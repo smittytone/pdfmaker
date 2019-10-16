@@ -26,6 +26,7 @@ var destPath: String = "~/Desktop"
 var outputName: String? = nil
 var sourcePath: String = "~/Documents"
 var doCompress: Bool = false
+var doShowInfo: Bool = false
 
 
 // MARK: - Functions
@@ -56,15 +57,17 @@ func getFilename(_ filepath: String, _ basename: String) -> String {
 func imagesToPdf() -> String? {
 
     // Iterate through the source directory's files, adding JPEGs to the new PDF
-
     let destDir: String = (destPath as NSString).standardizingPath
     let srcDir: String = (sourcePath as NSString).standardizingPath
     let filename: String = getFilename(destDir, (outputName == nil ? "PDF From Images" : outputName!))
     let outputPath: String = destDir + "/" + filename
 
-    #if DEBUG
-        print("Target file: \(outputPath)")
-    #endif
+    if doShowInfo {
+        print("Conversion Information")
+        print("Image Source: \(srcDir)")
+        print("  Target PDF: \(filename)")
+        print("Attempting to assemble PDF file...")
+    }
 
     var pdf: PDFDocument? = nil
 
@@ -78,9 +81,10 @@ func imagesToPdf() -> String? {
             let file: String = srcDir + "/" + files[i]
             let ext: String = (file as NSString).pathExtension.lowercased()
 
-            #if DEBUG
-                print("File: \(file) has extension \(ext.count == 0 ? "NONE" : ext)")
-            #endif
+            if doShowInfo {
+                let extra: String = ext.count == 0 ? "ignoring" : "processing"
+                print("Found file: \(file)... \(extra)")
+            }
 
             if ext == "jpg" || ext == "jpeg" {
                 someFiles = true
@@ -108,6 +112,7 @@ func imagesToPdf() -> String? {
 
         if someFiles {
             if let newpdf: PDFDocument = pdf {
+                if doShowInfo { print("Writing PDF file \(outputPath)") }
                 newpdf.write(toFile: outputPath)
                 return outputPath
             }
@@ -123,7 +128,7 @@ func imagesToPdf() -> String? {
 func compressPdfImages(_ inputPath: String) {
 
     // Compress the images with the specified PDF file using Quartz filter
-    print("Attempting to compress \(inputPath)")
+    if doShowInfo { print("Attempting to compress \(inputPath)...") }
 
     // Get the full path to 'PDFer.qfilter'
     var filterPath: String = "~/Library/Filters/PDFer.qfilter"
@@ -171,6 +176,7 @@ func showHelp() {
     print ("    -d / --destination [path]   Where to save the PDF. Default: Desktop folder.")
     print ("    -n / --name        [name]   The name of the new PDF. Default: \'PDF From Images\'.")
     print ("    -c / --compress             Apply an image compression filter to the PDF.")
+    print ("    -v / --verbose              Show progress information. Otherwise only errors are shown.")
     print ("    -h / --help                 This help screen.\n")
 }
 
@@ -205,10 +211,6 @@ for argument in CommandLine.arguments {
 
         argIsAValue = false
     } else {
-        #if DEBUG
-            print("Arg: \(argument)")
-        #endif
-
         switch argument {
         case "-d":
             fallthrough
@@ -229,6 +231,10 @@ for argument in CommandLine.arguments {
             fallthrough
         case "--compress":
             doCompress = true
+        case "-v":
+            fallthrough
+        case "--verbose":
+            doShowInfo = true
         case "-h":
             fallthrough
         case "--help":
@@ -249,11 +255,6 @@ for argument in CommandLine.arguments {
         exit(1)
     }
 }
-
-#if DEBUG
-    print("Source: \((sourcePath as NSString).standardizingPath)")
-    print("Target: \((destPath as NSString).standardizingPath)")
-#endif
 
 // Convert the images and, if required, compress the PDF
 let outputFile: String? = imagesToPdf()
