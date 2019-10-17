@@ -36,74 +36,115 @@ func getFilename(_ filepath: String, _ basename: String) -> String {
     // Run through the files in the target directory and bump the
     // output file's numeric suffix so that it doesn't clash
 
-    // Make sure we have a .pdf
+    // Add '.pdf' to the filename if it's not there already
     var extensionAdded: Bool = false
     if (basename as NSString).pathExtension.lowercased() == "pdf" { extensionAdded = true }
-
+    
     var fullname: String = basename + (!extensionAdded ? ".pdf" : "")
     var i: Int = 0
 
     // Iterate through the existing files
     while FileManager.default.fileExists(atPath: (filepath + "/" + fullname)) {
+        // The named file exists, so add a numeric suffix to the filename and re-check
         i += 1
         fullname = basename + String(format: " %02d", i) + ".pdf"
     }
 
-    // Send back the calculated name
+    // Send back the derived name
     return fullname
+}
+
+
+func checkDirectory(_ dir: String, _ dirType: String) {
+    
+    // Make sure the specified directory ('dir') and is indeed a directory,
+    // bailing if it’s missing or a regular file.
+    // The 'dirType' parameter is passed into the error report, if issued
+    
+    var isDir: ObjCBool = true
+    let success: Bool = FileManager.default.fileExists(atPath: dir, isDirectory: &isDir)
+    if (!success || !isDir.boolValue) {
+        print("[ERROR] \(dirType) directory \(dir) does not exist")
+        exit(1)
+    }
 }
 
 
 func imagesToPdf() -> String? {
 
     // Iterate through the source directory's files, adding JPEGs to the new PDF
+    
+    // Expand the directories to full pasth
     let destDir: String = (destPath as NSString).standardizingPath
     let srcDir: String = (sourcePath as NSString).standardizingPath
     let filename: String = getFilename(destDir, (outputName == nil ? "PDF From Images" : outputName!))
     let outputPath: String = destDir + "/" + filename
-
+    
+    // Check the supplied directories
+    checkDirectory(srcDir, "Source")
+    checkDirectory(destDir, "Target")
+    
+    // Prepare a PDF Document
+    var pdf: PDFDocument? = nil
+    
     if doShowInfo {
+        // We're in verbose mode, so show some info
         print("Conversion Information")
         print("Image Source: \(srcDir)")
         print("  Target PDF: \(outputPath)")
         print("Attempting to assemble PDF file...")
     }
 
-    var pdf: PDFDocument? = nil
-
+    // Begin the iteration
     do {
+        // Get a list of files in the source directory and sort them so that they
+        // get added to
         var files: [String] = try FileManager.default.contentsOfDirectory(atPath: srcDir as String)
         files.sort()
-        var someFiles: Bool = false
-        var fileCount: Int = 0
+        
+        // Initialise counters and flags
+        var gotFirstImage: Bool = false
+        var pageCount: Int = 0
         var isDir: ObjCBool = true
-
+        
+        // Iterate through the list of files
         for i in 0..<files.count {
             let file: String = srcDir + "/" + files[i]
+            
+            // Makes sure we're only addressing files
             _ = FileManager.default.fileExists(atPath: file, isDirectory: &isDir)
             if !isDir.boolValue {
+                // Get the file extension
                 let ext: String = (file as NSString).pathExtension.lowercased()
 
                 if doShowInfo {
                     let extra: String = ext.count == 0 ? "ignoring" : "processing"
                     print("Found file: \(file)... \(extra)")
                 }
-
+                
+                // Only proceed if the file is a JPEG
                 if ext == "jpg" || ext == "jpeg" {
-                    someFiles = true
+                    // Load the image
                     let image: NSImage? = NSImage.init(contentsOfFile: file)
                     if image != nil {
+                        // Create a PDF page based on the image
                         let page: PDFPage? = PDFPage.init(image: image!)
                         if page != nil {
-                            if fileCount == 0 {
+                            if pageCount == 0 {
+                                // This will be the first page in the PDF, so initialize
+                                // the PDF will the page data
                                 if let pageData: Data = page!.dataRepresentation {
+                                    gotFirstImage = true
                                     pdf = PDFDocument.init(data: pageData)
-                                    fileCount += 1
+                                    pageCount += 1
                                 }
                             } else {
                                 if let newpdf: PDFDocument = pdf {
-                                    newpdf.insert(page!, at: fileCount)
-                                    fileCount += 1
+                                    // We're adding a page to the already created PDF,
+                                    // so just insert the page
+                                    gotFirstImage = true
+                                    newpdf.insert(page!, at: pageCount)
+                                    pageCount += 1
                                 }
                             }
                         }
@@ -113,15 +154,22 @@ func imagesToPdf() -> String? {
                 }
             }
         }
-
-        if someFiles {
+        
+        // Did we add any images to the PDF?
+        if gotFirstImage {
+            // Yes we did, so save the PDF to disk
             if let newpdf: PDFDocument = pdf {
                 if doShowInfo { print("Writing PDF file \(outputPath)") }
                 newpdf.write(toFile: outputPath)
                 return outputPath
             }
+        } else {
+            if doShowInfo {
+                print("No suitable image files found in the source directory")
+            }
         }
     } catch {
+        // NOTE This should not be triggered due to earlier checks
         print("[ERROR] Unable to get contents of directory")
     }
 
@@ -255,7 +303,8 @@ for argument in CommandLine.arguments {
     }
 
     argCount += 1
-
+    
+    // Trap commands that come last and therefore have missing args
     if argCount == CommandLine.arguments.count && argIsAValue {
         print("*[ERROR] Missing value for \(argument)")
         exit(1)
