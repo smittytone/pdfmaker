@@ -24,7 +24,7 @@ var argCount: Int = 0
 var prevArg: String = ""
 var destPath: String = "~/Desktop"
 var outputName: String? = nil
-var sourcePath: String = "~/Documents"
+var sourcePath: String = FileManager.default.currentDirectoryPath
 var doCompress: Bool = false
 var doShowInfo: Bool = false
 
@@ -65,7 +65,7 @@ func imagesToPdf() -> String? {
     if doShowInfo {
         print("Conversion Information")
         print("Image Source: \(srcDir)")
-        print("  Target PDF: \(filename)")
+        print("  Target PDF: \(outputPath)")
         print("Attempting to assemble PDF file...")
     }
 
@@ -76,36 +76,40 @@ func imagesToPdf() -> String? {
         files.sort()
         var someFiles: Bool = false
         var fileCount: Int = 0
+        var isDir: ObjCBool = true
 
         for i in 0..<files.count {
             let file: String = srcDir + "/" + files[i]
-            let ext: String = (file as NSString).pathExtension.lowercased()
+            _ = FileManager.default.fileExists(atPath: file, isDirectory: &isDir)
+            if !isDir.boolValue {
+                let ext: String = (file as NSString).pathExtension.lowercased()
 
-            if doShowInfo {
-                let extra: String = ext.count == 0 ? "ignoring" : "processing"
-                print("Found file: \(file)... \(extra)")
-            }
+                if doShowInfo {
+                    let extra: String = ext.count == 0 ? "ignoring" : "processing"
+                    print("Found file: \(file)... \(extra)")
+                }
 
-            if ext == "jpg" || ext == "jpeg" {
-                someFiles = true
-                let image: NSImage? = NSImage.init(contentsOfFile: file)
-                if image != nil {
-                    let page: PDFPage? = PDFPage.init(image: image!)
-                    if page != nil {
-                        if fileCount == 0 {
-                            if let pageData: Data = page!.dataRepresentation {
-                                pdf = PDFDocument.init(data: pageData)
-                                fileCount += 1
-                            }
-                        } else {
-                            if let newpdf: PDFDocument = pdf {
-                                newpdf.insert(page!, at: fileCount)
-                                fileCount += 1
+                if ext == "jpg" || ext == "jpeg" {
+                    someFiles = true
+                    let image: NSImage? = NSImage.init(contentsOfFile: file)
+                    if image != nil {
+                        let page: PDFPage? = PDFPage.init(image: image!)
+                        if page != nil {
+                            if fileCount == 0 {
+                                if let pageData: Data = page!.dataRepresentation {
+                                    pdf = PDFDocument.init(data: pageData)
+                                    fileCount += 1
+                                }
+                            } else {
+                                if let newpdf: PDFDocument = pdf {
+                                    newpdf.insert(page!, at: fileCount)
+                                    fileCount += 1
+                                }
                             }
                         }
+                    } else {
+                        print("[ERROR] Could not load image for file \(file)")
                     }
-                } else {
-                    print("[ERROR] Could not load image for file \(file)")
                 }
             }
         }
@@ -154,6 +158,8 @@ func compressPdfImages(_ inputPath: String) {
         {
             do {
                 try pdfData.write(to: URL.init(fileURLWithPath: outputPath))
+
+                //compressedPdf.write(toFile: outputPath, withOptions: [kCGPDFContextAllowsPrinting:filter])
             } catch {
                 print("[ERROR] Could not write the compressed PDF file")
             }
@@ -172,7 +178,7 @@ func showHelp() {
     print("\nConvert a directory of images to a single PDF file.\n")
     print ("Usage:\n    pdfmaker [-s <directory path>] [-d <directory path>] [-n <name>] [-c] [-h]\n")
     print ("Options:")
-    print ("    -s / --source      [path]   The path to the images. Default: Documents folder")
+    print ("    -s / --source      [path]   The path to the images. Default: current folder")
     print ("    -d / --destination [path]   Where to save the PDF. Default: Desktop folder.")
     print ("    -n / --name        [name]   The name of the new PDF. Default: \'PDF From Images\'.")
     print ("    -c / --compress             Apply an image compression filter to the PDF.")
