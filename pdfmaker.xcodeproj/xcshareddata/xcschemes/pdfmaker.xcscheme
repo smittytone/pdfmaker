@@ -56,7 +56,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "~/downloads/brink"
+            argument = "$HOME/downloads/brink"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
