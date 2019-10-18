@@ -26,6 +26,7 @@ var destPath: String = "~/Desktop"
 var outputName: String? = nil
 var sourcePath: String = FileManager.default.currentDirectoryPath
 var doCompress: Bool = false
+var compressionLevel: Float = 0.8
 var doShowInfo: Bool = false
 
 
@@ -70,6 +71,23 @@ func checkDirectory(_ dir: String, _ dirType: String) {
 }
 
 
+func compressImage(_ image: NSImage) -> NSImage? {
+
+    // Take an existing image, and compress it
+    // See https://stackoverflow.com/questions/52709210/how-to-compress-nsimage-in-swift-4
+    if let tiff = image.tiffRepresentation {
+        if let imageRep: NSBitmapImageRep = NSBitmapImageRep(data: tiff) {
+            let compressedData = imageRep.representation(using: NSBitmapImageRep.FileType.jpeg,
+                                                         properties: [NSBitmapImageRep.PropertyKey.compressionFactor : compressionLevel])!
+            return NSImage(data: compressedData)
+        }
+    }
+
+    // Something went wrong, so just return nil
+    return nil
+}
+
+
 func imagesToPdf() -> String? {
 
     // Iterate through the source directory's files, adding JPEGs to the new PDF
@@ -92,6 +110,13 @@ func imagesToPdf() -> String? {
         print("Conversion Information")
         print("Image Source: \(srcDir)")
         print("  Target PDF: \(outputPath)")
+        if doCompress {
+            let percent: Int = Int(compressionLevel * 100)
+            var amount = "\(percent)%"
+            if percent == 0 { amount = "Least (" + amount + ")" }
+            if percent == 100 { amount = "Maxiumum (" + amount + ")" }
+            if doShowInfo { print("     Quality: " + amount) }
+        }
         print("Attempting to assemble PDF file...")
     }
 
@@ -125,8 +150,20 @@ func imagesToPdf() -> String? {
                 // Only proceed if the file is a JPEG
                 if ext == "jpg" || ext == "jpeg" {
                     // Load the image
-                    let image: NSImage? = NSImage.init(contentsOfFile: file)
+                    var image: NSImage? = NSImage.init(contentsOfFile: file)
                     if image != nil {
+                        if doCompress {
+                            // Re-compress the image
+                            // NOTE Since we're loading from JPEG, the image may already by compressed
+                            image = compressImage(image!)
+
+                            // Break on error
+                            if image == nil {
+                                if doShowInfo { print("Could not compress image... ignoring") }
+                                break
+                            }
+                        }
+
                         // Create a PDF page based on the image
                         let page: PDFPage? = PDFPage.init(image: image!)
                         if page != nil {
@@ -177,49 +214,6 @@ func imagesToPdf() -> String? {
 }
 
 
-func compressPdfImages(_ inputPath: String) {
-
-    // Compress the images with the specified PDF file using Quartz filter
-    if doShowInfo { print("Attempting to compress \(inputPath)...") }
-
-    // Get the full path to 'PDFer.qfilter'
-    var filterPath: String = "~/Library/Filters/PDFer.qfilter"
-    filterPath = (filterPath as NSString).standardizingPath
-
-    // Set the output name
-    let outputDir: String = (inputPath as NSString).deletingLastPathComponent
-    let outputName: String = (inputPath as NSString).lastPathComponent
-    let outputNameParts: [String] = outputName.components(separatedBy: ".")
-    let outputPath: String = outputDir + "/" + outputNameParts[0] + ".compressed.pdf"
-
-    // Create URLs from the string paths:
-    // First the filer...
-    let filterURL: URL = URL.init(fileURLWithPath: filterPath)
-    let srcURL: URL = URL.init(fileURLWithPath: inputPath)
-
-    // Load in the PDF we have just made
-    if let compressedPdf: PDFDocument = PDFDocument.init(url: srcURL) {
-        // Load and apply the filter
-        let filter: QuartzFilter = QuartzFilter.init(url: filterURL)
-
-        if let pdfData: Data = compressedPdf.dataRepresentation(options: [AnyHashable("QuartzFilter"):filter])
-        {
-            do {
-                try pdfData.write(to: URL.init(fileURLWithPath: outputPath))
-
-                //compressedPdf.write(toFile: outputPath, withOptions: [kCGPDFContextAllowsPrinting:filter])
-            } catch {
-                print("[ERROR] Could not write the compressed PDF file")
-            }
-        } else {
-            print("[ERROR] Could not apply the compressed filter")
-        }
-    } else {
-        print("[ERROR] Could not load the new PDF file for compression")
-    }
-}
-
-
 func showHelp() {
 
     print("\npdfmaker \(APP_VERSION)")
@@ -229,7 +223,7 @@ func showHelp() {
     print ("    -s / --source      [path]   The path to the images. Default: current folder")
     print ("    -d / --destination [path]   Where to save the PDF. Default: Desktop folder.")
     print ("    -n / --name        [name]   The name of the new PDF. Default: \'PDF From Images\'.")
-    print ("    -c / --compress             Apply an image compression filter to the PDF.")
+    print ("    -c / --compress    [amount] Apply an image compression filter to the PDF.")
     print ("    -v / --verbose              Show progress information. Otherwise only errors are shown.")
     print ("    -h / --help                 This help screen.\n")
 }
@@ -258,6 +252,13 @@ for argument in CommandLine.arguments {
             sourcePath = argument
         case 2:
             outputName = argument
+        case 3:
+            doCompress = true
+            if let cl = Float(argument) {
+                compressionLevel = cl
+            } else {
+                compressionLevel = 0.8
+            }
         default:
             print("[ERROR] Unknown argument")
             exit(1)
@@ -284,7 +285,8 @@ for argument in CommandLine.arguments {
         case "-c":
             fallthrough
         case "--compress":
-            doCompress = true
+            argType = 3
+            argIsAValue = true
         case "-v":
             fallthrough
         case "--verbose":
@@ -311,6 +313,5 @@ for argument in CommandLine.arguments {
     }
 }
 
-// Convert the images and, if required, compress the PDF
+// Convert the images
 let outputFile: String? = imagesToPdf()
-if outputFile != nil && doCompress { compressPdfImages(outputFile!) }
