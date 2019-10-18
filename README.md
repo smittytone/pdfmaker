@@ -43,7 +43,7 @@ This will merge all of the images files in `~/Documents/Project X/Images` into a
 
 ## Release Notes ##
 
-- 1.0.0 &mdash; *Unreleased*
+- 1.0.0 &mdash; *18 October 2019*
     - Initial public release.
 
 ## Copyright ##
