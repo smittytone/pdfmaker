@@ -60,11 +60,23 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "-n"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "Test0-0"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-v"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-c"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "0.0"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
