@@ -13,7 +13,7 @@ import Quartz
 
 // MARK: - Constants
 
-let APP_VERSION = "1.0.0"
+let APP_VERSION = "1.1.0"
 
 
 // MARK: - Global Variables
@@ -56,7 +56,7 @@ func getFilename(_ filepath: String, _ basename: String) -> String {
 }
 
 
-func checkDirectory(_ dir: String, _ dirType: String) {
+func checkDirectory(_ dir: String, _ dirType: String) -> Bool {
     
     // Make sure the specified directory ('dir') and is indeed a directory,
     // bailing if it’s missing or a regular file.
@@ -64,10 +64,16 @@ func checkDirectory(_ dir: String, _ dirType: String) {
     
     var isDir: ObjCBool = true
     let success: Bool = FileManager.default.fileExists(atPath: dir, isDirectory: &isDir)
-    if (!success || !isDir.boolValue) {
+
+    if !success {
+        // Item doesn't exist, whatever it is
         print("[ERROR] \(dirType) directory \(dir) does not exist")
         exit(1)
     }
+
+    // FROM 1.1.0
+    // Return a bool indicating whether path points to a director (true) or a file (false)
+    return isDir.boolValue
 }
 
 
@@ -99,11 +105,8 @@ func imagesToPdf() -> String? {
     let outputPath: String = destDir + "/" + filename
     
     // Check the supplied directories
-    checkDirectory(srcDir, "Source")
-    checkDirectory(destDir, "Target")
-    
-    // Prepare a PDF Document
-    var pdf: PDFDocument? = nil
+    let isDir: Bool = checkDirectory(srcDir, "Source")
+    let _ = checkDirectory(destDir, "Target")
     
     if doShowInfo {
         // We're in verbose mode, so show some info
@@ -120,94 +123,109 @@ func imagesToPdf() -> String? {
         print("Attempting to assemble PDF file...")
     }
 
-    // Begin the iteration
-    do {
-        // Get a list of files in the source directory and sort them so that they
-        // get added to
-        var files: [String] = try FileManager.default.contentsOfDirectory(atPath: srcDir as String)
-        files.sort()
-        
-        // Initialise counters and flags
-        var gotFirstImage: Bool = false
-        var pageCount: Int = 0
-        var isDir: ObjCBool = true
-        
-        // Iterate through the list of files
-        for i in 0..<files.count {
-            let file: String = srcDir + "/" + files[i]
-            
-            // Makes sure we're only addressing files
-            _ = FileManager.default.fileExists(atPath: file, isDirectory: &isDir)
-            if !isDir.boolValue {
-                // Get the file extension
-                let ext: String = (file as NSString).pathExtension.lowercased()
+    var files: [String]
 
-                if doShowInfo {
-                    let extra: String = ext.count == 0 ? "ignoring" : "processing"
-                    print("Found file: \(file)... \(extra)")
-                }
-                
-                // Only proceed if the file is a JPEG
-                if ext == "jpg" || ext == "jpeg" {
-                    // Load the image
-                    var image: NSImage? = NSImage.init(contentsOfFile: file)
-                    if image != nil {
-                        if doCompress {
-                            // Re-compress the image
-                            // NOTE Since we're loading from JPEG, the image may already by compressed
-                            image = compressImage(image!)
+    if isDir {
+        // We have a directory of files, so load a list of items into 'files'
+        do {
+            // Get a list of files in the source directory and sort them so that they get added
+            // to the output PDF in the correct order
+            files = try FileManager.default.contentsOfDirectory(atPath: srcDir as String)
+            files.sort()
+        } catch {
+            // NOTE This should not be triggered due to earlier checks
+            print("[ERROR] Unable to get contents of directory")
+            return nil
+        }
+    } else {
+        // 'srcDir' points to a file, so add it to files manually
+        files = [srcDir]
+    }
 
-                            // Break on error
-                            if image == nil {
-                                if doShowInfo { print("Could not compress image... ignoring") }
-                                break
-                            }
-                        }
+    // Initialise counters and flags
+    var gotFirstImage: Bool = false
+    var pageCount: Int = 0
 
-                        // Create a PDF page based on the image
-                        let page: PDFPage? = PDFPage.init(image: image!)
-                        if page != nil {
-                            if pageCount == 0 {
-                                // This will be the first page in the PDF, so initialize
-                                // the PDF will the page data
-                                if let pageData: Data = page!.dataRepresentation {
-                                    gotFirstImage = true
-                                    pdf = PDFDocument.init(data: pageData)
-                                    pageCount += 1
-                                }
-                            } else {
-                                if let newpdf: PDFDocument = pdf {
-                                    // We're adding a page to the already created PDF,
-                                    // so just insert the page
-                                    gotFirstImage = true
-                                    newpdf.insert(page!, at: pageCount)
-                                    pageCount += 1
-                                }
-                            }
-                        }
-                    } else {
-                        print("[ERROR] Could not load image for file \(file)")
+    // Prepare a PDF Document
+    var pdf: PDFDocument? = nil
+
+    // Iterate through the list of files
+    for i in 0..<files.count {
+        // Get a file, making sure it's not a . file
+        var file: String
+        if isDir {
+            // FROM 1.1.0
+            // Ignore . files
+            if files[i].hasPrefix(".") { continue }
+            file = srcDir + "/" + files[i]
+        } else {
+            file = files[i]
+        }
+
+        // Get the file extension
+        let ext: String = (file as NSString).pathExtension.lowercased()
+
+        if doShowInfo {
+            let extra: String = ext.count == 0 ? "ignoring" : "processing"
+            print("Found file: \(file)... \(extra)")
+        }
+
+        // Only proceed if the file is a JPEG
+        if ext == "jpg" || ext == "jpeg" {
+            // Load the image
+            var image: NSImage? = NSImage.init(contentsOfFile: file)
+            if image != nil {
+                if doCompress {
+                    // Re-compress the image
+                    // NOTE Since we're loading from JPEG, the image may already by compressed
+                    image = compressImage(image!)
+
+                    // Break on error
+                    if image == nil {
+                        if doShowInfo { print("Could not compress image... ignoring") }
+                        break
                     }
                 }
+
+                // Create a PDF page based on the image
+                let page: PDFPage? = PDFPage.init(image: image!)
+                if page != nil {
+                    if pageCount == 0 {
+                        // This will be the first page in the PDF, so initialize
+                        // the PDF will the page data
+                        if let pageData: Data = page!.dataRepresentation {
+                            gotFirstImage = true
+                            pdf = PDFDocument.init(data: pageData)
+                            pageCount += 1
+                        }
+                    } else {
+                        if let newpdf: PDFDocument = pdf {
+                            // We're adding a page to the already created PDF,
+                            // so just insert the page
+                            gotFirstImage = true
+                            newpdf.insert(page!, at: pageCount)
+                            pageCount += 1
+                        }
+                    }
+                }
+            } else {
+                print("[ERROR] Could not load image for file \(file)")
             }
         }
-        
-        // Did we add any images to the PDF?
-        if gotFirstImage {
-            // Yes we did, so save the PDF to disk
-            if let newpdf: PDFDocument = pdf {
-                if doShowInfo { print("Writing PDF file \(outputPath)") }
-                newpdf.write(toFile: outputPath)
-                return outputPath
-            }
-        } else {
-            if doShowInfo {
-                print("No suitable image files found in the source directory")
-            }
+    }
+
+    // Did we add any images to the PDF?
+    if gotFirstImage {
+        // Yes we did, so save the PDF to disk
+        if let newpdf: PDFDocument = pdf {
+            if doShowInfo { print("Writing PDF file \(outputPath)") }
+            newpdf.write(toFile: outputPath)
+            return outputPath
         }
-    } catch {
-        // NOTE This should not be triggered due to earlier checks
-        print("[ERROR] Unable to get contents of directory")
+    } else {
+        if doShowInfo {
+            print("No suitable image files found in the source directory")
+        }
     }
 
     return nil
@@ -217,10 +235,10 @@ func imagesToPdf() -> String? {
 func showHelp() {
 
     print("\npdfmaker \(APP_VERSION)")
-    print("\nConvert a directory of images to a single PDF file.\n")
+    print("\nConvert a directory of images or a specified image to a single PDF file.\n")
     print ("Usage:\n    pdfmaker [-s <directory path>] [-d <directory path>] [-n <name>] [-c] [-h]\n")
     print ("Options:")
-    print ("    -s / --source      [path]   The path to the images. Default: current folder")
+    print ("    -s / --source      [path]   The path to the image(s). Default: current folder")
     print ("    -d / --destination [path]   Where to save the PDF. Default: Desktop folder.")
     print ("    -n / --name        [name]   The name of the new PDF. Default: \'PDF From Images\'.")
     print ("    -c / --compress    [amount] Apply an image compression filter to the PDF.")
