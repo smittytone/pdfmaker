@@ -49,6 +49,7 @@ This convert the image `cover.jpg` into a file called `Project X.pdf` placed in 
 
 - 1.1.0 &mdash; *Unreleased*
     - Allow the user to select a single source image, not just source directories.
+    - Support easier notarization.
     - Ignore dot files.
 - 1.0.0 &mdash; *18 October 2019*
     - Initial public release.
