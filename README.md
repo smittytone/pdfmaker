@@ -1,4 +1,4 @@
-# pdfmaker 1.0.0 #
+# pdfmaker 1.1.0 #
 
 *pdfmaker* is a command line tool for combining multiple JPEG images into a single PDF file.
 
@@ -31,18 +31,25 @@ The compression option will compress images before adding them to the PDF. This 
 pdfmaker --source ~/Documents/'Project X'/Images --destination ~/Documents/PDFs --name 'Project X'
 ```
 
-This will merge all of the images files in `~/Documents/Project X/Images` into a file called `Project X.pdf` which is placed in
-`~/Documents/PDFs`.
+This will merge all of the images files in `~/Documents/Project X/Images` into a file called `Project X.pdf` which is placed in `~/Documents/PDFs`.
 
 ```
 pdfmaker --source ~/Documents/'Project X'/Images --destination ~/Documents/PDFs --name 'Project X' --compress 0.5
 ```
 
-This will merge all of the images files in `~/Documents/Project X/Images` into a file called `Project X.pdf` which is placed in
-`~/Documents/PDFs`. The compilation process will compress images to 50% JPEG quality.
+This will merge all of the images files in `~/Documents/Project X/Images` into a file called `Project X.pdf` which is placed in `~/Documents/PDFs`. The compilation process will compress images to 50% JPEG quality.
+
+```
+pdfmaker --source ~/Documents/'Project X'/Images/cover.jpg --destination ~/Documents/PDFs --name 'Project X'
+```
+
+This convert the image `cover.jpg` into a file called `Project X.pdf` placed in `~/Documents/PDFs`.
 
 ## Release Notes ##
 
+- 1.1.0 &mdash; *Unreleased*
+    - Allow the user to select a single source image, not just source directories.
+    - Ignore dot files.
 - 1.0.0 &mdash; *18 October 2019*
     - Initial public release.
 
