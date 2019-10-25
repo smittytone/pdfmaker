@@ -43,7 +43,7 @@ This will merge all of the images files in `~/Documents/Project X/Images` into a
 pdfmaker --source ~/Documents/'Project X'/Images/cover.jpg --destination ~/Documents/PDFs
 ```
 
-This convert the image `cover.jpg` into a file called `PDF From Images.pdf` (as no destination filename is specified) that is placed in `~/Documents/PDFs`.
+This converts the image `cover.jpg` into a file called `PDF From Images.pdf` (as no destination filename is specified) that is placed in `~/Documents/PDFs`.
 
 ## Release Notes ##
 
