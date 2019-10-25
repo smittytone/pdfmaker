@@ -277,8 +277,8 @@ func showHelp() {
     print ("    -v / --verbose               Show progress information. Otherwise only errors are shown.")
     print ("    -h / --help                  This help screen.\n")
     print ("Examples:")
-    print ("    pdfmaker --source ~/Documents/'Project X'/Images --destination ~/Documents/PDFs --name 'Project X'")
-    print ("    pdfmaker --source ~/Documents/'Project X'/Images/cover.jpg --destination ~/Documents/PDFs --name 'cover test")
+    print ("    pdfmaker --source ~/Documents/\'Project X\'/Images --destination ~/Documents/PDFs/\'Project X.pdf\'")
+    print ("    pdfmaker --source ~/Documents/\'Project X\'/Images/cover.jpg --destination ~/Documents/PDFs\n")
 }
 
 
