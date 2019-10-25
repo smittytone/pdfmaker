@@ -238,12 +238,17 @@ func showHelp() {
     print("\nConvert a directory of images or a specified image to a single PDF file.\n")
     print ("Usage:\n    pdfmaker [-s <directory path>] [-d <directory path>] [-n <name>] [-c] [-h]\n")
     print ("Options:")
-    print ("    -s / --source      [path]   The path to the image(s). Default: current folder")
-    print ("    -d / --destination [path]   Where to save the PDF. Default: Desktop folder.")
-    print ("    -n / --name        [name]   The name of the new PDF. Default: \'PDF From Images\'.")
-    print ("    -c / --compress    [amount] Apply an image compression filter to the PDF.")
-    print ("    -v / --verbose              Show progress information. Otherwise only errors are shown.")
-    print ("    -h / --help                 This help screen.\n")
+    print ("    -s / --source      [path]    The path to the image(s). Default: current folder")
+    print ("    -d / --destination [path]    Where to save the PDF. Default: Desktop folder.")
+    print ("    -n / --name        [name]    The name of the new PDF. Default: \'PDF From Images\'.")
+    print ("    -c / --compress    [amount]  Apply an image compression filter to the PDF:")
+    print ("                                   0.0 = maximum compression, lowest image quality.")
+    print ("                                   1.0 = no compression, best image quality.")
+    print ("    -v / --verbose               Show progress information. Otherwise only errors are shown.")
+    print ("    -h / --help                  This help screen.\n")
+    print ("Examples:")
+    print ("    pdfmaker --source ~/Documents/'Project X'/Images --destination ~/Documents/PDFs --name 'Project X'")
+    print ("    pdfmaker --source ~/Documents/'Project X'/Images/cover.jpg --destination ~/Documents/PDFs --name 'cover test")
 }
 
 
