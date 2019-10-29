@@ -2,6 +2,8 @@
 
 *pdfmaker* is a command line tool for combining multiple JPEG images into a single PDF file.
 
+For some background on the development of this tool, please see [this blog post](https://smittytone.wordpress.com/2019/10/25/macos-make-pdf-from-images/).
+
 ## Installation ##
 
 Build and copy the binary to the `/usr/local/bin` directory.
