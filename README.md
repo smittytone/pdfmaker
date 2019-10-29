@@ -47,7 +47,7 @@ This converts the image `cover.jpg` into a file called `PDF From Images.pdf` (as
 
 ## Release Notes ##
 
-- 1.1.0 &mdash; *Unreleased*
+- 1.1.0 &mdash; *28 October 2019*
     - Allow the user to select a single source image, not just source directories.
     - Allow the user to name the target file as part of the target path.
         - Remove the `--name` switch.
