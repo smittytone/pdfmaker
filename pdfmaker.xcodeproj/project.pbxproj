@@ -8,16 +8,39 @@
 
 /* Begin PBXBuildFile section */
 		3B746092235726550032EA96 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B746091235726550032EA96 /* main.swift */; };
+		3BD5FE93236B2A6100D5CED4 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD5FE92236B2A6100D5CED4 /* main.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		3BD5FE8E236B2A6100D5CED4 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		3B41AE822360D9D8009FE993 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3B74608E235726550032EA96 /* pdfmaker */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = pdfmaker; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B746091235726550032EA96 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		3BD5FE90236B2A6100D5CED4 /* pdfbreaker */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = pdfbreaker; sourceTree = BUILT_PRODUCTS_DIR; };
+		3BD5FE92236B2A6100D5CED4 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		3BD5FE97236B2A8000D5CED4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		3B74608B235726550032EA96 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3BD5FE8D236B2A6100D5CED4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -31,6 +54,7 @@
 			isa = PBXGroup;
 			children = (
 				3B746090235726550032EA96 /* pdfmaker */,
+				3BD5FE91236B2A6100D5CED4 /* pdfbreaker */,
 				3B74608F235726550032EA96 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -39,6 +63,7 @@
 			isa = PBXGroup;
 			children = (
 				3B74608E235726550032EA96 /* pdfmaker */,
+				3BD5FE90236B2A6100D5CED4 /* pdfbreaker */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -50,6 +75,15 @@
 				3B41AE822360D9D8009FE993 /* Info.plist */,
 			);
 			path = pdfmaker;
+			sourceTree = "<group>";
+		};
+		3BD5FE91236B2A6100D5CED4 /* pdfbreaker */ = {
+			isa = PBXGroup;
+			children = (
+				3BD5FE92236B2A6100D5CED4 /* main.swift */,
+				3BD5FE97236B2A8000D5CED4 /* Info.plist */,
+			);
+			path = pdfbreaker;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -71,6 +105,23 @@
 			productReference = 3B74608E235726550032EA96 /* pdfmaker */;
 			productType = "com.apple.product-type.tool";
 		};
+		3BD5FE8F236B2A6100D5CED4 /* pdfbreaker */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3BD5FE96236B2A6100D5CED4 /* Build configuration list for PBXNativeTarget "pdfbreaker" */;
+			buildPhases = (
+				3BD5FE8C236B2A6100D5CED4 /* Sources */,
+				3BD5FE8D236B2A6100D5CED4 /* Frameworks */,
+				3BD5FE8E236B2A6100D5CED4 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = pdfbreaker;
+			productName = pdfbreaker;
+			productReference = 3BD5FE90236B2A6100D5CED4 /* pdfbreaker */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -82,6 +133,9 @@
 				ORGANIZATIONNAME = "Tony Smith";
 				TargetAttributes = {
 					3B74608D235726550032EA96 = {
+						CreatedOnToolsVersion = 11.1;
+					};
+					3BD5FE8F236B2A6100D5CED4 = {
 						CreatedOnToolsVersion = 11.1;
 					};
 				};
@@ -100,6 +154,7 @@
 			projectRoot = "";
 			targets = (
 				3B74608D235726550032EA96 /* pdfmaker */,
+				3BD5FE8F236B2A6100D5CED4 /* pdfbreaker */,
 			);
 		};
 /* End PBXProject section */
@@ -110,6 +165,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				3B746092235726550032EA96 /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3BD5FE8C236B2A6100D5CED4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3BD5FE93236B2A6100D5CED4 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,6 +332,40 @@
 			};
 			name = Release;
 		};
+		3BD5FE94236B2A6100D5CED4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Y5J3K52DNA;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/pdfbreaker/Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		3BD5FE95236B2A6100D5CED4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Y5J3K52DNA;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/pdfbreaker/Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -286,6 +383,15 @@
 			buildConfigurations = (
 				3B746096235726550032EA96 /* Debug */,
 				3B746097235726550032EA96 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3BD5FE96236B2A6100D5CED4 /* Build configuration list for PBXNativeTarget "pdfbreaker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3BD5FE94236B2A6100D5CED4 /* Debug */,
+				3BD5FE95236B2A6100D5CED4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
