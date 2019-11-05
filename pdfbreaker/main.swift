@@ -168,10 +168,8 @@ func pdfToImages() {
 
     // Initialise counters and flags
     var gotFirstImage: Bool = false
-    var pageCount: Int = 0
-
-    // Prepare a PDF Document
-    var pdf: PDFDocument? = nil
+    let scaleFactor: CGFloat = 300.0 / 72.0
+    let imageProps: [NSBitmapImageRep.PropertyKey: Any] = [NSBitmapImageRep.PropertyKey.compressionFactor: 1.0]
 
     // Iterate through the list of files
     for i in 0..<files.count {
@@ -197,34 +195,27 @@ func pdfToImages() {
         // Only proceed if the file is a PDF
         if ext == "pdf" {
             gotFirstImage = true
-            
-            // Load the PDF
             do {
+                // Load the PDF
                 let fileData: Data = try Data.init(contentsOf: URL.init(fileURLWithPath: file))
-                if let pdf: PDFDocument = PDFDocument.init(data: fileData) {
-                    for i in 0..<pdf.pageCount {
-                        if let page: PDFPage = pdf.page(at: i) {
-                            if let cs: CGColorSpace = CGColorSpace.init(name: CGColorSpace.sRGB) {
-                                if let context: CGContext = CGContext.init(data: nil,
-                                                                           width: 1666,
-                                                                           height: 2224,
-                                                                           bitsPerComponent: 8,
-                                                                           bytesPerRow: 0,
-                                                                           space: cs,
-                                                                           bitmapInfo: 0) {
-                                    page.draw(with: .cropBox, to: context)
-                                    if let cimage: CGImage = context.makeImage() {
-                                        let image: NSImage = NSImage.init(cgImage: cimage, size: page.bounds(for: .cropBox).size)
-                                        // if doCompress { image = compressImage(image) }
-                                        // Write the file
-                                        var imageData: Data? = image.tiffRepresentation
-                                        if imageData != nil {
-                                            if let imageRep: NSBitmapImageRep = NSBitmapImageRep.init(data: imageData!) {
-                                                let imageProps: [NSBitmapImageRep.PropertyKey: Any] = [NSBitmapImageRep.PropertyKey.compressionFactor: 1.0]
-                                                imageData = imageRep.representation(using: .jpeg, properties: imageProps)
-                                                let path: String = destDir + "/page " + String(format: "%03d", i) + ".jpg"
-                                                try imageData!.write(to: URL.init(fileURLWithPath: path))
-                                            }
+                if let pdfRep: NSPDFImageRep = NSPDFImageRep.init(data: fileData) {
+                    for i in 0..<pdfRep.pageCount {
+                        autoreleasepool {
+                            pdfRep.currentPage = i
+                            let newSize: CGSize = CGSize.init(width: pdfRep.size.width * scaleFactor, height: pdfRep.size.height * scaleFactor)
+                            let scaledImage: NSImage = NSImage.init(size: newSize, flipped: false) { (drawRect) -> Bool in
+                                pdfRep.draw(in: drawRect)
+                                return true
+                            }
+
+                            if let imageData: Data = scaledImage.tiffRepresentation {
+                                if let bmp: NSBitmapImageRep = NSBitmapImageRep.init(data: imageData) {
+                                    if let finalData: Data = bmp.representation(using: .jpeg, properties: imageProps) {
+                                        let path: String = destDir + "/page " + String(format: "%03d", i) + ".jpg"
+                                        do {
+                                            try finalData.write(to: URL.init(fileURLWithPath: path))
+                                        } catch {
+
                                         }
                                     }
                                 }
