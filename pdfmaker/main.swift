@@ -11,6 +11,13 @@ import Foundation
 import Quartz
 
 
+// MARK: - Constants
+
+// FROM 1.2.0
+let BASE_DPI: CGFloat = 72.0
+let DEFAULT_DPI: CGFloat = 300.0
+
+
 // MARK: - Global Variables
 
 var argIsAValue: Bool = false
@@ -21,8 +28,12 @@ var destPath: String = "~/Desktop"
 var outputName: String? = nil
 var sourcePath: String = FileManager.default.currentDirectoryPath
 var doCompress: Bool = false
-var compressionLevel: Float = 0.8
+var compressionLevel: CGFloat = 0.8
 var doShowInfo: Bool = false
+
+// FROM 1.2.0
+var doBreak: Bool = false
+var outputResolution: CGFloat = BASE_DPI
 
 
 // MARK: - Functions
@@ -261,6 +272,149 @@ func imagesToPdf() -> String? {
 }
 
 
+func pdfToImages() -> Bool {
+
+    // Iterate through the source directory's files, or the named source file, adding
+    // any JPEGs we find to the new PDF
+
+    // Check the supplied directories
+    // NOTE 'checkDirectory()' will exit if the either item doesn't exist
+    let isSrcADir: Bool = checkDirectory(sourcePath, "Source")
+    let isDestADir: Bool = checkDirectory(destPath, "Target")
+
+    // Make sure we're loading a PDF and outputting to a directory
+    if !isDestADir {
+        print("[ERROR] Image destination \(destPath) is not a directory")
+        exit(1)
+    }
+
+    if isSrcADir {
+        print("[ERROR] Source \(destPath) is a directory")
+        exit(1)
+    }
+
+    // Get the file extension
+    let ext: String = (sourcePath as NSString).pathExtension.lowercased()
+
+    // Only proceed if the file is a PDF
+    if ext == "pdf" {
+        // Output info, if requested to do so
+        if doShowInfo {
+            // We're in verbose mode, so show some info
+            print("Conversion Information")
+            print("Source PDF: \(sourcePath)")
+            print("Image dir: \(destPath)")
+            if doCompress {
+                showCompression()
+            }
+            print("Attempting to assemble PDF file...")
+        }
+
+        // Initialise counters and flags
+        let scaleFactor: CGFloat = outputResolution == BASE_DPI ? 1.0 : outputResolution / BASE_DPI
+        let imageProps: [NSBitmapImageRep.PropertyKey: Any] = [NSBitmapImageRep.PropertyKey.compressionFactor: compressionLevel]
+        var count: Int = 0
+
+        // Load and process the PDF
+        do {
+            let fileData: Data = try Data.init(contentsOf: URL.init(fileURLWithPath: sourcePath))
+            if let pdfRep: NSPDFImageRep = NSPDFImageRep.init(data: fileData) {
+                // Process the PDF page by page
+                for i in 0..<pdfRep.pageCount {
+                    autoreleasepool {
+                        // Draw the PDF page into an NSImage of the correct pixel dimensions
+                        // (because the PDF size is in points)
+                        pdfRep.currentPage = i
+                        let newWidth: CGFloat = sizeAlign(pdfRep.size.width * scaleFactor)
+                        let newHeight: CGFloat = sizeAlign(pdfRep.size.height * scaleFactor)
+                        let newSize: CGSize = CGSize.init(width: newWidth, height: newHeight)
+                        let scaledImage: NSImage = NSImage.init(size: newSize, flipped: false) { (drawRect) -> Bool in
+                            pdfRep.draw(in: drawRect)
+                            return true
+                        }
+
+                        // Convert the NSImage to data, then to an image Rep and this to a JPEG we can save
+                        if let imageData: Data = scaledImage.tiffRepresentation {
+                            if let bmp: NSBitmapImageRep = NSBitmapImageRep.init(data: imageData) {
+                                // Set the DPI to 'outputResolution'
+                                if scaleFactor != 1.0 {
+                                    setDPI(bmp, outputResolution)
+                                }
+
+                                // Convert the image to JPEG and save to disk
+                                if let finalData: Data = bmp.representation(using: .jpeg, properties: imageProps) {
+                                    let path: String = destPath + "/page " + String(format: "%03d", i + 1) + ".jpg"
+                                    do {
+                                        try finalData.write(to: URL.init(fileURLWithPath: path))
+                                        count += 1
+                                    } catch {
+                                        print("[ERROR] Could not write file \(path)")
+                                    }
+                                } else {
+                                    print("[ERROR] Could not create an image for \(sourcePath) page \(i)")
+                                }
+                            } else {
+                                print("[ERROR] Could not create an image for \(sourcePath) page \(i)")
+                            }
+                        } else {
+                            print("[ERROR] Could not create an image for \(sourcePath) page \(i)")
+                        }
+                    }
+                }
+
+                if count > 0 {
+                    return true
+                }
+            } else {
+                print("[ERROR] Could not extract the PDF data from \(sourcePath)")
+            }
+        } catch {
+            print("[ERROR] Could not load \(sourcePath)")
+        }
+    }
+
+    return false
+}
+
+
+func sizeAlign(_ dimension: CGFloat) -> CGFloat {
+
+    // Ensure an image dimension ('d'), whether width or height, is a multiple of 10
+
+    var returnValue: CGFloat = 0.0
+    let remainder: CGFloat = dimension.truncatingRemainder(dividingBy: 10.0)
+
+    if r != 0 {
+        returnValue = remainder <= 5 ? dimension - remainder : dimension + (10 - remainder)
+    } else {
+        returnValue = dimension
+    }
+
+    return returnValue
+}
+
+
+func setDPI(_ imageRep: NSBitmapImageRep, _ dpi: CGFloat) {
+
+    // Set the image DPI based on its pixel dimensions and the standard ('BASE') DPI
+
+    var size: CGSize = imageRep.size
+    size.width = CGFloat(imageRep.pixelsWide) * BASE_DPI / dpi
+    size.height = CGFloat(imageRep.pixelsHigh) * BASE_DPI / dpi
+    imageRep.size = size
+}
+
+
+func showCompression() {
+
+    let percent: Int = Int(compressionLevel * 100)
+    var amount = "\(percent)%"
+    if percent == 0 { amount = "Least (" + amount + ")" }
+    if percent == 100 { amount = "Maxiumum (" + amount + ")" }
+    print("     Quality: " + amount)
+}
+
+
 func showHelp() {
     
     // FROM 1.1.0
@@ -275,6 +429,7 @@ func showHelp() {
     print ("    -s / --source      [path]    The path to the images or an image. Default: current folder")
     print ("    -d / --destination [path]    Where to save the new PDF. The file name is optional.")
     print ("                                 Default: ~/Desktop folder/\'PDF From Images.pdf\'.")
+    print ("    -b / --break                 Break a PDF into imges.")
     print ("    -c / --compress    [amount]  Apply an image compression filter to the PDF:")
     print ("                                    0.0 = maximum compression, lowest image quality.")
     print ("                                    1.0 = no compression, best image quality.")
@@ -304,17 +459,19 @@ for argument in CommandLine.arguments {
 
         switch argType {
         case 0:
-            destPath = argument
+            destPath = (argument as NSString).standardizingPath
         case 1:
-            sourcePath = argument
+            sourcePath = (argument as NSString).standardizingPath
         case 2:
             outputName = argument
         case 3:
             doCompress = true
             if let cl = Float(argument) {
                 compressionLevel = cl
-            } else {
-                compressionLevel = 0.8
+            }
+        case 4:
+            if let rs = Float(argument) {
+                outputResolution = rs
             }
         default:
             print("[ERROR] Unknown argument")
@@ -339,6 +496,15 @@ for argument in CommandLine.arguments {
         case "--compress":
             argType = 3
             argIsAValue = true
+        case "-r":
+            fallthrough
+        case "--resolution":
+            argType = 4
+            argIsAValue = true
+        case "-b":
+            fallthrough
+        case "--break":
+            doBreak = true
         case "-v":
             fallthrough
         case "--verbose":
@@ -360,10 +526,15 @@ for argument in CommandLine.arguments {
     
     // Trap commands that come last and therefore have missing args
     if argCount == CommandLine.arguments.count && argIsAValue {
-        print("*[ERROR] Missing value for \(argument)")
+        print("[ERROR] Missing value for \(argument)")
         exit(1)
     }
 }
 
 // Convert the images
-let outputFile: String? = imagesToPdf()
+if doBreak {
+    let success: Bool = pdfToImages()
+    exit(success ? 0 : 1)
+} else {
+    let outputFile: String? = imagesToPdf()
+}
