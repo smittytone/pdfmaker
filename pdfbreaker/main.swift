@@ -9,6 +9,11 @@
 import Foundation
 import Quartz
 
+// MARK: - Constantsa
+
+let BASE_DPI: CGFloat = 72.0
+let DEFAULT_DPI: CGFloat = 300.0
+
 
 // MARK: - Global Variables
 
@@ -168,8 +173,8 @@ func pdfToImages() {
 
     // Initialise counters and flags
     var gotFirstImage: Bool = false
-    let scaleFactor: CGFloat = 300.0 / 72.0
-    let imageProps: [NSBitmapImageRep.PropertyKey: Any] = [NSBitmapImageRep.PropertyKey.compressionFactor: 1.0]
+    let scaleFactor: CGFloat = DEFAULT_DPI / BASE_DPI
+    let imageProps: [NSBitmapImageRep.PropertyKey: Any] = [NSBitmapImageRep.PropertyKey.compressionFactor: compressionLevel]
 
     // Iterate through the list of files
     for i in 0..<files.count {
@@ -201,15 +206,24 @@ func pdfToImages() {
                 if let pdfRep: NSPDFImageRep = NSPDFImageRep.init(data: fileData) {
                     for i in 0..<pdfRep.pageCount {
                         autoreleasepool {
+                            // Draw the PDF page into an NSImage of the correct pixel dimensions
+                            // (because the PDF size is in points)
                             pdfRep.currentPage = i
-                            let newSize: CGSize = CGSize.init(width: pdfRep.size.width * scaleFactor, height: pdfRep.size.height * scaleFactor)
+                            let newWidth: CGFloat = sizeAlign(pdfRep.size.width * scaleFactor)
+                            let newHeight: CGFloat = sizeAlign(pdfRep.size.height * scaleFactor)
+                            let newSize: CGSize = CGSize.init(width: newWidth, height: newHeight)
                             let scaledImage: NSImage = NSImage.init(size: newSize, flipped: false) { (drawRect) -> Bool in
                                 pdfRep.draw(in: drawRect)
                                 return true
                             }
 
+                            // Convert the NSImage to data, then to an image Rep and this to a JPEG we can save
                             if let imageData: Data = scaledImage.tiffRepresentation {
                                 if let bmp: NSBitmapImageRep = NSBitmapImageRep.init(data: imageData) {
+                                    // Set the DPI to 'DEFAULT_DPI' -- it will be 72dpi to now
+                                    setDPI(bmp, DEFAULT_DPI)
+
+                                    // Convert to JPEG
                                     if let finalData: Data = bmp.representation(using: .jpeg, properties: imageProps) {
                                         let path: String = destDir + "/page " + String(format: "%03d", i) + ".jpg"
                                         do {
@@ -233,6 +247,33 @@ func pdfToImages() {
     if !gotFirstImage && doShowInfo {
         print("No suitable image files found in the source directory")
     }
+}
+
+
+func sizeAlign(_ d: CGFloat) -> CGFloat {
+
+    // Ensure an image dimension ('d'), whether width or height, is a multiple of 10
+
+    var v: CGFloat = 0.0
+    let r: CGFloat = d.truncatingRemainder(dividingBy: 10.0)
+    if r != 0 {
+        v = r <= 5 ? d - r : d + (10 - r)
+    } else {
+        v = d
+    }
+
+    return v
+}
+
+
+func setDPI(_ ir: NSBitmapImageRep, _ dpi: CGFloat) {
+
+    // Set the image DPI based on its pixel dimensions and the standard DPI
+
+    var size: CGSize = ir.size
+    size.width = CGFloat(ir.pixelsWide) * BASE_DPI / dpi
+    size.height = CGFloat(ir.pixelsHigh) * BASE_DPI / dpi
+    ir.size = size
 }
 
 
