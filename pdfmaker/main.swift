@@ -215,6 +215,10 @@ func imagesToPdf() -> String? {
                 // Create a PDF page based on the image
                 let page: PDFPage? = PDFPage.init(image: image!)
                 if page != nil {
+                    // FROM 1.1.2
+                    // Set the mediaBox size
+                    page!.setBounds(CGRect.init(x: 0, y: 0, width: image!.size.width, height: image!.size.height), for: .mediaBox)
+
                     if pageCount == 0 {
                         // This will be the first page in the PDF, so initialize
                         // the PDF will the page data
