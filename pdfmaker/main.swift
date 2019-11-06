@@ -269,6 +269,10 @@ func pdfToImages() -> Bool {
                                     do {
                                         try finalData.write(to: URL.init(fileURLWithPath: path))
                                         count += 1
+
+                                        if doShowInfo {
+                                            print("Written image: \(path)")
+                                        }
                                     } catch {
                                         print("[ERROR] Could not write file \(path)")
                                     }
