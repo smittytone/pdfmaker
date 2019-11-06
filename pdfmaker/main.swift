@@ -13,7 +13,7 @@ import Quartz
 
 // MARK: - Constants
 
-// FROM 1.2.0
+// FROM 2.0.0
 let BASE_DPI: CGFloat = 72.0
 let DEFAULT_DPI: CGFloat = 300.0
 
@@ -31,131 +31,49 @@ var doCompress: Bool = false
 var compressionLevel: CGFloat = 0.8
 var doShowInfo: Bool = false
 
-// FROM 1.2.0
+// FROM 2.0.0
 var doBreak: Bool = false
 var outputResolution: CGFloat = BASE_DPI
 
 
 // MARK: - Functions
 
-func getFilename(_ filepath: String, _ basename: String) -> String {
-
-    // Run through the files in the specified directory ('filepath') and set
-    // the output file's name so that it doesn't clash with existing files
-
-    // If the passed filename has a '.pdf' extension, remove it
-    var newBasename: String = basename
-    if (newBasename as NSString).pathExtension.lowercased() == "pdf" {
-        newBasename = (newBasename as NSString).deletingPathExtension
-    }
-    
-    // Assemble the target filename
-    var newFilename: String = newBasename + ".pdf"
-    var i: Int = 0
-
-    // Does a file with the target filename exist?
-    while FileManager.default.fileExists(atPath: (filepath + "/" + newFilename)) {
-        // The named file exists, so add a numeric suffix to the filename and re-check
-        i += 1
-        newFilename = newBasename + String(format: " %02d", i) + ".pdf"
-    }
-
-    // Send back the derived name
-    return newFilename
-}
-
-
-func checkDirectory(_ path: String, _ dirType: String) -> Bool {
-    
-    // Check that item at 'path' is a directory or a regular file, returning
-    // true or false, respectively. If the item is a file and it exists, we deal with
-    // it later (in 'getFilename()'), but if it doesn't exist, we also return false
-    // so that it can be created later.
-    // NOTE 'dirType' is passed into the error report, if issued
-    
-    var isDir: ObjCBool = true
-    let success: Bool = FileManager.default.fileExists(atPath: path, isDirectory: &isDir)
-    
-    if success {
-        // The path points to an existing item, so return its type
-        return isDir.boolValue
-    }
-    
-    // Is the non-existent item a file, ie. does it have an extension?
-    let ext: String = (path as NSString).pathExtension
-    
-    if ext.count > 0 {
-        // There is an extension, so assume it points to a file,
-        // which we will create later
-        return false
-    }
-    
-    // A directory was specified but we can't find it so warn and bail
-    // TODO Add a switch to make this missing directory
-    print("[ERROR] \(dirType) directory \(path) does not exist")
-    exit(1)
-}
-
-
-func compressImage(_ image: NSImage) -> NSImage? {
-
-    // Take an existing image, and compress it
-    // See https://stackoverflow.com/questions/52709210/how-to-compress-nsimage-in-swift-4
-    if let tiff = image.tiffRepresentation {
-        if let imageRep: NSBitmapImageRep = NSBitmapImageRep(data: tiff) {
-            let compressedData = imageRep.representation(using: NSBitmapImageRep.FileType.jpeg,
-                                                         properties: [NSBitmapImageRep.PropertyKey.compressionFactor : compressionLevel])!
-            return NSImage(data: compressedData)
-        }
-    }
-
-    // Something went wrong, so just return nil
-    return nil
-}
-
-
-func imagesToPdf() -> String? {
+func imagesToPdf() -> Bool {
 
     // Iterate through the source directory's files, or the named source file, adding
     // any JPEGs we find to the new PDF
     
-    // Expand the source and destination directories to full paths
-    var destDir: String = (destPath as NSString).standardizingPath
-    let srcDir: String = (sourcePath as NSString).standardizingPath
-    
-    // Check the supplied directories
+    // Check the supplied paths
     // NOTE 'checkDirectory()' will exit if the either item doesn't exist
-    let isSrcADir: Bool = checkDirectory(srcDir, "Source")
-    let isDestADir: Bool = checkDirectory(destDir, "Target")
+    let isSrcADir: Bool = checkDirectory(sourcePath, "Source")
+    let isDestADir: Bool = checkDirectory(destPath, "Target")
     var filename: String
     
     // Determine the destination filename
     if isDestADir {
         // Destination path indicates a directory, so prepare the filename
-        filename = getFilename(destDir, (outputName == nil ? "PDF From Images" : outputName!))
+        filename = getFilename(destPath, (outputName == nil ? "PDF From Images" : outputName!))
     } else {
         // Destination path indicates a file, so extract the filename
         // NOTE The file may not exist at this point -- we will make it later.
-        filename = (destDir as NSString).lastPathComponent
-        destDir = (destDir as NSString).deletingLastPathComponent
-        filename = getFilename(destDir, filename)
+        filename = (destPath as NSString).lastPathComponent
+        destPath = (destPath as NSString).deletingLastPathComponent
+        filename = getFilename(destPath, filename)
     }
     
     // Set the destination path from the generated filename
-    let savePath: String = destDir + "/" + filename
+    let savePath: String = destPath + "/" + filename
     
     if doShowInfo {
         // We're in verbose mode, so show some info
         print("Conversion Information")
-        print("Image Source: \(srcDir)")
+        print("Image Source: \(sourcePath)")
         print("  Target PDF: \(savePath)")
+
         if doCompress {
-            let percent: Int = Int(compressionLevel * 100)
-            var amount = "\(percent)%"
-            if percent == 0 { amount = "Least (" + amount + ")" }
-            if percent == 100 { amount = "Maxiumum (" + amount + ")" }
-            if doShowInfo { print("     Quality: " + amount) }
+            showCompression()
         }
+
         print("Attempting to assemble PDF file...")
     }
 
@@ -166,16 +84,16 @@ func imagesToPdf() -> String? {
         do {
             // Get a list of files in the source directory and sort them so that they get added
             // to the output PDF in the correct order
-            files = try FileManager.default.contentsOfDirectory(atPath: srcDir)
+            files = try FileManager.default.contentsOfDirectory(atPath: sourcePath)
             files.sort()
         } catch {
             // NOTE This should not be triggered due to earlier checks
             print("[ERROR] Unable to get contents of directory")
-            return nil
+            return false
         }
     } else {
         // 'srcDir' points to a file, so add it to files array manually
-        files = [srcDir]
+        files = [sourcePath]
     }
 
     // Initialise counters and flags
@@ -193,7 +111,7 @@ func imagesToPdf() -> String? {
             // FROM 1.1.0
             // Ignore . files
             if files[i].hasPrefix(".") { continue }
-            file = srcDir + "/" + files[i]
+            file = sourcePath + "/" + files[i]
         } else {
             file = files[i]
         }
@@ -260,7 +178,7 @@ func imagesToPdf() -> String? {
         if let newpdf: PDFDocument = pdf {
             if doShowInfo { print("Writing PDF file \(savePath)") }
             newpdf.write(toFile: savePath)
-            return savePath
+            return true
         }
     } else {
         if doShowInfo {
@@ -268,29 +186,26 @@ func imagesToPdf() -> String? {
         }
     }
 
-    return nil
+    return false
 }
 
 
 func pdfToImages() -> Bool {
 
-    // Iterate through the source directory's files, or the named source file, adding
-    // any JPEGs we find to the new PDF
-
-    // Check the supplied directories
+    // Check the supplied paths
     // NOTE 'checkDirectory()' will exit if the either item doesn't exist
     let isSrcADir: Bool = checkDirectory(sourcePath, "Source")
     let isDestADir: Bool = checkDirectory(destPath, "Target")
 
     // Make sure we're loading a PDF and outputting to a directory
     if !isDestADir {
-        print("[ERROR] Image destination \(destPath) is not a directory")
-        exit(1)
+        print("[ERROR] Chosen image destination \(destPath) is not a directory")
+        return false
     }
 
     if isSrcADir {
         print("[ERROR] Source \(destPath) is a directory")
-        exit(1)
+        return false
     }
 
     // Get the file extension
@@ -302,25 +217,31 @@ func pdfToImages() -> Bool {
         if doShowInfo {
             // We're in verbose mode, so show some info
             print("Conversion Information")
-            print("Source PDF: \(sourcePath)")
-            print("Image dir: \(destPath)")
+            print("  Source PDF: \(sourcePath)")
+            print("      Images: \(destPath)")
+
             if doCompress {
                 showCompression()
             }
-            print("Attempting to assemble PDF file...")
+
+            print("Attempting to disassemble PDF file...")
         }
 
-        // Initialise counters and flags
+        // Initialise conversion values
         let scaleFactor: CGFloat = outputResolution == BASE_DPI ? 1.0 : outputResolution / BASE_DPI
         let imageProps: [NSBitmapImageRep.PropertyKey: Any] = [NSBitmapImageRep.PropertyKey.compressionFactor: compressionLevel]
         var count: Int = 0
 
         // Load and process the PDF
         do {
+            // Get the PDF as data and convert it to a PDF Image Representation
             let fileData: Data = try Data.init(contentsOf: URL.init(fileURLWithPath: sourcePath))
             if let pdfRep: NSPDFImageRep = NSPDFImageRep.init(data: fileData) {
                 // Process the PDF page by page
                 for i in 0..<pdfRep.pageCount {
+                    // Run in an autorelease closure to avoid MAJOR memory gobbling. It all gets
+                    // free by the garbage collector after the loop has completed, but while looping,
+                    // this code can allocate gigabytes of RAM (without autorelease)
                     autoreleasepool {
                         // Draw the PDF page into an NSImage of the correct pixel dimensions
                         // (because the PDF size is in points)
@@ -334,6 +255,7 @@ func pdfToImages() -> Bool {
                         }
 
                         // Convert the NSImage to data, then to an image Rep and this to a JPEG we can save
+                        var createFailed: Bool = false
                         if let imageData: Data = scaledImage.tiffRepresentation {
                             if let bmp: NSBitmapImageRep = NSBitmapImageRep.init(data: imageData) {
                                 // Set the DPI to 'outputResolution'
@@ -351,12 +273,14 @@ func pdfToImages() -> Bool {
                                         print("[ERROR] Could not write file \(path)")
                                     }
                                 } else {
-                                    print("[ERROR] Could not create an image for \(sourcePath) page \(i)")
+                                    createFailed = true
                                 }
                             } else {
-                                print("[ERROR] Could not create an image for \(sourcePath) page \(i)")
+                                createFailed = true
                             }
-                        } else {
+                        }
+
+                        if createFailed {
                             print("[ERROR] Could not create an image for \(sourcePath) page \(i)")
                         }
                     }
@@ -371,9 +295,87 @@ func pdfToImages() -> Bool {
         } catch {
             print("[ERROR] Could not load \(sourcePath)")
         }
+    } else {
+        print("[ERROR] Source \(sourcePath) is not a .pdf file")
     }
 
     return false
+}
+
+
+func getFilename(_ filepath: String, _ basename: String) -> String {
+
+    // Run through the files in the specified directory ('filepath') and set
+    // the output file's name so that it doesn't clash with existing files
+
+    // If the passed filename has a '.pdf' extension, remove it
+    var newBasename: String = basename
+    if (newBasename as NSString).pathExtension.lowercased() == "pdf" {
+        newBasename = (newBasename as NSString).deletingPathExtension
+    }
+
+    // Assemble the target filename
+    var newFilename: String = newBasename + ".pdf"
+    var i: Int = 0
+
+    // Does a file with the target filename exist?
+    while FileManager.default.fileExists(atPath: (filepath + "/" + newFilename)) {
+        // The named file exists, so add a numeric suffix to the filename and re-check
+        i += 1
+        newFilename = newBasename + String(format: " %02d", i) + ".pdf"
+    }
+
+    // Send back the derived name
+    return newFilename
+}
+
+
+func checkDirectory(_ path: String, _ dirType: String) -> Bool {
+
+    // Check that item at 'path' is a directory or a regular file, returning
+    // true or false, respectively. If the item is a file and it exists, we deal with
+    // it later (in 'getFilename()'), but if it doesn't exist, we also return false
+    // so that it can be created later.
+    // NOTE 'dirType' is passed into the error report, if issued
+
+    var isDir: ObjCBool = true
+    let success: Bool = FileManager.default.fileExists(atPath: path, isDirectory: &isDir)
+
+    if success {
+        // The path points to an existing item, so return its type
+        return isDir.boolValue
+    }
+
+    // Is the non-existent item a file, ie. does it have an extension?
+    let ext: String = (path as NSString).pathExtension
+
+    if ext.count > 0 {
+        // There is an extension, so assume it points to a file,
+        // which we will create later
+        return false
+    }
+
+    // A directory was specified but we can't find it so warn and bail
+    // TODO Add a switch to make this missing directory
+    print("[ERROR] \(dirType) directory \(path) does not exist")
+    exit(1)
+}
+
+
+func compressImage(_ image: NSImage) -> NSImage? {
+
+    // Take an existing image, and compress it
+    // See https://stackoverflow.com/questions/52709210/how-to-compress-nsimage-in-swift-4
+    if let tiff = image.tiffRepresentation {
+        if let imageRep: NSBitmapImageRep = NSBitmapImageRep(data: tiff) {
+            let compressedData = imageRep.representation(using: NSBitmapImageRep.FileType.jpeg,
+                                                         properties: [NSBitmapImageRep.PropertyKey.compressionFactor : compressionLevel])!
+            return NSImage(data: compressedData)
+        }
+    }
+
+    // Something went wrong, so just return nil
+    return nil
 }
 
 
@@ -384,7 +386,7 @@ func sizeAlign(_ dimension: CGFloat) -> CGFloat {
     var returnValue: CGFloat = 0.0
     let remainder: CGFloat = dimension.truncatingRemainder(dividingBy: 10.0)
 
-    if r != 0 {
+    if remainder != 0 {
         returnValue = remainder <= 5 ? dimension - remainder : dimension + (10 - remainder)
     } else {
         returnValue = dimension
@@ -407,6 +409,7 @@ func setDPI(_ imageRep: NSBitmapImageRep, _ dpi: CGFloat) {
 
 func showCompression() {
 
+    // Display the chosen image compression level
     let percent: Int = Int(compressionLevel * 100)
     var amount = "\(percent)%"
     if percent == 0 { amount = "Least (" + amount + ")" }
@@ -467,11 +470,11 @@ for argument in CommandLine.arguments {
         case 3:
             doCompress = true
             if let cl = Float(argument) {
-                compressionLevel = cl
+                compressionLevel = CGFloat(cl)
             }
         case 4:
             if let rs = Float(argument) {
-                outputResolution = rs
+                outputResolution = CGFloat(rs)
             }
         default:
             print("[ERROR] Unknown argument")
@@ -532,9 +535,6 @@ for argument in CommandLine.arguments {
 }
 
 // Convert the images
-if doBreak {
-    let success: Bool = pdfToImages()
-    exit(success ? 0 : 1)
-} else {
-    let outputFile: String? = imagesToPdf()
-}
+var success: Bool = false
+success = doBreak ? pdfToImages() : imagesToPdf()
+exit(success ? 0 : 1)
