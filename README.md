@@ -1,6 +1,8 @@
-# pdfmaker 1.1.0 #
+# pdfmaker 2.0.0 #
 
 *pdfmaker* is a command line tool for combining multiple JPEG images into a single PDF file.
+
+From version 2.0.0, it can also be used to convert a PDF into separate page images.
 
 For some background on the development of this tool, please see [this blog post](https://smittytone.wordpress.com/2019/10/25/macos-make-pdf-from-images/).
 
@@ -9,6 +11,8 @@ For some background on the development of this tool, please see [this blog post]
 Build and copy the binary to the `/usr/local/bin` directory.
 
 ## Usage ##
+
+### Making PDFs ###
 
 In Terminal, run `pdfmaker --source <path to image(s)> --destination <path to new pdf file> --compress <factor>`
 
@@ -21,11 +25,27 @@ If you omit any of these switches, their default values will be used:
 
 You can use `-s`, `-d`, and `-c` as shorthand for the switches above &mdash; `pdfmaker --help` has the details.
 
-### Compression ###
+#### Image Compression ####
 
 The compression option will compress images before adding them to the PDF. This allows you to reduce the size of the final PDF, as required. Provide an amount in the range 0.0 to 1.0, where 0.0 is maximum compression (lowest quality) and 1.0 is no compression (highest quality).
 
 **Note** Building a PDF from JPEG files means that you are already using compressed images. If those JPEGs are highly compressed, applying a low compression amount to *pdfmaker* will not increase image quality but will make your PDF file larger.
+
+### Breaking PDFs ###
+
+In Terminal, run `pdfmaker --break --source <path to pdf> --destination <path to folder> --resolution <output dpi value>`
+
+You can use `-b`, and `-r` as shorthand for the `--break` and `--resolution` switches. The `-c` switch may also be used to compress the output images.
+
+*pdfmaker* does not delete the source file.
+
+#### Image Resolution ####
+
+The default output resolution is 72dpi (dots per inch). PDFs store page dimensions as points, rather than pixels, enabling device-independent resolution. *pdfmaker* determines image pixel dimensions based on the output resolution and the PDF point dimensions. To get correctly sized images out of a PDF, you need to specify the resolution of the images used to source the PDF. You do this be specifying an appropriate output resolution.
+
+For example, a PDF contains a page sourced from a 2600 x 1600, 300dpi image. Output at 72dpi, this will result in an image of 620 x 400 (2600 * 27 / 300). To get the correct pixel size back, add `-r 300` to the command line. This will yield a 2600 x 1600, 300dpi output image.
+
+If you don’t know the source image dpi resolution, experiment with `-r` values until you get output of the size you require.
 
 ### Examples ###
 
@@ -47,8 +67,16 @@ pdfmaker --source ~/Documents/'Project X'/Images/cover.jpg --destination ~/Docum
 
 This converts the image `cover.jpg` into a file called `PDF From Images.pdf` (as no destination filename is specified) that is placed in `~/Documents/PDFs`.
 
+```
+pdfmaker --break --source ~/Documents/PDFs/'Project X.pdf' --compress 0.4 --resolution 200
+```
+
+This converts `Project X.pdf` to a series of images that will be written to the desktop (the default destination). This images will be highly compressed and output at a resolution of 200dpi.
+
 ## Release Notes ##
 
+- 2.0.0 &mdash; *Unreleased*
+    - Add PDF disassembly functionality.
 - 1.1.0 &mdash; *28 October 2019*
     - Allow the user to select a single source image, not just source directories.
     - Allow the user to name the target file as part of the target path.
