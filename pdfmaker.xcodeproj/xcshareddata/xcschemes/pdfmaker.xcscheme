@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1110"
+   LastUpgradeVersion = "1120"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -56,7 +56,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "$HOME/downloads/2"
+            argument = "$HOME/downloads/pdfmaker_test"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -64,7 +64,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "$HOME/downloads/test.pdf"
+            argument = "$HOME/downloads/pdfmaker_test.pdf"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -78,6 +78,14 @@
          <CommandLineArgument
             argument = "0.0"
             isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-r"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "300"
+            isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
    </LaunchAction>
