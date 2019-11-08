@@ -31,9 +31,9 @@ The compression option will compress images before adding them to the PDF. This 
 
 **Note** Building a PDF from JPEG files means that you are already using compressed images. If those JPEGs are highly compressed, applying a low compression amount to *pdfmaker* will not increase image quality but will make your PDF file larger.
 
-### Breaking PDFs ###
+### ‘Breaking’ PDFs ###
 
-In Terminal, run `pdfmaker --break --source <path to pdf> --destination <path to folder> --resolution <output dpi value>`
+To convert a PDF to a set of images, in Terminal, run `pdfmaker --break --source <path to pdf> --destination <path to folder> --resolution <output dpi value>`
 
 You can use `-b`, and `-r` as shorthand for the `--break` and `--resolution` switches. The `-c` switch may also be used to compress the output images.
 
@@ -75,15 +75,15 @@ This converts `Project X.pdf` to a series of images that will be written to the 
 
 ## Release Notes ##
 
-- 2.0.0 &mdash; *Unreleased*
+- 2.0.0 *Unreleased*
     - Add PDF disassembly functionality.
-- 1.1.0 &mdash; *28 October 2019*
+- 1.1.0 *28 October 2019*
     - Allow the user to select a single source image, not just source directories.
     - Allow the user to name the target file as part of the target path.
         - Remove the `--name` switch.
     - Ignore dot files in the source image search.
     - Support easier notarization.
-- 1.0.0 &mdash; *18 October 2019*
+- 1.0.0 *18 October 2019*
     - Initial public release.
 
 ## Copyright ##
