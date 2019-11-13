@@ -245,7 +245,9 @@ func pdfToImages() -> Bool {
                     autoreleasepool {
                         // Draw the PDF page into an NSImage of the correct pixel dimensions
                         // (because the PDF size is in points)
+                        var createFailed: Bool = false
                         pdfRep.currentPage = i
+                        
                         let newWidth: CGFloat = sizeAlign(pdfRep.size.width * scaleFactor)
                         let newHeight: CGFloat = sizeAlign(pdfRep.size.height * scaleFactor)
                         let newSize: CGSize = CGSize.init(width: newWidth, height: newHeight)
@@ -254,8 +256,8 @@ func pdfToImages() -> Bool {
                             return true
                         }
 
+                        /*
                         // Convert the NSImage to data, then to an image Rep and this to a JPEG we can save
-                        var createFailed: Bool = false
                         if let imageData: Data = scaledImage.tiffRepresentation {
                             if let bmp: NSBitmapImageRep = NSBitmapImageRep.init(data: imageData) {
                                 // Set the DPI to 'outputResolution'
@@ -271,7 +273,7 @@ func pdfToImages() -> Bool {
                                         count += 1
 
                                         if doShowInfo {
-                                            print("Written image: \(path) @ \(bmp.size.width)x\(bmp.size.height)")
+                                            print("Written image: \(path) of pixel size  \(bmp.pixelsWide)x\(bmp.pixelsHigh)")
                                         }
                                     } catch {
                                         print("[ERROR] Could not write file \(path)")
@@ -283,7 +285,38 @@ func pdfToImages() -> Bool {
                                 createFailed = true
                             }
                         }
+                        
+                        */
+                        
+                        // Convert the NSImage to a CGImage and then to a bitmap
+                        // See https://stackoverflow.com/questions/17507170/how-to-save-png-file-from-nsimage-retina-issues/17510651#17510651
+                        // NOTE This code runs a lot more quickly than the above because it only calls
+                        //      The NSImage drawing block once, not three times
+                        if let ci: CGImage = scaledImage.cgImage(forProposedRect: nil, context: nil, hints: nil) {
+                            // Make the bitmap and set its DPI to 'outputResolution'
+                            let bmp: NSBitmapImageRep = NSBitmapImageRep.init(cgImage: ci)
+                            if scaleFactor != 1.0 {
+                                setDPI(bmp, outputResolution)
+                            }
 
+                            // Convert the image to JPEG and save to disk
+                            if let finalData: Data = bmp.representation(using: .jpeg, properties: imageProps) {
+                                let path: String = destPath + "/page " + String(format: "%03d", i + 1) + ".jpg"
+                                do {
+                                    try finalData.write(to: URL.init(fileURLWithPath: path))
+                                    count += 1
+
+                                    if doShowInfo {
+                                        print("Written image: \(path) of pixel size \(bmp.pixelsWide)x\(bmp.pixelsHigh)")
+                                    }
+                                } catch {
+                                    print("[ERROR] Could not write file \(path)")
+                                }
+                            } else {
+                                createFailed = true
+                            }
+                        }
+                
                         if createFailed {
                             print("[ERROR] Could not create an image for \(sourcePath) page \(i)")
                         }
@@ -385,17 +418,13 @@ func compressImage(_ image: NSImage) -> NSImage? {
 
 func sizeAlign(_ dimension: CGFloat) -> CGFloat {
 
-    // Ensure an image dimension ('d'), whether width or height, is a multiple of 10
-
-    var returnValue: CGFloat = 0.0
-    let remainder: CGFloat = dimension.truncatingRemainder(dividingBy: 10.0)
-
-    if remainder != 0 {
-        returnValue = remainder <= 5 ? dimension - remainder : dimension + (10 - remainder)
-    } else {
-        returnValue = dimension
+    // Ensure an image dimension, whether width or height, is an integral multiple of 2
+    var returnValue: CGFloat = dimension.rounded(.down)
+    
+    if returnValue.truncatingRemainder(dividingBy: 2.0) != 0 {
+        returnValue -= 1
     }
-
+    
     return returnValue
 }
 
