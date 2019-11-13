@@ -245,7 +245,6 @@ func pdfToImages() -> Bool {
                     autoreleasepool {
                         // Draw the PDF page into an NSImage of the correct pixel dimensions
                         // (because the PDF size is in points)
-                        var createFailed: Bool = false
                         pdfRep.currentPage = i
                         
                         let newWidth: CGFloat = sizeAlign(pdfRep.size.width * scaleFactor)
@@ -295,9 +294,7 @@ func pdfToImages() -> Bool {
                         if let ci: CGImage = scaledImage.cgImage(forProposedRect: nil, context: nil, hints: nil) {
                             // Make the bitmap and set its DPI to 'outputResolution'
                             let bmp: NSBitmapImageRep = NSBitmapImageRep.init(cgImage: ci)
-                            if scaleFactor != 1.0 {
-                                setDPI(bmp, outputResolution)
-                            }
+                            if scaleFactor != 1.0 { setDPI(bmp, outputResolution) }
 
                             // Convert the image to JPEG and save to disk
                             if let finalData: Data = bmp.representation(using: .jpeg, properties: imageProps) {
@@ -313,19 +310,13 @@ func pdfToImages() -> Bool {
                                     print("[ERROR] Could not write file \(path)")
                                 }
                             } else {
-                                createFailed = true
+                                print("[ERROR] Could not create an image for \(sourcePath) page \(i)")
                             }
-                        }
-                
-                        if createFailed {
-                            print("[ERROR] Could not create an image for \(sourcePath) page \(i)")
                         }
                     }
                 }
 
-                if count > 0 {
-                    return true
-                }
+                if count > 0 { return true }
             } else {
                 print("[ERROR] Could not extract the PDF data from \(sourcePath)")
             }
