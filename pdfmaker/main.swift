@@ -66,15 +66,8 @@ func imagesToPdf() -> Bool {
     
     if doShowInfo {
         // We're in verbose mode, so show some info
-        print("Conversion Information")
-        print("Image Source: \(sourcePath)")
-        print("  Target PDF: \(savePath)")
-
-        if doCompress {
-            showCompression()
-        }
-
-        print("Attempting to assemble PDF file...")
+        print("Attempting to assemble \(savePath) from \(sourcePath)...")
+        if doCompress { showCompression() }
     }
 
     var files: [String]
@@ -216,15 +209,8 @@ func pdfToImages() -> Bool {
         // Output info, if requested to do so
         if doShowInfo {
             // We're in verbose mode, so show some info
-            print("Conversion Information")
-            print("  Source PDF: \(sourcePath)")
-            print("      Images: \(destPath)")
-
-            if doCompress {
-                showCompression()
-            }
-
-            print("Attempting to disassemble PDF file...")
+            print("Attempting to disassemble \(sourcePath) to \(destPath)...")
+            if doCompress { showCompression() }
         }
 
         // Initialise conversion values
