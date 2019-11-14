@@ -75,8 +75,8 @@ This converts `Project X.pdf` to a series of images that will be written to the 
 
 ## Release Notes ##
 
-- 2.0.0 *Unreleased*
-    - Add PDF disassembly functionality.
+- 2.0.0 *14 November 2019*
+    - Add PDF-to-images functionality.
 - 1.1.0 *28 October 2019*
     - Allow the user to select a single source image, not just source directories.
     - Allow the user to name the target file as part of the target path.
