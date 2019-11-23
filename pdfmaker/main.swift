@@ -274,7 +274,6 @@ func pdfToImages() -> Bool {
                         */
                         
                         // Convert the NSImage to a CGImage and then to a bitmap
-                        // See https://stackoverflow.com/questions/17507170/how-to-save-png-file-from-nsimage-retina-issues/17510651#17510651
                         // NOTE This code runs a lot more quickly than the above because it only calls
                         //      The NSImage drawing block once, not three times
                         if let ci: CGImage = scaledImage.cgImage(forProposedRect: nil, context: nil, hints: nil) {
@@ -379,7 +378,6 @@ func checkDirectory(_ path: String, _ dirType: String) -> Bool {
 func compressImage(_ image: NSImage) -> NSImage? {
 
     // Take an existing image, and compress it
-    // See https://stackoverflow.com/questions/52709210/how-to-compress-nsimage-in-swift-4
     if let tiff = image.tiffRepresentation {
         if let imageRep: NSBitmapImageRep = NSBitmapImageRep(data: tiff) {
             let compressedData = imageRep.representation(using: NSBitmapImageRep.FileType.jpeg,
