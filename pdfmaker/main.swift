@@ -323,8 +323,14 @@ func getFilename(_ filepath: String, _ basename: String) -> String {
 
     // If the passed filename has a '.pdf' extension, remove it
     var newBasename: String = basename
-    if (newBasename as NSString).pathExtension.lowercased() == "pdf" {
+
+    let pathExt: String = (newBasename as NSString).pathExtension.lowercased()
+    if pathExt == "pdf" {
         newBasename = (newBasename as NSString).deletingPathExtension
+    } else if pathExt != "" {
+        // NOT a PDF file, so bail
+        print("[ERROR] \(newBasename) is does not reference a PDF file")
+        exit(1)
     }
 
     // Assemble the target filename
@@ -336,6 +342,13 @@ func getFilename(_ filepath: String, _ basename: String) -> String {
         // The named file exists, so add a numeric suffix to the filename and re-check
         i += 1
         newFilename = newBasename + String(format: " %02d", i) + ".pdf"
+    }
+
+    // FROM 2.0.1
+    // Bail if the filename exceeds 255 UTF-8 characters
+    if newFilename.count > 255 {
+        print("[ERROR] \(newFilename) is too long")
+        exit(1)
     }
 
     // Send back the derived name
