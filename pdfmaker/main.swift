@@ -443,10 +443,8 @@ func showHelp() {
     
     // FROM 1.1.0
     // Read in app version from info.plist
-    let version: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
-    let build: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
-    
-    print("\npdfmaker \(version) (\(build))")
+
+    showHeader()
     print("\nConvert a directory of images or a specified image to a single PDF file.\n")
     print ("Usage:\n    pdfmaker [-s <path>] [-d <path>] [-c <value>] [-r <value>] [-b ] [-v] [-h]\n")
     print ("Options:")
@@ -459,10 +457,31 @@ func showHelp() {
     print ("    -r / --resolution  [dpi]     Set output resolution of extracted images.")
     print ("    -b / --break                 Break a PDF into imges.")
     print ("    -v / --verbose               Show progress information. Otherwise only errors are shown.")
+    print ("    --version                    Show pdfmaker version information.")
     print ("    -h / --help                  This help screen.\n")
     print ("Examples:")
     print ("    pdfmaker --source ~/Documents/\'Project X\'/Images --destination ~/Documents/PDFs/\'Project X.pdf\'")
     print ("    pdfmaker --source ~/Documents/\'Project X\'/Images/cover.jpg --destination ~/Documents/PDFs\n")
+}
+
+
+func showHeader() {
+
+    // FROM 2.1.0
+    // Display the utility's version number
+
+    let version: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
+    let build: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
+    print("\npdfmaker \(version) (\(build))")
+}
+
+
+func showVersion() {
+
+    // FROM 2.1.0
+    // Display the utility's version
+    showHeader()
+    print("\nCopyright 2020, Tony Smith (@smittytone). Source code available under the MIT licence.\n")
 }
 
 
@@ -499,7 +518,7 @@ for argument in CommandLine.arguments {
                 outputResolution = CGFloat(rs)
             }
         default:
-            print("[ERROR] Unknown argument")
+            print("[ERROR] Unknown argument: \(argument)")
             exit(1)
         }
 
@@ -539,8 +558,11 @@ for argument in CommandLine.arguments {
         case "--help":
             showHelp()
             exit(0)
+        case "--version":
+            showVersion()
+            exit(0)
         default:
-            print("[ERROR] Unknown argument")
+            print("[ERROR] Unknown argument: \(argument)")
             exit(1)
         }
 
