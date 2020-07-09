@@ -1,4 +1,4 @@
-# pdfmaker 2.1.0#
+# pdfmaker 2.1.0 #
 
 *pdfmaker* is a command line tool for combining multiple JPEG images into a single PDF file.
 
