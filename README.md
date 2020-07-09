@@ -75,7 +75,7 @@ This converts `Project X.pdf` to a series of images that will be written to the 
 
 ## Release Notes ##
 
-- 2.1.0 *Unreleased*
+- 2.1.0 *09 July 2020*
     - Better reporting of bad arguments.
     - Add '--version' option.
 - 2.0.0 *14 November 2019*
