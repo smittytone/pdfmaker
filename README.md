@@ -76,18 +76,18 @@ This converts `Project X.pdf` to a series of images that will be written to the 
 ## Release Notes ##
 
 - 2.1.0 *09 July 2020*
-	- Better reporting of bad arguments.
-	- Add '--version' option.
+    - Better reporting of bad arguments.
+    - Add '--version' option.
 - 2.0.0 *14 November 2019*
-	- Add PDF-to-images functionality.
+    - Add PDF-to-images functionality.
 - 1.1.0 *28 October 2019*
-	- Allow the user to select a single source image, not just source directories.
-	- Allow the user to name the target file as part of the target path.
-		- Remove the `--name` switch.
-	- Ignore dot files in the source image search.
-	- Support easier notarization.
+    - Allow the user to select a single source image, not just source directories.
+    - Allow the user to name the target file as part of the target path.
+        - Remove the `--name` switch.
+    - Ignore dot files in the source image search.
+    - Support easier notarization.
 - 1.0.0 *18 October 2019*
-	- Initial public release.
+    - Initial public release.
 
 ## Copyright ##
 
