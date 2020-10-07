@@ -1,4 +1,4 @@
-# pdfmaker 2.1.0 #
+# pdfmaker 2.2.0 #
 
 *pdfmaker* is a command line tool for combining multiple JPEG images into a single PDF file.
 
@@ -75,6 +75,9 @@ This converts `Project X.pdf` to a series of images that will be written to the 
 
 ## Release Notes ##
 
+- 2.2.0 *Unreleased*
+    - Support adding PNG and TIFFs to PDFs.
+    - More informative error reporting.
 - 2.1.0 *09 July 2020*
     - Better reporting of bad arguments.
     - Add '--version' option.

@@ -81,7 +81,7 @@ func imagesToPdf() -> Bool {
             files.sort()
         } catch {
             // NOTE This should not be triggered due to earlier checks
-            print("[ERROR] Unable to get contents of directory")
+            print("[ERROR] Unable to get contents of directory \(sourcePath)")
             return false
         }
     } else {
@@ -117,20 +117,24 @@ func imagesToPdf() -> Bool {
             print("Found file: \(file)... \(extra)")
         }
 
+        // FROM 2.1.1
+        // Support loading of PNG and TIFF as well as JPEG images
+        let imageTypes: [String] = ["jpg", "jpeg", "png", "tiff"]
+        if imageTypes.contains(ext) {
         // Only proceed if the file is a JPEG
-        if ext == "jpg" || ext == "jpeg" {
+        // if ext == "jpg" || ext == "jpeg"
             // Load the image
             var image: NSImage? = NSImage.init(contentsOfFile: file)
             if image != nil {
-                if doCompress {
+                if doCompress && (ext == "jpg" || ext == "jpeg") {
                     // Re-compress the image
                     // NOTE Since we're loading from JPEG, the image may already by compressed
                     image = compressImage(image!)
 
                     // Break on error
                     if image == nil {
-                        if doShowInfo { print("Could not compress image... ignoring") }
-                        break
+                        if doShowInfo { print("Could not compress image \(file)... ignoring") }
+                        continue
                     }
                 }
 
@@ -160,7 +164,7 @@ func imagesToPdf() -> Bool {
                     }
                 }
             } else {
-                print("[ERROR] Could not load image for file \(file)")
+                print("[ERROR] Could not load image \(file)")
             }
         }
     }
@@ -347,7 +351,7 @@ func getFilename(_ filepath: String, _ basename: String) -> String {
     // FROM 2.0.1
     // Bail if the filename exceeds 255 UTF-8 characters
     if newFilename.count > 255 {
-        print("[ERROR] \(newFilename) is too long")
+        print("[ERROR] Generated filename \(newFilename) is too long -- please provide a filename")
         exit(1)
     }
 
@@ -455,7 +459,7 @@ func showHelp() {
     print ("                                    0.0 = maximum compression, lowest image quality.")
     print ("                                    1.0 = no compression, best image quality.")
     print ("    -r / --resolution  [dpi]     Set output resolution of extracted images.")
-    print ("    -b / --break                 Break a PDF into imges.")
+    print ("    -b / --break                 Break a PDF into JPEG images.")
     print ("    -v / --verbose               Show progress information. Otherwise only errors are shown.")
     print ("    --version                    Show pdfmaker version information.")
     print ("    -h / --help                  This help screen.\n")
@@ -496,6 +500,7 @@ for argument in CommandLine.arguments {
     }
 
     if argIsAValue {
+        // Make sure we're not reading in an option rather than a value
         if argument.prefix(1) == "-" {
             print("[ERROR] Missing value for \(prevArg)")
             exit(1)
