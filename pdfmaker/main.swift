@@ -1,10 +1,27 @@
-//
-//  main.swift
-//  pdfmaker
-//
-//  Created by Tony Smith on 16/10/2019.
-//  Copyright © 2019 Tony Smith. All rights reserved.
-//
+/*
+    main.swift
+    pdfmaker
+    Copyright © 2020 Tony Smith. All rights reserved.
+
+    MIT License
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+*/
 
 
 import Foundation
@@ -35,6 +52,9 @@ var doShowInfo: Bool = false
 var doBreak: Bool = false
 var outputResolution: CGFloat = BASE_DPI
 
+// FROM 2.3.0
+var doMakeSubDirectories: Bool = false
+
 
 // MARK: - Functions
 
@@ -58,6 +78,13 @@ func imagesToPdf() -> Bool {
         // NOTE The file may not exist at this point -- we will make it later.
         filename = (destPath as NSString).lastPathComponent
         destPath = (destPath as NSString).deletingLastPathComponent
+
+        // FROM 2.3.0 - Bug Fix
+        // Ensure that the intermediate path is good
+        _ = checkDirectory(destPath, "Target")
+
+        // Assemble the file name that will be used
+        // NOTE Adda a number to the end to avoid replacement
         filename = getFilename(destPath, filename)
     }
     
@@ -81,7 +108,7 @@ func imagesToPdf() -> Bool {
             files.sort()
         } catch {
             // NOTE This should not be triggered due to earlier checks
-            print("[ERROR] Unable to get contents of directory \(sourcePath)")
+            reportError("Unable to get contents of directory \(sourcePath)")
             return false
         }
     } else {
@@ -119,10 +146,8 @@ func imagesToPdf() -> Bool {
 
         // FROM 2.1.1
         // Support loading of PNG and TIFF as well as JPEG images
-        let imageTypes: [String] = ["jpg", "jpeg", "png", "tiff"]
+        let imageTypes: [String] = ["jpg", "jpeg", "png", "tiff", "tif"]
         if imageTypes.contains(ext) {
-        // Only proceed if the file is a JPEG
-        // if ext == "jpg" || ext == "jpeg"
             // Load the image
             var image: NSImage? = NSImage.init(contentsOfFile: file)
             if image != nil {
@@ -164,7 +189,7 @@ func imagesToPdf() -> Bool {
                     }
                 }
             } else {
-                print("[ERROR] Could not load image \(file)")
+                reportError("Could not load image \(file)")
             }
         }
     }
@@ -196,12 +221,12 @@ func pdfToImages() -> Bool {
 
     // Make sure we're loading a PDF and outputting to a directory
     if !isDestADir {
-        print("[ERROR] Chosen image destination \(destPath) is not a directory")
+        reportError("Chosen image destination \(destPath) is not a directory")
         return false
     }
 
     if isSrcADir {
-        print("[ERROR] Source \(destPath) is a directory")
+        reportError("Source \(destPath) is a directory")
         return false
     }
 
@@ -245,38 +270,6 @@ func pdfToImages() -> Bool {
                             return true
                         }
 
-                        /*
-                        // Convert the NSImage to data, then to an image Rep and this to a JPEG we can save
-                        if let imageData: Data = scaledImage.tiffRepresentation {
-                            if let bmp: NSBitmapImageRep = NSBitmapImageRep.init(data: imageData) {
-                                // Set the DPI to 'outputResolution'
-                                if scaleFactor != 1.0 {
-                                    setDPI(bmp, outputResolution)
-                                }
-
-                                // Convert the image to JPEG and save to disk
-                                if let finalData: Data = bmp.representation(using: .jpeg, properties: imageProps) {
-                                    let path: String = destPath + "/page " + String(format: "%03d", i + 1) + ".jpg"
-                                    do {
-                                        try finalData.write(to: URL.init(fileURLWithPath: path))
-                                        count += 1
-
-                                        if doShowInfo {
-                                            print("Written image: \(path) of pixel size  \(bmp.pixelsWide)x\(bmp.pixelsHigh)")
-                                        }
-                                    } catch {
-                                        print("[ERROR] Could not write file \(path)")
-                                    }
-                                } else {
-                                    createFailed = true
-                                }
-                            } else {
-                                createFailed = true
-                            }
-                        }
-                        
-                        */
-                        
                         // Convert the NSImage to a CGImage and then to a bitmap
                         // NOTE This code runs a lot more quickly than the above because it only calls
                         //      The NSImage drawing block once, not three times
@@ -296,10 +289,10 @@ func pdfToImages() -> Bool {
                                         print("Written image: \(path) of pixel size \(bmp.pixelsWide)x\(bmp.pixelsHigh)")
                                     }
                                 } catch {
-                                    print("[ERROR] Could not write file \(path)")
+                                    reportError("Could not write file \(path)")
                                 }
                             } else {
-                                print("[ERROR] Could not create an image for \(sourcePath) page \(i)")
+                                reportError("Could not create an image for \(sourcePath) page \(i)")
                             }
                         }
                     }
@@ -307,13 +300,13 @@ func pdfToImages() -> Bool {
 
                 if count > 0 { return true }
             } else {
-                print("[ERROR] Could not extract the PDF data from \(sourcePath)")
+                reportError("Could not extract the PDF data from \(sourcePath)")
             }
         } catch {
-            print("[ERROR] Could not load \(sourcePath)")
+            reportError("Could not load \(sourcePath)")
         }
     } else {
-        print("[ERROR] Source \(sourcePath) is not a .pdf file")
+        reportError("Source \(sourcePath) is not a .pdf file")
     }
 
     return false
@@ -333,8 +326,7 @@ func getFilename(_ filepath: String, _ basename: String) -> String {
         newBasename = (newBasename as NSString).deletingPathExtension
     } else if pathExt != "" {
         // NOT a PDF file, so bail
-        print("[ERROR] \(newBasename) is does not reference a PDF file")
-        exit(1)
+        reportErrorAndExit("\(newBasename) is does not reference a PDF file")
     }
 
     // Assemble the target filename
@@ -351,8 +343,7 @@ func getFilename(_ filepath: String, _ basename: String) -> String {
     // FROM 2.0.1
     // Bail if the filename exceeds 255 UTF-8 characters
     if newFilename.count > 255 {
-        print("[ERROR] Generated filename \(newFilename) is too long -- please provide a filename")
-        exit(1)
+        reportErrorAndExit("Generated filename \(newFilename) is too long -- please provide a filename")
     }
 
     // Send back the derived name
@@ -366,7 +357,8 @@ func checkDirectory(_ path: String, _ dirType: String) -> Bool {
     // true or false, respectively. If the item is a file and it exists, we deal with
     // it later (in 'getFilename()'), but if it doesn't exist, we also return false
     // so that it can be created later.
-    // NOTE 'dirType' is passed into the error report, if issued
+    // NOTE 'dirType' is passed into the error report, if issued.
+    //      It is the type of directory: 'Source' or 'Target'
 
     var isDir: ObjCBool = true
     let success: Bool = FileManager.default.fileExists(atPath: path, isDirectory: &isDir)
@@ -385,10 +377,21 @@ func checkDirectory(_ path: String, _ dirType: String) -> Bool {
         return false
     }
 
-    // A directory was specified but we can't find it so warn and bail
-    // TODO Add a switch to make this missing directory
-    print("[ERROR] \(dirType) directory \(path) does not exist")
-    exit(1)
+    // FROM 2.3.0
+    // Try and make intermediate directories if we can and are asked to
+    if doMakeSubDirectories {
+        do {
+            try FileManager.default.createDirectory(at: URL.init(fileURLWithPath: path),
+                                                          withIntermediateDirectories: true,
+                                                          attributes: nil)
+        } catch {
+            reportErrorAndExit("\(dirType) directory \(path) does not exist and cannot be created")
+        }
+    } else {
+        reportErrorAndExit("\(dirType) directory \(path) does not exist")
+    }
+
+    return true
 }
 
 
@@ -443,23 +446,42 @@ func showCompression() {
 }
 
 
+func reportErrorAndExit(_ message: String, _ code: Int32 = 1) {
+
+    // FROM 2.3.0
+    // Generic error display routine that also quits the app
+
+    print("Error -- " + message + " -- exiting")
+    exit(code)
+}
+
+
+func reportError(_ message: String) {
+
+    // FROM 2.3.0
+    // Generic error display routine
+
+    print("Error -- " + message + " -- exiting")
+}
+
+
 func showHelp() {
     
-    // FROM 1.1.0
-    // Read in app version from info.plist
-
     showHeader()
-    print("\nConvert a directory of images or a specified image to a single PDF file.\n")
+
+    print("\nConvert a directory of images or a specified image to a single PDF file, or")
+    print("expand a single PDF file to a collection of image files.\n")
     print ("Usage:\n    pdfmaker [-s <path>] [-d <path>] [-c <value>] [-r <value>] [-b ] [-v] [-h]\n")
     print ("Options:")
     print ("    -s / --source      [path]    The path to the images or an image. Default: current folder")
     print ("    -d / --destination [path]    Where to save the new PDF. The file name is optional.")
     print ("                                 Default: ~/Desktop folder/\'PDF From Images.pdf\'.")
     print ("    -c / --compress    [amount]  Apply an image compression filter to the PDF:")
-    print ("                                    0.0 = maximum compression, lowest image quality.")
-    print ("                                    1.0 = no compression, best image quality.")
-    print ("    -r / --resolution  [dpi]     Set output resolution of extracted images.")
+    print ("                                 0.0 = maximum compression, lowest image quality.")
+    print ("                                 1.0 = no compression, best image quality.")
+    print ("    --createdirs                 Make target intermediate directories if they do not exist.")
     print ("    -b / --break                 Break a PDF into JPEG images.")
+    print ("    -r / --resolution  [dpi]     Set the output resolution of extracted images.")
     print ("    -v / --verbose               Show progress information. Otherwise only errors are shown.")
     print ("    --version                    Show pdfmaker version information.")
     print ("    -h / --help                  This help screen.\n")
@@ -484,6 +506,7 @@ func showVersion() {
 
     // FROM 2.1.0
     // Display the utility's version
+
     showHeader()
     print("\nCopyright 2020, Tony Smith (@smittytone). Source code available under the MIT licence.\n")
 }
@@ -494,6 +517,7 @@ func showVersion() {
 
 for argument in CommandLine.arguments {
 
+    // Ignore the first comand line argument
     if argCount == 0 {
         argCount += 1
         continue
@@ -502,8 +526,7 @@ for argument in CommandLine.arguments {
     if argIsAValue {
         // Make sure we're not reading in an option rather than a value
         if argument.prefix(1) == "-" {
-            print("[ERROR] Missing value for \(prevArg)")
-            exit(1)
+            reportErrorAndExit(" Missing value for \(prevArg)")
         }
 
         switch argType {
@@ -523,8 +546,7 @@ for argument in CommandLine.arguments {
                 outputResolution = CGFloat(rs)
             }
         default:
-            print("[ERROR] Unknown argument: \(argument)")
-            exit(1)
+            reportErrorAndExit("Unknown argument: \(argument)")
         }
 
         argIsAValue = false
@@ -554,6 +576,8 @@ for argument in CommandLine.arguments {
             fallthrough
         case "--break":
             doBreak = true
+        case "--createdirs":
+            doMakeSubDirectories = true
         case "-v":
             fallthrough
         case "--verbose":
@@ -567,8 +591,7 @@ for argument in CommandLine.arguments {
             showVersion()
             exit(0)
         default:
-            print("[ERROR] Unknown argument: \(argument)")
-            exit(1)
+            reportErrorAndExit("Unknown argument: \(argument)")
         }
 
         prevArg = argument
@@ -578,8 +601,7 @@ for argument in CommandLine.arguments {
     
     // Trap commands that come last and therefore have missing args
     if argCount == CommandLine.arguments.count && argIsAValue {
-        print("[ERROR] Missing value for \(argument)")
-        exit(1)
+        reportErrorAndExit("Missing value for \(argument)")
     }
 }
 
