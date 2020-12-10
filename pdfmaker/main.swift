@@ -531,9 +531,9 @@ for argument in CommandLine.arguments {
 
         switch argType {
         case 0:
-            destPath = (argument as NSString).standardizingPath
+            destPath = argument
         case 1:
-            sourcePath = (argument as NSString).standardizingPath
+            sourcePath = argument
         case 2:
             outputName = argument
         case 3:
@@ -604,6 +604,12 @@ for argument in CommandLine.arguments {
         reportErrorAndExit("Missing value for \(argument)")
     }
 }
+
+// FROM 2.3.0
+// Fix source and destination paths here, not if they were set
+// (so we catch the defaults)
+destPath = (destPath as NSString).standardizingPath
+sourcePath = (sourcePath as NSString).standardizingPath
 
 // Convert the images
 var success: Bool = false
