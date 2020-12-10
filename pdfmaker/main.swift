@@ -541,9 +541,19 @@ for argument in CommandLine.arguments {
             if let cl = Float(argument) {
                 compressionLevel = CGFloat(cl)
             }
+
+            // FROM 2.3.0 -- check values!
+            if compressionLevel < 0.0 || compressionLevel > 1.0 {
+                reportErrorAndExit("Compression level out of range")
+            }
         case 4:
             if let rs = Float(argument) {
                 outputResolution = CGFloat(rs)
+            }
+
+            // FROM 2.3.0 -- check values!
+            if outputResolution < 1 {
+                reportErrorAndExit("Output resolution out of range")
             }
         default:
             reportErrorAndExit("Unknown argument: \(argument)")
