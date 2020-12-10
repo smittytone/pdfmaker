@@ -80,6 +80,7 @@ This converts `Project X.pdf` to a series of images that will be written to the 
 - 2.3.0 *Unreleased*
     - Add `--createdirs` switch to create intermediate directories to the specified target.
     - Make error reporting consistent with [*imageprep*](https://smittytone.net/imageprep/index.html).
+    - Better argument checking.
     - Fixed a bug in which target PDFs at non-existent locations were not trapped.
 - 2.2.0 *18 November 2020*
     - Apple Silicon version included.
