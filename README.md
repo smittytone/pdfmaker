@@ -1,4 +1,4 @@
-# pdfmaker 2.2.0 #
+# pdfmaker 2.3.0 #
 
 *pdfmaker* is a command line tool for combining multiple JPEG images into a single PDF file.
 
@@ -24,6 +24,8 @@ If you omit any of these switches, their default values will be used:
 - Compression: The native compression of the JPEG source images
 
 You can use `-s`, `-d`, and `-c` as shorthand for the switches above &mdash; `pdfmaker --help` has the details.
+
+From 2.3.0, using the `--createdirs` switch will cause *pdfmaker* to create intermediate directories to the target. This is not the default. If this switch is not used, *pdfmaker* will exit with a ‘missing directory’ error.
 
 #### Image Compression ####
 
@@ -75,6 +77,10 @@ This converts `Project X.pdf` to a series of images that will be written to the 
 
 ## Release Notes ##
 
+- 2.3.0 *Unreleased*
+    - Add `--createdirs` switch to create intermediate directories to the specified target.
+    - Make error reporting consistent with [*imageprep*](https://smittytone.net/imageprep/index.html).
+    - Fixed a bug in which target PDFs at non-existent locations were not trapped.
 - 2.2.0 *18 November 2020*
     - Apple Silicon version included.
     - Support adding PNG and TIFFs to PDFs.
