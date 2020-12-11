@@ -497,27 +497,29 @@ func reportError(_ message: String) {
 
 func showHelp() {
     
+    // Display the help screen
+
     showHeader()
 
     print("\nConvert a directory of images or a specified image to a single PDF file, or")
     print("expand a single PDF file into a collection of image files.\n")
-    print ("Usage:\n    pdfmaker [-s <path>] [-d <path>] [-c <value>] [-r <value>] [-b ] [-v] [-h]\n")
-    print ("Options:")
-    print ("    -s | --source      [path]    The path to the images or an image. Default: current folder")
-    print ("    -d | --destination [path]    Where to save the new PDF. The file name is optional.")
-    print ("                                 Default: ~/Desktop folder/\'PDF From Images.pdf\'.")
-    print ("    -c | --compress    [amount]  Apply an image compression filter to the PDF:")
-    print ("                                 0.0 = maximum compression, lowest image quality.")
-    print ("                                 1.0 = no compression, best image quality.")
-    print ("         --createdirs            Make target intermediate directories if they do not exist.")
-    print ("    -b | --break                 Break a PDF into JPEG images.")
-    print ("    -r | --resolution  [dpi]     Set the output resolution of extracted images.")
-    print ("    -v | --verbose               Show progress information. Otherwise only errors are shown.")
-    print ("    -h | --help                  This help screen.")
-    print ("         --version               Show pdfmaker version information.\n")
-    print ("Examples:")
-    print ("    pdfmaker --source ~/Documents/\'Project X\'/Images --destination ~/Documents/PDFs/\'Project X.pdf\'")
-    print ("    pdfmaker --source ~/Documents/\'Project X\'/Images/cover.jpg --destination ~/Documents/PDFs\n")
+    print("Usage:\n    pdfmaker [-s <path>] [-d <path>] [-c <value>] [-r <value>] [-b ] [-v] [-h]\n")
+    print("Options:")
+    print("    -s | --source      [path]    The path to the images or an image. Default: current folder")
+    print("    -d | --destination [path]    Where to save the new PDF. The file name is optional.")
+    print("                                 Default: ~/Desktop folder/\'PDF From Images.pdf\'.")
+    print("    -c | --compress    [amount]  Apply an image compression filter to the PDF:")
+    print("                                 0.0 = maximum compression, lowest image quality.")
+    print("                                 1.0 = no compression, best image quality.")
+    print("         --createdirs            Make target intermediate directories if they do not exist.")
+    print("    -b | --break                 Break a PDF into JPEG images.")
+    print("    -r | --resolution  [dpi]     Set the output resolution of extracted images.")
+    print("    -v | --verbose               Show progress information. Otherwise only errors are shown.")
+    print("    -h | --help                  This help screen.")
+    print("         --version               Show pdfmaker version information.\n")
+    print("Examples:")
+    print("    pdfmaker --source ~/Documents/\'Project X\'/Images --destination ~/Documents/PDFs/\'Project X.pdf\'")
+    print("    pdfmaker --source ~/Documents/\'Project X\'/Images/cover.jpg --destination ~/Documents/PDFs\n")
 }
 
 
@@ -528,7 +530,8 @@ func showHeader() {
 
     let version: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
     let build: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
-    print("pdfmaker \(version) (\(build))")
+    let name:String = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String
+    print("\(name) \(version) (\(build))")
 }
 
 
