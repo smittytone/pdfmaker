@@ -446,6 +446,36 @@ func showCompression() {
 }
 
 
+func getFullPath(_ relativePath: String) -> String {
+
+    // FROM 2.3.0
+    // Convert a partial path to an absolute path
+
+    // Standardise the path as best as we can (this covers most cases)
+    var absolutePath: String = (relativePath as NSString).standardizingPath
+
+    // Check for a unresolved relative path -- and if it is one, resolve it
+    // NOTE This includes raw filenames
+    if (absolutePath as NSString).contains("..") || !(absolutePath as NSString).hasPrefix("/") {
+        absolutePath = processRelativePath(absolutePath)
+    }
+
+    // Return the absolute path
+    return absolutePath
+}
+
+
+func processRelativePath(_ relativePath: String) -> String {
+
+    // FROM 2.3.0
+    // Add the basepath (the current working directory of the call) to the
+    // supplied relative path - and then resolve it
+
+    let absolutePath = FileManager.default.currentDirectoryPath + "/" + relativePath
+    return (absolutePath as NSString).standardizingPath
+}
+
+
 func reportErrorAndExit(_ message: String, _ code: Int32 = 1) {
 
     // FROM 2.3.0
@@ -618,8 +648,8 @@ for argument in CommandLine.arguments {
 // FROM 2.3.0
 // Fix source and destination paths here, not if they were set
 // (so we catch the defaults)
-destPath = (destPath as NSString).standardizingPath
-sourcePath = (sourcePath as NSString).standardizingPath
+destPath = getFullPath(destPath)
+sourcePath = getFullPath(sourcePath)
 
 // Convert the images
 var success: Bool = false
