@@ -226,7 +226,7 @@ func pdfToImages() -> Bool {
     }
 
     if isSrcADir {
-        reportError("Source \(destPath) is a directory")
+        reportError("Source \(sourcePath) is a directory")
         return false
     }
 
@@ -326,7 +326,7 @@ func getFilename(_ filepath: String, _ basename: String) -> String {
         newBasename = (newBasename as NSString).deletingPathExtension
     } else if pathExt != "" {
         // NOT a PDF file, so bail
-        reportErrorAndExit("\(newBasename) is does not reference a PDF file")
+        reportErrorAndExit("\(newBasename) does not reference a PDF file")
     }
 
     // Assemble the target filename
@@ -513,7 +513,7 @@ func showHelp() {
     print("                                 1.0 = no compression, best image quality.")
     print("         --createdirs            Make target intermediate directories if they do not exist.")
     print("    -b | --break                 Break a PDF into JPEG images.")
-    print("    -r | --resolution  [dpi]     Set the output resolution of extracted images.")
+    print("    -r | --resolution  [dpi]     The output resolution of extracted images. Max: 9999.")
     print("    -v | --verbose               Show progress information. Otherwise only errors are shown.")
     print("    -h | --help                  This help screen.")
     print("         --version               Show pdfmaker version information.\n")
@@ -559,7 +559,7 @@ for argument in CommandLine.arguments {
     if argIsAValue {
         // Make sure we're not reading in an option rather than a value
         if argument.prefix(1) == "-" {
-            reportErrorAndExit(" Missing value for \(prevArg)")
+            reportErrorAndExit("Missing value for \(prevArg)")
         }
 
         switch argType {
@@ -585,7 +585,7 @@ for argument in CommandLine.arguments {
             }
 
             // FROM 2.3.0 -- check values!
-            if outputResolution < 1 {
+            if outputResolution < 1 || outputResolution > 9999 {
                 reportErrorAndExit("Output resolution out of range")
             }
         default:
