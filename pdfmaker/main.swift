@@ -34,6 +34,10 @@ import Quartz
 let BASE_DPI: CGFloat = 72.0
 let DEFAULT_DPI: CGFloat = 300.0
 
+// FROM 2.3.0 -- Use stderr, stdout for output
+let STD_ERR = FileHandle.standardError
+let STD_OUT = FileHandle.standardOutput
+
 
 // MARK: - Global Variables
 
@@ -93,7 +97,7 @@ func imagesToPdf() -> Bool {
     
     if doShowInfo {
         // We're in verbose mode, so show some info
-        print("Attempting to assemble \(savePath) from \(sourcePath)...")
+        writeToStderr("Attempting to assemble \(savePath) from \(sourcePath)...")
         if doCompress { showCompression() }
     }
 
@@ -141,7 +145,7 @@ func imagesToPdf() -> Bool {
 
         if doShowInfo {
             let extra: String = ext.count == 0 ? "ignoring" : "processing"
-            print("Found file: \(file)... \(extra)")
+            writeToStderr("Found file: \(file)... \(extra)")
         }
 
         // FROM 2.1.1
@@ -158,7 +162,7 @@ func imagesToPdf() -> Bool {
 
                     // Break on error
                     if image == nil {
-                        if doShowInfo { print("Could not compress image \(file)... ignoring") }
+                        if doShowInfo { writeToStderr("Could not compress image \(file)... ignoring") }
                         continue
                     }
                 }
@@ -198,13 +202,13 @@ func imagesToPdf() -> Bool {
     if gotFirstImage {
         // Yes we did, so save the PDF to disk
         if let newpdf: PDFDocument = pdf {
-            if doShowInfo { print("Writing PDF file \(savePath)") }
+            if doShowInfo { writeToStderr("Writing PDF file \(savePath)") }
             newpdf.write(toFile: savePath)
             return true
         }
     } else {
         if doShowInfo {
-            print("No suitable image files found in the source directory")
+            writeToStderr("No suitable image files found in the source directory")
         }
     }
 
@@ -238,7 +242,7 @@ func pdfToImages() -> Bool {
         // Output info, if requested to do so
         if doShowInfo {
             // We're in verbose mode, so show some info
-            print("Attempting to disassemble \(sourcePath) to \(destPath)...")
+            writeToStderr("Attempting to disassemble \(sourcePath) to \(destPath)...")
             if doCompress { showCompression() }
         }
 
@@ -286,7 +290,7 @@ func pdfToImages() -> Bool {
                                     count += 1
 
                                     if doShowInfo {
-                                        print("Written image: \(path) of pixel size \(bmp.pixelsWide)x\(bmp.pixelsHigh)")
+                                        writeToStderr("Written image: \(path) of pixel size \(bmp.pixelsWide)x\(bmp.pixelsHigh)")
                                     }
                                 } catch {
                                     reportError("Could not write file \(path)")
@@ -442,7 +446,7 @@ func showCompression() {
     var amount = "\(percent)%"
     if percent == 0 { amount = "Least (" + amount + ")" }
     if percent == 100 { amount = "Maxiumum (" + amount + ")" }
-    print("     Quality: " + amount)
+    writeToStderr("     Quality: " + amount)
 }
 
 
@@ -476,12 +480,12 @@ func processRelativePath(_ relativePath: String) -> String {
 }
 
 
-func reportErrorAndExit(_ message: String, _ code: Int32 = 1) {
+func reportErrorAndExit(_ message: String, _ code: Int32 = EXIT_FAILURE) {
 
     // FROM 2.3.0
     // Generic error display routine that also quits the app
 
-    print("Error -- " + message + " -- exiting")
+    writeToStderr("Error -- " + message + " -- exiting")
     exit(code)
 }
 
@@ -491,7 +495,18 @@ func reportError(_ message: String) {
     // FROM 2.3.0
     // Generic error display routine
 
-    print("Error -- " + message + " -- exiting")
+    writeToStderr("Error -- " + message + " -- exiting")
+}
+
+
+func writeToStderr(_ message: String) {
+    
+    // FROM 6.1.0
+    // Write errors and other messages to stderr
+    let messageAsString = message + "\r\n"
+    if let messageAsData: Data = messageAsString.data(using: .utf8) {
+        STD_ERR.write(messageAsData)
+    }
 }
 
 
@@ -501,25 +516,27 @@ func showHelp() {
 
     showHeader()
 
-    print("\nConvert a directory of images or a specified image to a single PDF file, or")
-    print("expand a single PDF file into a collection of image files.\n")
-    print("Usage:\n    pdfmaker [-s <path>] [-d <path>] [-c <value>] [-r <value>] [-b ] [-v] [-h]\n")
-    print("Options:")
-    print("    -s | --source      [path]    The path to the images or an image. Default: current folder")
-    print("    -d | --destination [path]    Where to save the new PDF. The file name is optional.")
-    print("                                 Default: ~/Desktop folder/\'PDF From Images.pdf\'.")
-    print("    -c | --compress    [amount]  Apply an image compression filter to the PDF:")
-    print("                                 0.0 = maximum compression, lowest image quality.")
-    print("                                 1.0 = no compression, best image quality.")
-    print("         --createdirs            Make target intermediate directories if they do not exist.")
-    print("    -b | --break                 Break a PDF into JPEG images.")
-    print("    -r | --resolution  [dpi]     The output resolution of extracted images. Max: 9999.")
-    print("    -v | --verbose               Show progress information. Otherwise only errors are shown.")
-    print("    -h | --help                  This help screen.")
-    print("         --version               Show pdfmaker version information.\n")
-    print("Examples:")
-    print("    pdfmaker --source ~/Documents/\'Project X\'/Images --destination ~/Documents/PDFs/\'Project X.pdf\'")
-    print("    pdfmaker --source ~/Documents/\'Project X\'/Images/cover.jpg --destination ~/Documents/PDFs\n")
+    writeToStderr("\nConvert a directory of images or a specified image to a single PDF file, or")
+    writeToStderr("expand a single PDF file into a collection of image files.")
+    writeToStderr("https://github.com/smittytone/pdfmaker\n")
+    writeToStderr("Usage:\n    pdfmaker [-s <path>] [-d <path>] [-c <value>] [-r <value>] [-b ] [-v] [-h]\n")
+    writeToStderr("Options:")
+    writeToStderr("    -s | --source      [path]    The path to the images or an image. Default: current folder")
+    writeToStderr("    -d | --destination [path]    Where to save the new PDF. The file name is optional.")
+    writeToStderr("                                 Default: ~/Desktop folder/\'PDF From Images.pdf\'.")
+    writeToStderr("    -c | --compress    [amount]  Apply an image compression filter to the PDF:")
+    writeToStderr("                                 0.0 = maximum compression, lowest image quality.")
+    writeToStderr("                                 1.0 = no compression, best image quality.")
+    writeToStderr("         --createdirs            Make target intermediate directories if they do not exist.")
+    writeToStderr("    -b | --break                 Break a PDF into JPEG images.")
+    writeToStderr("    -r | --resolution  [dpi]     The output resolution of extracted images. Max: 9999.")
+    writeToStderr("    -v | --verbose               Show progress information. Otherwise only errors are shown.")
+    writeToStderr("    -h | --help                  This help screen.")
+    writeToStderr("         --version               Show pdfmaker version information.\n")
+    writeToStderr("Examples:")
+    writeToStderr("    pdfmaker --source $IMAGES_DIR --destination $PDFS_DIR/\'Project X.pdf\' --compress 0.8")
+    writeToStderr("    pdfmaker --source $IMAGES_DIR/cover.jpg --destination $PDFS_DIR --compress 0.5")
+    writeToStderr("    pdfmaker --break --source $PDFS_DIR/\'Project X.pdf\' --destination $IMAGES_DIR\n")
 }
 
 
@@ -531,7 +548,7 @@ func showHeader() {
     let version: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
     let build: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
     let name:String = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String
-    print("\(name) \(version) (\(build))")
+    writeToStderr("\(name) \(version) (\(build))")
 }
 
 
@@ -541,12 +558,27 @@ func showVersion() {
     // Display the utility's version
 
     showHeader()
-    print("Copyright 2020, Tony Smith (@smittytone).\nSource code available under the MIT licence.")
+    writeToStderr("Copyright 2020, Tony Smith (@smittytone).\r\nSource code available under the MIT licence.")
 }
 
 
 
 // MARK: - Runtime Start
+
+// FROM 2.3.0
+// Trap ctrl-c
+signal(SIGINT) {
+    s in let b = String(UnicodeScalar(8))
+    writeToStderr("\(b)\(b)\rpdfmaker interrupted -- halting")
+    exit(EXIT_FAILURE)
+}
+
+// FROM 2.3.0
+// No arguments? Show Help
+if CommandLine.arguments.count == 1 {
+    showHelp()
+    exit(EXIT_SUCCESS)
+}
 
 for argument in CommandLine.arguments {
 
@@ -629,10 +661,10 @@ for argument in CommandLine.arguments {
             fallthrough
         case "--help":
             showHelp()
-            exit(0)
+            exit(EXIT_SUCCESS)
         case "--version":
             showVersion()
-            exit(0)
+            exit(EXIT_SUCCESS)
         default:
             reportErrorAndExit("Unknown argument: \(argument)")
         }

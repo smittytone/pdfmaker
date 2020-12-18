@@ -83,6 +83,9 @@ This converts `Project X.pdf` to a series of images that will be written to the 
     - Improved argument checking.
     - Make error reporting consistent with [*imageprep*](https://smittytone.net/imageprep/index.html).
     - Fixed a bug in which target PDFs at non-existent locations were not trapped.
+    - Write all messages to user via `stderr` ([click here to see why](https://clig.dev/#the-basics)).
+    - Correctly trap `SIGINT`.
+    - Add test suite.
 - 2.2.0 *18 November 2020*
     - Apple Silicon version included.
     - Support adding PNG and TIFFs to PDFs.
