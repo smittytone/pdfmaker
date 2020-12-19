@@ -1,6 +1,7 @@
 /*
-    main.swift
     pdfmaker
+    main.swift
+
     Copyright © 2020 Tony Smith. All rights reserved.
 
     MIT License
@@ -23,7 +24,6 @@
     SOFTWARE.
 */
 
-
 import Foundation
 import Quartz
 
@@ -36,15 +36,24 @@ let DEFAULT_DPI: CGFloat = 300.0
 
 // FROM 2.3.0 -- Use stderr, stdout for output
 let STD_ERR = FileHandle.standardError
-let STD_OUT = FileHandle.standardOutput
+
+// FROM 2.3. 0 -- TTY formatting
+let RED = "\u{001B}[0;31m"
+let RESET = "\u{001B}[0m"
+let BOLD = "\u{001B}[1m"
+let ITALIC = "\u{001B}[3m"
+let BSP = String(UnicodeScalar(8))
 
 
 // MARK: - Global Variables
 
+// CLI argument management
 var argIsAValue: Bool = false
 var argType: Int = -1
 var argCount: Int = 0
 var prevArg: String = ""
+
+// PDF processing variables
 var destPath: String = "~/Desktop"
 var outputName: String? = nil
 var sourcePath: String = FileManager.default.currentDirectoryPath
@@ -58,6 +67,7 @@ var outputResolution: CGFloat = BASE_DPI
 
 // FROM 2.3.0
 var doMakeSubDirectories: Bool = false
+var isPiped: Bool = false
 
 
 // MARK: - Functions
@@ -66,13 +76,13 @@ func imagesToPdf() -> Bool {
 
     // Iterate through the source directory's files, or the named source file, adding
     // any JPEGs we find to the new PDF
-    
+
     // Check the supplied paths
     // NOTE 'checkDirectory()' will exit if the either item doesn't exist
     let isSrcADir: Bool = checkDirectory(sourcePath, "Source")
     let isDestADir: Bool = checkDirectory(destPath, "Target")
     var filename: String
-    
+
     // Determine the destination filename
     if isDestADir {
         // Destination path indicates a directory, so prepare the filename
@@ -91,10 +101,10 @@ func imagesToPdf() -> Bool {
         // NOTE Adda a number to the end to avoid replacement
         filename = getFilename(destPath, filename)
     }
-    
+
     // Set the destination path from the generated filename
     let savePath: String = destPath + "/" + filename
-    
+
     if doShowInfo {
         // We're in verbose mode, so show some info
         writeToStderr("Attempting to assemble \(savePath) from \(sourcePath)...")
@@ -265,7 +275,7 @@ func pdfToImages() -> Bool {
                         // Draw the PDF page into an NSImage of the correct pixel dimensions
                         // (because the PDF size is in points)
                         pdfRep.currentPage = i
-                        
+
                         let newWidth: CGFloat = sizeAlign(pdfRep.size.width * scaleFactor)
                         let newHeight: CGFloat = sizeAlign(pdfRep.size.height * scaleFactor)
                         let newSize: CGSize = CGSize.init(width: newWidth, height: newHeight)
@@ -419,11 +429,11 @@ func sizeAlign(_ dimension: CGFloat) -> CGFloat {
 
     // Ensure an image dimension, whether width or height, is an integral multiple of 2
     var returnValue: CGFloat = dimension.rounded(.down)
-    
+
     if returnValue.truncatingRemainder(dividingBy: 2.0) != 0 {
         returnValue -= 1
     }
-    
+
     return returnValue
 }
 
@@ -485,7 +495,7 @@ func reportErrorAndExit(_ message: String, _ code: Int32 = EXIT_FAILURE) {
     // FROM 2.3.0
     // Generic error display routine that also quits the app
 
-    writeToStderr("Error -- " + message + " -- exiting")
+    writeToStderr(RED + BOLD + "ERROR" + RESET + " " + message + " -- exiting")
     exit(code)
 }
 
@@ -495,14 +505,15 @@ func reportError(_ message: String) {
     // FROM 2.3.0
     // Generic error display routine
 
-    writeToStderr("Error -- " + message + " -- exiting")
+    writeToStderr(RED + BOLD + "ERROR" + RESET + " " + message)
 }
 
 
 func writeToStderr(_ message: String) {
-    
-    // FROM 6.1.0
+
+    // FROM 2.3.0
     // Write errors and other messages to stderr
+
     let messageAsString = message + "\r\n"
     if let messageAsData: Data = messageAsString.data(using: .utf8) {
         STD_ERR.write(messageAsData)
@@ -511,16 +522,16 @@ func writeToStderr(_ message: String) {
 
 
 func showHelp() {
-    
+
     // Display the help screen
 
     showHeader()
 
     writeToStderr("\nConvert a directory of images or a specified image to a single PDF file, or")
     writeToStderr("expand a single PDF file into a collection of image files.")
-    writeToStderr("https://github.com/smittytone/pdfmaker\n")
-    writeToStderr("Usage:\n    pdfmaker [-s <path>] [-d <path>] [-c <value>] [-r <value>] [-b ] [-v] [-h]\n")
-    writeToStderr("Options:")
+    writeToStderr(ITALIC + "https://github.com/smittytone/pdfmaker\n" + RESET)
+    writeToStderr(BOLD + "USAGE" + RESET + "\n    pdfmaker [-s <path>] [-d <path>] [-c <value>] [-r <value>] [-b ] [-v] [-h]\n")
+    writeToStderr(BOLD + "OPTIONS" + RESET)
     writeToStderr("    -s | --source      [path]    The path to the images or an image. Default: current folder")
     writeToStderr("    -d | --destination [path]    Where to save the new PDF. The file name is optional.")
     writeToStderr("                                 Default: ~/Desktop folder/\'PDF From Images.pdf\'.")
@@ -533,7 +544,7 @@ func showHelp() {
     writeToStderr("    -v | --verbose               Show progress information. Otherwise only errors are shown.")
     writeToStderr("    -h | --help                  This help screen.")
     writeToStderr("         --version               Show pdfmaker version information.\n")
-    writeToStderr("Examples:")
+    writeToStderr(BOLD + "EXAMPLES" + RESET)
     writeToStderr("    pdfmaker --source $IMAGES_DIR --destination $PDFS_DIR/\'Project X.pdf\' --compress 0.8")
     writeToStderr("    pdfmaker --source $IMAGES_DIR/cover.jpg --destination $PDFS_DIR --compress 0.5")
     writeToStderr("    pdfmaker --break --source $PDFS_DIR/\'Project X.pdf\' --destination $IMAGES_DIR\n")
@@ -568,19 +579,19 @@ func showVersion() {
 // FROM 2.3.0
 // Trap ctrl-c
 signal(SIGINT) {
-    s in let b = String(UnicodeScalar(8))
-    writeToStderr("\(b)\(b)\rpdfmaker interrupted -- halting")
+    theSignal in writeToStderr("\(BSP)\(BSP)\rpdfmaker interrupted -- halting")
     exit(EXIT_FAILURE)
 }
 
 // FROM 2.3.0
 // No arguments? Show Help
-if CommandLine.arguments.count == 1 {
+var args = CommandLine.arguments
+if args.count == 1 {
     showHelp()
     exit(EXIT_SUCCESS)
 }
 
-for argument in CommandLine.arguments {
+for argument in args {
 
     // Ignore the first comand line argument
     if argCount == 0 {
@@ -673,7 +684,7 @@ for argument in CommandLine.arguments {
     }
 
     argCount += 1
-    
+
     // Trap commands that come last and therefore have missing args
     if argCount == CommandLine.arguments.count && argIsAValue {
         reportErrorAndExit("Missing value for \(argument)")
