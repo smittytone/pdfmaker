@@ -55,7 +55,7 @@ check_file_not_exists() {
 
 # Check test app exists
 result=$(which "$test_app")
-result=$(echo -e "$result" | grep 'Error --')
+result=$(echo -e "$result" | grep 'not found')
 if [[ -n "$result" ]]; then
     fail "Cannot access test file $test_app" "\b"
 fi
@@ -108,7 +108,7 @@ target=test1.biff
 result=$("$test_app" -s "$image_src" -d "$target" 2>&1)
 
 # Check for error message in output
-result=$(echo -e "$result" | grep 'Error --')
+result=$(echo -e "$result" | grep 'does not reference')
 if [[ -z "$result" ]]; then
     fail "Bad extension not trapped" $test_num
 fi
@@ -116,11 +116,11 @@ pass
 
 # TEST -- create pdf, make target by bad name (too long)
 new_test
-target=ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+target=ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd.pdf
 result=$("$test_app" -s "$image_src" -d "$target" 2>&1)
 
 # Check for error message in output
-result=$(echo -e "$result" | grep 'Error --')
+result=$(echo -e "$result" | grep 'is too long')
 if [[ -z "$result" ]]; then
     fail "Bad filename not trapped" $test_num
 fi
@@ -132,7 +132,7 @@ target=test1.biff
 result=$("$test_app" -s "$image_src/test.pdf" -d "$target" -b 2>&1)
 
 # Check for error message in output
-result=$(echo -e "$result" | grep 'Error --')
+result=$(echo -e "$result" | grep 'is not a directory')
 if [[ -z "$result" ]]; then
     fail "Bad target name not trapped" $test_num
 fi
@@ -143,7 +143,7 @@ new_test
 result=$("$test_app" -s "$image_src" -b --createdirs 2>&1)
 
 # Check for error message in output
-result=$(echo -e "$result" | grep 'Error --')
+result=$(echo -e "$result" | grep 'is a directory')
 if [[ -z "$result" ]]; then
     fail "Bad source name not trapped" $test_num
 fi
@@ -154,7 +154,7 @@ new_test
 result=$("$test_app" -s "$image_src" -d "$target" --createdirs -y 2>&1)
 
 # Check for error message in output
-result=$(echo -e "$result" | grep 'Error --')
+result=$(echo -e "$result" | grep 'Unknown argument')
 if [[ -z "$result" ]]; then
     fail "Bad switch not trapped" $test_num
 fi
@@ -165,7 +165,7 @@ new_test
 result=$("$test_app" -s "$image_src" -d "$target" --createdirs -c 2>&1)
 
 # Check for error message in output
-result=$(echo -e "$result" | grep 'Error --')
+result=$(echo -e "$result" | grep 'Missing value for')
 if [[ -z "$result" ]]; then
     fail "Missing value not trapped" $test_num
 fi
@@ -176,7 +176,7 @@ new_test
 result=$("$test_app" -s "$image_src" -c -d "$target" --createdirs 2>&1)
 
 # Check for error message  in output
-result=$(echo -e "$result" | grep 'Error --')
+result=$(echo -e "$result" | grep 'Missing value for')
 if [[ -z "$result" ]]; then
     fail "Missing value not trapped" $test_num
 fi
@@ -198,9 +198,9 @@ new_test
 result=$("$test_app" -s "$image_src" -c -1.1 -d "$target" --createdirs 2>&1)
 
 # Check for error message in output
-result=$(echo -e "$result" | grep 'Error --')
+result=$(echo -e "$result" | grep 'Missing value for')
 if [[ -z "$result" ]]; then
-    fail "Bad value not trapped" $test_num
+    fail "*Bad value not trapped" $test_num
 fi
 pass
 
@@ -209,7 +209,7 @@ new_test
 result=$("$test_app" -s "$image_src" -r 0.7 -d "$target" --createdirs 2>&1)
 
 # Check for error message in output
-result=$(echo -e "$result" | grep 'Error --')
+result=$(echo -e "$result" | grep 'out of range')
 if [[ -z "$result" ]]; then
     fail "Bad value not trapped" $test_num
 fi
@@ -220,7 +220,7 @@ new_test
 result=$("$test_app" -s "$image_src" -r 9999999 -d "$target" --createdirs 2>&1)
 
 # Check for error message in output
-result=$(echo -e "$result" | grep 'Error --')
+result=$(echo -e "$result" | grep 'out of range')
 if [[ -z "$result" ]]; then
     fail "Bad value not trapped" $test_num
 fi
