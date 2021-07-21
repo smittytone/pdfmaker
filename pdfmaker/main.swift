@@ -2,7 +2,7 @@
     pdfmaker
     main.swift
 
-    Copyright © 2020 Tony Smith. All rights reserved.
+    Copyright © 2021 Tony Smith. All rights reserved.
 
     MIT License
     Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -31,35 +31,38 @@ import Quartz
 // MARK: - Constants
 
 // FROM 2.0.0
-let BASE_DPI: CGFloat = 72.0
+let BASE_DPI: CGFloat    = 72.0
 let DEFAULT_DPI: CGFloat = 300.0
 
 // FROM 2.3.0 -- Use stderr, stdout for output
-let STD_ERR = FileHandle.standardError
+let STD_ERR: FileHandle = FileHandle.standardError
 
-// FROM 2.3. 0 -- TTY formatting
-let RED = "\u{001B}[0;31m"
-let RESET = "\u{001B}[0m"
-let BOLD = "\u{001B}[1m"
-let ITALIC = "\u{001B}[3m"
-let BSP = String(UnicodeScalar(8))
+// FROM 2.3.0 -- TTY formatting
+let RED: String             = "\u{001B}[0;31m"
+let RESET: String           = "\u{001B}[0m"
+let BOLD: String            = "\u{001B}[1m"
+let ITALIC: String          = "\u{001B}[3m"
+let BSP: String             = String(UnicodeScalar(8))
+// FROM 2.3.1
+let EXIT_CTRL_C_CODE: Int32 = 130
+let CTRL_C_MSG: String      = "\(BSP)\(BSP)\rpdfmaker interrupted -- halting"
 
 
 // MARK: - Global Variables
 
 // CLI argument management
 var argIsAValue: Bool = false
-var argType: Int = -1
-var argCount: Int = 0
-var prevArg: String = ""
+var argType: Int      = -1
+var argCount: Int     = 0
+var prevArg: String   = ""
 
 // PDF processing variables
-var destPath: String = "~/Desktop"
-var outputName: String? = nil
-var sourcePath: String = FileManager.default.currentDirectoryPath
-var doCompress: Bool = false
+var destPath: String          = "~/Desktop"
+var outputName: String?       = nil
+var sourcePath: String        = FileManager.default.currentDirectoryPath
+var doCompress: Bool          = false
 var compressionLevel: CGFloat = 0.8
-var doShowInfo: Bool = false
+var doShowInfo: Bool          = false
 
 // FROM 2.0.0
 var doBreak: Bool = false
@@ -569,7 +572,7 @@ func showVersion() {
     // Display the utility's version
 
     showHeader()
-    writeToStderr("Copyright 2020, Tony Smith (@smittytone).\r\nSource code available under the MIT licence.")
+    writeToStderr("Copyright 2021, Tony Smith (@smittytone).\r\nSource code available under the MIT licence.")
 }
 
 
@@ -578,10 +581,28 @@ func showVersion() {
 
 // FROM 2.3.0
 // Trap ctrl-c
+/*
 signal(SIGINT) {
-    theSignal in writeToStderr("\(BSP)\(BSP)\rpdfmaker interrupted -- halting")
+    theSignal in writeToStderr("\(BSP)\(BSP)\rimageprep interrupted -- halting")
     exit(EXIT_FAILURE)
 }
+*/
+
+// FROM 6.3.2
+// Make sure the signal does not terminate the application
+signal(SIGINT, SIG_IGN)
+
+// Set up an event source for SIGINT...
+let dss: DispatchSourceSignal = DispatchSource.makeSignalSource(signal: SIGINT,
+                                                                queue: DispatchQueue.main)
+// ...add an event handler (from above)...
+dss.setEventHandler {
+    writeToStderr(CTRL_C_MSG)
+    exit(EXIT_CTRL_C_CODE)
+}
+
+// ...and start the event flow
+dss.resume()
 
 // FROM 2.3.0
 // No arguments? Show Help
@@ -698,6 +719,5 @@ destPath = getFullPath(destPath)
 sourcePath = getFullPath(sourcePath)
 
 // Convert the images
-var success: Bool = false
-success = doBreak ? pdfToImages() : imagesToPdf()
+var success: Bool = doBreak ? pdfToImages() : imagesToPdf()
 exit(success ? 0 : 1)
