@@ -1,4 +1,4 @@
-# pdfmaker 2.3.0 #
+# pdfmaker 2.3.1 #
 
 *pdfmaker* is a command line tool for combining multiple JPEG images into a single PDF file.
 
@@ -77,7 +77,9 @@ This converts `Project X.pdf` to a series of images that will be written to the 
 
 ## Release Notes ##
 
-- 2.3.0 *Unreleased*
+- 2.3.1 *Unreleased*
+    - Add async signal safe ctrl-c trapping code.
+- 2.3.0 *19 December 2020*
     - Add `--createdirs` switch to create intermediate directories to the specified target.
     - Improved handling of relative paths.
     - Improved argument checking.
@@ -107,4 +109,4 @@ This converts `Project X.pdf` to a series of images that will be written to the 
 
 ## Copyright ##
 
-*pdfmaker* is copyright &copy; 2020, Tony Smith. The source code is licensed under the terms of the MIT licence.
+*pdfmaker* is copyright &copy; 2021, Tony Smith. The source code is licensed under the terms of the MIT licence.
