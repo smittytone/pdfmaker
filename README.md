@@ -77,7 +77,7 @@ This converts `Project X.pdf` to a series of images that will be written to the 
 
 ## Release Notes ##
 
-- 2.3.1 *Unreleased*
+- 2.3.1 *21 July 2021*
     - Add async signal safe ctrl-c trapping code.
 - 2.3.0 *19 December 2020*
     - Add `--createdirs` switch to create intermediate directories to the specified target.
