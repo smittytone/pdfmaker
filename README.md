@@ -77,8 +77,9 @@ This converts `Project X.pdf` to a series of images that will be written to the 
 
 ## Release Notes ##
 
-- 2.3.2 *Unreleased*
+- 2.3.2 *23 May 2022*
     - Add `man` page.
+    - Under-the-hood code changes
 - 2.3.1 *21 July 2021*
     - Add async signal safe ctrl-c trapping code.
 - 2.3.0 *19 December 2020*
