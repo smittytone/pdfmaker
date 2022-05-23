@@ -2,7 +2,7 @@
     pdfmaker
     main.swift
 
-    Copyright © 2021 Tony Smith. All rights reserved.
+    Copyright © 2022 Tony Smith. All rights reserved.
 
     MIT License
     Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -36,6 +36,7 @@ let DEFAULT_DPI: CGFloat = 300.0
 
 // FROM 2.3.0 -- Use stderr, stdout for output
 let STD_ERR: FileHandle = FileHandle.standardError
+let STD_OUT: FileHandle = FileHandle.standardOutput
 
 // FROM 2.3.0 -- TTY formatting
 let RED: String             = "\u{001B}[0;31m"
@@ -517,9 +518,27 @@ func writeToStderr(_ message: String) {
     // FROM 2.3.0
     // Write errors and other messages to stderr
 
+    writeOut(message, STD_ERR)
+}
+
+
+func writeToStdout(_ message: String) {
+
+    // FROM 2.3.2
+    // Write errors and other messages to stderr
+
+    writeOut(message, STD_OUT)
+}
+
+
+func writeOut(_ message: String, _ targetFileHandle: FileHandle) {
+    
+    // FROM 2.3.2
+    // Write errors and other messages to `target`
+
     let messageAsString = message + "\r\n"
     if let messageAsData: Data = messageAsString.data(using: .utf8) {
-        STD_ERR.write(messageAsData)
+        targetFileHandle.write(messageAsData)
     }
 }
 
@@ -530,27 +549,27 @@ func showHelp() {
 
     showHeader()
 
-    writeToStderr("\nConvert a directory of images or a specified image to a single PDF file, or")
-    writeToStderr("expand a single PDF file into a collection of image files.")
-    writeToStderr(ITALIC + "https://github.com/smittytone/pdfmaker\n" + RESET)
-    writeToStderr(BOLD + "USAGE" + RESET + "\n    pdfmaker [-s <path>] [-d <path>] [-c <value>] [-r <value>] [-b ] [-v] [-h]\n")
-    writeToStderr(BOLD + "OPTIONS" + RESET)
-    writeToStderr("    -s | --source      [path]    The path to the images or an image. Default: current folder")
-    writeToStderr("    -d | --destination [path]    Where to save the new PDF. The file name is optional.")
-    writeToStderr("                                 Default: ~/Desktop folder/\'PDF From Images.pdf\'.")
-    writeToStderr("    -c | --compress    [amount]  Apply an image compression filter to the PDF:")
-    writeToStderr("                                 0.0 = maximum compression, lowest image quality.")
-    writeToStderr("                                 1.0 = no compression, best image quality.")
-    writeToStderr("         --createdirs            Make target intermediate directories if they do not exist.")
-    writeToStderr("    -b | --break                 Break a PDF into JPEG images.")
-    writeToStderr("    -r | --resolution  [dpi]     The output resolution of extracted images. Max: 9999.")
-    writeToStderr("    -v | --verbose               Show progress information. Otherwise only errors are shown.")
-    writeToStderr("    -h | --help                  This help screen.")
-    writeToStderr("         --version               Show pdfmaker version information.\n")
-    writeToStderr(BOLD + "EXAMPLES" + RESET)
-    writeToStderr("    pdfmaker --source $IMAGES_DIR --destination $PDFS_DIR/\'Project X.pdf\' --compress 0.8")
-    writeToStderr("    pdfmaker --source $IMAGES_DIR/cover.jpg --destination $PDFS_DIR --compress 0.5")
-    writeToStderr("    pdfmaker --break --source $PDFS_DIR/\'Project X.pdf\' --destination $IMAGES_DIR\n")
+    writeToStdout("\nConvert a directory of images or a specified image to a single PDF file, or")
+    writeToStdout("expand a single PDF file into a collection of image files.")
+    writeToStdout(ITALIC + "https://github.com/smittytone/pdfmaker\n" + RESET)
+    writeToStdout(BOLD + "USAGE" + RESET + "\n    pdfmaker [-s <path>] [-d <path>] [-c <value>] [-r <value>] [-b ] [-v] [-h]\n")
+    writeToStdout(BOLD + "OPTIONS" + RESET)
+    writeToStdout("    -s | --source      [path]    The path to the images or an image. Default: current folder")
+    writeToStdout("    -d | --destination [path]    Where to save the new PDF. The file name is optional.")
+    writeToStdout("                                 Default: ~/Desktop folder/\'PDF From Images.pdf\'.")
+    writeToStdout("    -c | --compress    [amount]  Apply an image compression filter to the PDF:")
+    writeToStdout("                                 0.0 = maximum compression, lowest image quality.")
+    writeToStdout("                                 1.0 = no compression, best image quality.")
+    writeToStdout("         --createdirs            Make target intermediate directories if they do not exist.")
+    writeToStdout("    -b | --break                 Break a PDF into JPEG images.")
+    writeToStdout("    -r | --resolution  [dpi]     The output resolution of extracted images. Max: 9999.")
+    writeToStdout("    -v | --verbose               Show progress information. Otherwise only errors are shown.")
+    writeToStdout("    -h | --help                  This help screen.")
+    writeToStdout("         --version               Show pdfmaker version information.\n")
+    writeToStdout(BOLD + "EXAMPLES" + RESET)
+    writeToStdout("    pdfmaker --source $IMAGES_DIR --destination $PDFS_DIR/\'Project X.pdf\' --compress 0.8")
+    writeToStdout("    pdfmaker --source $IMAGES_DIR/cover.jpg --destination $PDFS_DIR --compress 0.5")
+    writeToStdout("    pdfmaker --break --source $PDFS_DIR/\'Project X.pdf\' --destination $IMAGES_DIR\n")
 }
 
 
@@ -562,7 +581,7 @@ func showHeader() {
     let version: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
     let build: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
     let name:String = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String
-    writeToStderr("\(name) \(version) (\(build))")
+    writeToStdout("\(name) \(version) (\(build))")
 }
 
 
@@ -572,7 +591,7 @@ func showVersion() {
     // Display the utility's version
 
     showHeader()
-    writeToStderr("Copyright 2021, Tony Smith (@smittytone).\r\nSource code available under the MIT licence.")
+    writeToStdout("Copyright 2022, Tony Smith (@smittytone).\r\nSource code available under the MIT licence.")
 }
 
 
