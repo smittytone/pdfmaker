@@ -552,17 +552,17 @@ func showHelp() {
     writeToStdout("\nConvert a directory of images or a specified image to a single PDF file, or")
     writeToStdout("expand a single PDF file into a collection of image files.")
     writeToStdout(ITALIC + "https://github.com/smittytone/pdfmaker\n" + RESET)
-    writeToStdout(BOLD + "USAGE" + RESET + "\n    pdfmaker [-s <path>] [-d <path>] [-c <value>] [-r <value>] [-b ] [-v] [-h]\n")
+    writeToStdout(BOLD + "USAGE" + RESET + "\n    pdfmaker [-s path] [-d path] [-c value] [-r value] [-b ] [-v] [-h]\n")
     writeToStdout(BOLD + "OPTIONS" + RESET)
-    writeToStdout("    -s | --source      [path]    The path to the images or an image. Default: current folder")
-    writeToStdout("    -d | --destination [path]    Where to save the new PDF. The file name is optional.")
+    writeToStdout("    -s | --source      {path}    The path to the images or an image. Default: current folder")
+    writeToStdout("    -d | --destination {path}    Where to save the new PDF. The file name is optional.")
     writeToStdout("                                 Default: ~/Desktop folder/\'PDF From Images.pdf\'.")
-    writeToStdout("    -c | --compress    [amount]  Apply an image compression filter to the PDF:")
+    writeToStdout("    -c | --compress    {amount}  Apply an image compression filter to the PDF:")
     writeToStdout("                                 0.0 = maximum compression, lowest image quality.")
     writeToStdout("                                 1.0 = no compression, best image quality.")
     writeToStdout("         --createdirs            Make target intermediate directories if they do not exist.")
     writeToStdout("    -b | --break                 Break a PDF into JPEG images.")
-    writeToStdout("    -r | --resolution  [dpi]     The output resolution of extracted images. Max: 9999.")
+    writeToStdout("    -r | --resolution  {dpi}     The output resolution of extracted images. Max: 9999.")
     writeToStdout("    -v | --verbose               Show progress information. Otherwise only errors are shown.")
     writeToStdout("    -h | --help                  This help screen.")
     writeToStdout("         --version               Show pdfmaker version information.\n")
@@ -570,6 +570,16 @@ func showHelp() {
     writeToStdout("    pdfmaker --source $IMAGES_DIR --destination $PDFS_DIR/\'Project X.pdf\' --compress 0.8")
     writeToStdout("    pdfmaker --source $IMAGES_DIR/cover.jpg --destination $PDFS_DIR --compress 0.5")
     writeToStdout("    pdfmaker --break --source $PDFS_DIR/\'Project X.pdf\' --destination $IMAGES_DIR\n")
+}
+
+
+func showVersion() {
+
+    // FROM 2.1.0
+    // Display the utility's version
+
+    showHeader()
+    writeToStdout("Copyright 2022, Tony Smith (@smittytone).\r\nSource code available under the MIT licence.")
 }
 
 
@@ -582,16 +592,6 @@ func showHeader() {
     let build: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
     let name:String = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String
     writeToStdout("\(name) \(version) (\(build))")
-}
-
-
-func showVersion() {
-
-    // FROM 2.1.0
-    // Display the utility's version
-
-    showHeader()
-    writeToStdout("Copyright 2022, Tony Smith (@smittytone).\r\nSource code available under the MIT licence.")
 }
 
 
