@@ -2,7 +2,7 @@
     pdfmaker
     main.swift
 
-    Copyright © 2022 Tony Smith. All rights reserved.
+    Copyright © 2023 Tony Smith. All rights reserved.
 
     MIT License
     Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -186,15 +186,21 @@ func imagesToPdf() -> Bool {
                 if page != nil {
                     // FROM 1.1.2
                     // Set the mediaBox size
-                    page!.setBounds(CGRect.init(x: 0, y: 0, width: image!.size.width, height: image!.size.height), for: .mediaBox)
+                    page!.setBounds(CGRect.init(x: 0,
+                                                y: 0,
+                                                width: image!.size.width,
+                                                height: image!.size.height),
+                                    for: .mediaBox)
 
                     if pageCount == 0 {
                         // This will be the first page in the PDF, so initialize
-                        // the PDF will the page data
+                        // the PDF with the page data
                         if let pageData: Data = page!.dataRepresentation {
                             gotFirstImage = true
                             pdf = PDFDocument.init(data: pageData)
                             pageCount += 1
+                        } else {
+                            reportError("Could not add page \(pageCount) for image \(file)")
                         }
                     } else {
                         if let newpdf: PDFDocument = pdf {
@@ -203,8 +209,12 @@ func imagesToPdf() -> Bool {
                             gotFirstImage = true
                             newpdf.insert(page!, at: pageCount)
                             pageCount += 1
+                        } else {
+                            reportError("Could not add page \(pageCount) for image \(file)")
                         }
                     }
+                } else {
+                    reportError("Could not create page for image \(file)")
                 }
             } else {
                 reportError("Could not load image \(file)")
