@@ -589,7 +589,7 @@ func showVersion() {
     // Display the utility's version
 
     showHeader()
-    writeToStdout("Copyright 2022, Tony Smith (@smittytone).\r\nSource code available under the MIT licence.")
+    writeToStdout("Copyright 2023, Tony Smith (@smittytone).\r\nSource code available under the MIT licence.")
 }
 
 
