@@ -77,7 +77,7 @@ This converts `Project X.pdf` to a series of images that will be written to the 
 
 ## Release Notes ##
 
-- 2.3.5 *Unreleased*
+- 2.3.5 *09 July 2023*
     - Maintenance.
 - 2.3.4 *14 March 2023*
     - Under-the-hood code changes.
