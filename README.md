@@ -1,8 +1,8 @@
-# pdfmaker 2.3.4 #
+# pdfmaker 2.3.5 #
 
 *pdfmaker* is a command line tool for combining multiple JPEG images into a single PDF file.
 
-From version 2.0.0, it can also be used to convert a PDF into separate page images.
+It can also be used to convert a PDF into separate page images.
 
 For some background on the development of this tool, please see [this blog post](https://smittytone.wordpress.com/2019/10/25/macos-make-pdf-from-images/).
 
@@ -25,7 +25,7 @@ If you omit any of these switches, their default values will be used:
 
 You can use `-s`, `-d`, and `-c` as shorthand for the switches above &mdash; `pdfmaker --help` has the details.
 
-From 2.3.0, using the `--createdirs` switch will cause *pdfmaker* to create intermediate directories to the target. This is not the default. If this switch is not used, *pdfmaker* will exit with a ‘missing directory’ error.
+Use the `--createdirs` switch to cause *pdfmaker* to create intermediate directories to the target. This is not the default. If this switch is not used, *pdfmaker* will exit with a ‘missing directory’ error.
 
 #### Image Compression ####
 
@@ -77,6 +77,8 @@ This converts `Project X.pdf` to a series of images that will be written to the 
 
 ## Release Notes ##
 
+- 2.3.5 *Unreleased*
+    - Maintenance.
 - 2.3.4 *14 March 2023*
     - Under-the-hood code changes.
 - 2.3.3 *24 May 2022*
@@ -116,4 +118,4 @@ This converts `Project X.pdf` to a series of images that will be written to the 
 
 ## Copyright ##
 
-*pdfmaker* is copyright &copy; 2023, Tony Smith. The source code is licensed under the terms of the MIT licence.
+*pdfmaker* is copyright © 2023, Tony Smith. The source code is licensed under the terms of the MIT licence.

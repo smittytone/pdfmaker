@@ -431,7 +431,7 @@ func compressImage(_ image: NSImage) -> NSImage? {
     // Take an existing image, and compress it
 
     if let tiff = image.tiffRepresentation {
-        if let imageRep: NSBitmapImageRep = NSBitmapImageRep(data: tiff) {
+        if let imageRep: NSBitmapImageRep = NSBitmapImageRep.init(data: tiff) {
             if let compressedData: Data = imageRep.representation(using: NSBitmapImageRep.FileType.jpeg,
                                                                   properties: [NSBitmapImageRep.PropertyKey.compressionFactor : compressionLevel]) {
 
