@@ -75,6 +75,10 @@ pdfmaker --break --source ~/Documents/PDFs/'Project X.pdf' --compress 0.4 --reso
 
 This converts `Project X.pdf` to a series of images that will be written to the desktop (the default destination). This images will be highly compressed and output at a resolution of 200dpi.
 
+## Contributions ##
+
+Contributions are welcome, but pull requestss can only be accepted when they target the `develop` branch. PRs targetting `main` will be rejected.
+
 ## Release Notes ##
 
 - 2.3.5 *09 July 2023*
