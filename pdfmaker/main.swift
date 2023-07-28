@@ -549,7 +549,7 @@ func writeToStdout(_ message: String) {
 
 
 func writeOut(_ message: String, _ targetFileHandle: FileHandle) {
-    
+
     // FROM 2.3.2
     // Write errors and other messages to `target`
 

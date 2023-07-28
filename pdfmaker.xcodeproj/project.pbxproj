@@ -12,6 +12,10 @@
 
 /* Begin PBXFileReference section */
 		3B41AE822360D9D8009FE993 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3B69BDB42A73BAA700415A8E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = tests/README.md; sourceTree = "<group>"; };
+		3B69BDB52A73BAA700415A8E /* testpdfmaker.zsh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = testpdfmaker.zsh; path = tests/testpdfmaker.zsh; sourceTree = "<group>"; };
+		3B69BDB82A73BADE00415A8E /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
+		3B69BDB92A73BADE00415A8E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3B74608E235726550032EA96 /* pdfmaker */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = pdfmaker; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B746091235726550032EA96 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -27,10 +31,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3B69BDB62A73BAAE00415A8E /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				3B69BDB42A73BAA700415A8E /* README.md */,
+				3B69BDB52A73BAA700415A8E /* testpdfmaker.zsh */,
+			);
+			name = Tests;
+			sourceTree = "<group>";
+		};
+		3B69BDB72A73BAC500415A8E /* Misc */ = {
+			isa = PBXGroup;
+			children = (
+				3B69BDB92A73BADE00415A8E /* README.md */,
+				3B69BDB82A73BADE00415A8E /* LICENSE.md */,
+			);
+			name = Misc;
+			sourceTree = "<group>";
+		};
 		3B746085235726550032EA96 = {
 			isa = PBXGroup;
 			children = (
 				3B746090235726550032EA96 /* pdfmaker */,
+				3B69BDB62A73BAAE00415A8E /* Tests */,
+				3B69BDB72A73BAC500415A8E /* Misc */,
 				3B74608F235726550032EA96 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -240,7 +264,7 @@
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 61;
+				CURRENT_PROJECT_VERSION = 62;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y5J3K52DNA;
 				DSTROOT = $SRCROOT/build/pkgroot;
@@ -261,7 +285,7 @@
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 61;
+				CURRENT_PROJECT_VERSION = 62;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y5J3K52DNA;
 				DSTROOT = $SRCROOT/build/pkgroot;
