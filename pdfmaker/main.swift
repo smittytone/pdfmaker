@@ -517,6 +517,7 @@ func reportErrorAndExit(_ message: String, _ code: Int32 = EXIT_FAILURE) {
     // Generic error display routine that also quits the app
 
     writeToStderr(RED + BOLD + "ERROR" + RESET + " " + message + " -- exiting")
+    dss.cancel()
     exit(code)
 }
 
@@ -615,16 +616,7 @@ func showHeader() {
 
 // MARK: - Runtime Start
 
-// FROM 2.3.0
-// Trap ctrl-c
-/*
-signal(SIGINT) {
-    theSignal in writeToStderr("\(BSP)\(BSP)\rimageprep interrupted -- halting")
-    exit(EXIT_FAILURE)
-}
-*/
-
-// FROM 6.3.2
+// FROM 2.3.2
 // Make sure the signal does not terminate the application
 signal(SIGINT, SIG_IGN)
 
@@ -634,6 +626,7 @@ let dss: DispatchSourceSignal = DispatchSource.makeSignalSource(signal: SIGINT,
 // ...add an event handler (from above)...
 dss.setEventHandler {
     writeToStderr(CTRL_C_MSG)
+    dss.cancel()
     exit(EXIT_CTRL_C_CODE)
 }
 
@@ -645,6 +638,7 @@ dss.resume()
 var args = CommandLine.arguments
 if args.count == 1 {
     showHelp()
+    dss.cancel()
     exit(EXIT_SUCCESS)
 }
 
@@ -756,4 +750,5 @@ sourcePath = getFullPath(sourcePath)
 
 // Convert the images
 var success: Bool = doBreak ? pdfToImages() : imagesToPdf()
+dss.cancel()
 exit(success ? 0 : 1)
