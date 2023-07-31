@@ -27,6 +27,8 @@ You can use `-s`, `-d`, and `-c` as shorthand for the switches above &mdash; `pd
 
 Use the `--createdirs` switch to cause *pdfmaker* to create intermediate directories to the target. This is not the default. If this switch is not used, *pdfmaker* will exit with a ‘missing directory’ error.
 
+Use the `--name` switch to provide a filename for your file if you are making a PDF and your destination is a directory.
+
 #### Image Compression ####
 
 The compression option will compress images before adding them to the PDF. This allows you to reduce the size of the final PDF, as required. Provide an amount in the range 0.0 to 1.0, where 0.0 is maximum compression (lowest quality) and 1.0 is no compression (highest quality).
@@ -81,8 +83,9 @@ Contributions are welcome, but pull requestss can only be accepted when they tar
 
 ## Release Notes ##
 
-- 2.3.5 *09 July 2023*
+- 2.3.5 *02 August 2023*
     - Maintenance.
+    - Fix missing `--name` switch.
 - 2.3.4 *14 March 2023*
     - Under-the-hood code changes.
 - 2.3.3 *24 May 2022*

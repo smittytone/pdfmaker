@@ -102,7 +102,7 @@ func imagesToPdf() -> Bool {
         _ = checkDirectory(destPath, "Target")
 
         // Assemble the file name that will be used
-        // NOTE Adda a number to the end to avoid replacement
+        // NOTE Add a number to the end to avoid replacement
         filename = getFilename(destPath, filename)
     }
 
@@ -419,7 +419,7 @@ func checkDirectory(_ path: String, _ dirType: String) -> Bool {
             reportErrorAndExit("\(dirType) directory \(path) does not exist and cannot be created")
         }
     } else {
-        reportErrorAndExit("\(dirType) directory \(path) does not exist")
+        reportErrorAndExit("\(dirType) directory \(path) does not exist. Use the --createdirs switch")
     }
 
     return true
@@ -575,6 +575,8 @@ func showHelp() {
     writeToStdout("    -s | --source      {path}    The path to the images or an image. Default: current folder")
     writeToStdout("    -d | --destination {path}    Where to save the new PDF. The file name is optional.")
     writeToStdout("                                 Default: ~/Desktop folder/\'PDF From Images.pdf\'.")
+    writeToStdout("    -n | --name                  Specify the target file name. Only used when your destination")
+    writeToStdout("                                 is a directory.")
     writeToStdout("    -c | --compress    {amount}  Apply an image compression filter to the PDF:")
     writeToStdout("                                 0.0 = maximum compression, lowest image quality.")
     writeToStdout("                                 1.0 = no compression, best image quality.")
@@ -597,7 +599,7 @@ func showVersion() {
     // Display the utility's version
 
     showHeader()
-    writeToStdout("Copyright 2023, Tony Smith (@smittytone).\r\nSource code available under the MIT licence.")
+    writeToStdout("Copyright © 2023, Tony Smith (@smittytone).\r\nSource code available under the MIT licence.")
 }
 
 
@@ -698,6 +700,11 @@ for argument in args {
             fallthrough
         case "--source":
             argType = 1
+            argIsAValue = true
+        case "-n":
+            fallthrough
+        case "--name":
+            argType = 2
             argIsAValue = true
         case "-c":
             fallthrough
