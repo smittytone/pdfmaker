@@ -1,4 +1,4 @@
-# pdfmaker 2.3.5 #
+# pdfmaker 2.3.6 #
 
 *pdfmaker* is a command line tool for combining multiple JPEG images into a single PDF file.
 
@@ -83,9 +83,10 @@ Contributions are welcome, but pull requestss can only be accepted when they tar
 
 ## Release Notes ##
 
-- 2.3.5 *02 August 2023*
-    - Maintenance.
+- 2.3.6 *10August 2023*
     - Fix missing `--name` switch.
+- 2.3.5 *09 July 2023*
+    - Maintenance.
 - 2.3.4 *14 March 2023*
     - Under-the-hood code changes.
 - 2.3.3 *24 May 2022*
