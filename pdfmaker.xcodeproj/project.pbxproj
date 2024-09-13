@@ -18,6 +18,7 @@
 		3B69BDB92A73BADE00415A8E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3B74608E235726550032EA96 /* pdfmaker */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = pdfmaker; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B746091235726550032EA96 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		3BAFAFE52C94877700C182C6 /* pdfmaker.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; name = pdfmaker.1; path = manpage/pdfmaker.1; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,6 +46,7 @@
 			children = (
 				3B69BDB92A73BADE00415A8E /* README.md */,
 				3B69BDB82A73BADE00415A8E /* LICENSE.md */,
+				3BAFAFE52C94877700C182C6 /* pdfmaker.1 */,
 			);
 			name = Misc;
 			sourceTree = "<group>";
