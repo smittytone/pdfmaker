@@ -7,10 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3B2E41A42C95C4F100B3A868 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B746091235726550032EA96 /* main.swift */; };
 		3B746092235726550032EA96 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B746091235726550032EA96 /* main.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3B2E41A92C95C4F100B3A868 /* pdfmaker-test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "pdfmaker-test"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B2E41AA2C95C4F100B3A868 /* pdfmaker copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "pdfmaker copy-Info.plist"; path = "/Users/smitty/GitHub/pdfmaker/pdfmaker copy-Info.plist"; sourceTree = "<absolute>"; };
 		3B41AE822360D9D8009FE993 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3B69BDB42A73BAA700415A8E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = tests/README.md; sourceTree = "<group>"; };
 		3B69BDB52A73BAA700415A8E /* testpdfmaker.zsh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = testpdfmaker.zsh; path = tests/testpdfmaker.zsh; sourceTree = "<group>"; };
@@ -22,6 +25,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		3B2E41A52C95C4F100B3A868 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3B74608B235726550032EA96 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -58,6 +68,7 @@
 				3B69BDB62A73BAAE00415A8E /* Tests */,
 				3B69BDB72A73BAC500415A8E /* Misc */,
 				3B74608F235726550032EA96 /* Products */,
+				3B2E41AA2C95C4F100B3A868 /* pdfmaker copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -65,6 +76,7 @@
 			isa = PBXGroup;
 			children = (
 				3B74608E235726550032EA96 /* pdfmaker */,
+				3B2E41A92C95C4F100B3A868 /* pdfmaker-test */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -81,6 +93,22 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		3B2E41A22C95C4F100B3A868 /* pdfmaker-test */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3B2E41A62C95C4F100B3A868 /* Build configuration list for PBXNativeTarget "pdfmaker-test" */;
+			buildPhases = (
+				3B2E41A32C95C4F100B3A868 /* Sources */,
+				3B2E41A52C95C4F100B3A868 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "pdfmaker-test";
+			productName = pdfmaker;
+			productReference = 3B2E41A92C95C4F100B3A868 /* pdfmaker-test */;
+			productType = "com.apple.product-type.tool";
+		};
 		3B74608D235726550032EA96 /* pdfmaker */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3B746095235726550032EA96 /* Build configuration list for PBXNativeTarget "pdfmaker" */;
@@ -127,11 +155,20 @@
 			projectRoot = "";
 			targets = (
 				3B74608D235726550032EA96 /* pdfmaker */,
+				3B2E41A22C95C4F100B3A868 /* pdfmaker-test */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		3B2E41A32C95C4F100B3A868 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3B2E41A42C95C4F100B3A868 /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3B74608A235726550032EA96 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -143,6 +180,52 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		3B2E41A72C95C4F100B3A868 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Developer ID Application: Antony Smith (Y5J3K52DNA)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Manual;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				CURRENT_PROJECT_VERSION = 145;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = Y5J3K52DNA;
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = "";
+				DSTROOT = $SRCROOT/build/pkgroot;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "pdfmaker copy-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 2.3.7;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bps.pdfmaker;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		3B2E41A82C95C4F100B3A868 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Developer ID Application: Antony Smith (Y5J3K52DNA)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Manual;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				CURRENT_PROJECT_VERSION = 145;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = Y5J3K52DNA;
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = "";
+				DSTROOT = $SRCROOT/build/pkgroot;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "pdfmaker copy-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 2.3.7;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bps.pdfmaker;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 		3B746093235726550032EA96 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -311,6 +394,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		3B2E41A62C95C4F100B3A868 /* Build configuration list for PBXNativeTarget "pdfmaker-test" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3B2E41A72C95C4F100B3A868 /* Debug */,
+				3B2E41A82C95C4F100B3A868 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		3B746089235726550032EA96 /* Build configuration list for PBXProject "pdfmaker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
