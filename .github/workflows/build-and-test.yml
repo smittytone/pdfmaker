@@ -11,7 +11,7 @@ jobs:
     name: Build using xcodebuild
     runs-on: macos-latest
     env:
-      app_name: ${{ 'pdfmaker' }}
+      app_name: ${{ 'pdfmaker-test' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
