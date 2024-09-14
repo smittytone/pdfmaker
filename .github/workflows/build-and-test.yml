@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Build and analyse default scheme using xcodebuild
+    name: Build using xcodebuild
     runs-on: macos-latest
     env:
       app_name: ${{ 'pdfmaker' }}
@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Build
         run: |
-          xcodebuild -quiet clean build -target "${app_name}" | xcpretty && exit ${PIPESTATUS[0]}
+          xcodebuild -quiet clean install -target "${app_name}"
       - name: Test
         run: |
           scripts/testpdfmaker.zsh build/pkgroot/usr/local/bin/${app_name}
