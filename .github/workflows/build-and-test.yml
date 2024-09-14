@@ -20,4 +20,4 @@ jobs:
           xcodebuild -quiet clean install -target "${app_name}"
       - name: Test
         run: |
-          scripts/testpdfmaker.zsh build/pkgroot/usr/local/bin/${app_name}
+          tests/testpdfmaker.zsh build/pkgroot/usr/local/bin/${app_name}
