@@ -14,13 +14,20 @@
 /* Begin PBXFileReference section */
 		3B2E419F2C95AC7300B3A868 /* output-grabber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "output-grabber.swift"; sourceTree = "<group>"; };
 		3B41AE822360D9D8009FE993 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		3B69BDB42A73BAA700415A8E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = tests/README.md; sourceTree = "<group>"; };
-		3B69BDB52A73BAA700415A8E /* testpdfmaker.zsh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = testpdfmaker.zsh; path = tests/testpdfmaker.zsh; sourceTree = "<group>"; };
 		3B69BDB82A73BADE00415A8E /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
 		3B69BDB92A73BADE00415A8E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3B74608E235726550032EA96 /* pdfmaker */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = pdfmaker; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B746091235726550032EA96 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		3BAFAFE52C94877700C182C6 /* pdfmaker.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; name = pdfmaker.1; path = manpage/pdfmaker.1; sourceTree = "<group>"; };
+		3BD5844C2D1300E9006388F1 /* BBC Space Themes.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "BBC Space Themes.jpg"; sourceTree = "<group>"; };
+		3BD5844D2D1300E9006388F1 /* Fourth Dimension.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Fourth Dimension.jpg"; sourceTree = "<group>"; };
+		3BD5844E2D1300E9006388F1 /* Out of this World.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Out of this World.jpg"; sourceTree = "<group>"; };
+		3BD5844F2D1300E9006388F1 /* Space Invaded.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Space Invaded.jpg"; sourceTree = "<group>"; };
+		3BD584502D1300E9006388F1 /* Star Wars and Other Great Space Themes.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Star Wars and Other Great Space Themes.jpg"; sourceTree = "<group>"; };
+		3BD584512D1300E9006388F1 /* test.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = test.pdf; sourceTree = "<group>"; };
+		3BD584532D1300E9006388F1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		3BD584542D1300E9006388F1 /* testpdfmaker.zsh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = testpdfmaker.zsh; sourceTree = "<group>"; };
+		3BD584562D130147006388F1 /* pdfmaker.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = pdfmaker.1; sourceTree = "<group>"; };
+		3BD584582D130247006388F1 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -34,28 +41,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3B2E41A12C95BA1E00B3A868 /* Man */ = {
-			isa = PBXGroup;
-			children = (
-				3BAFAFE52C94877700C182C6 /* pdfmaker.1 */,
-			);
-			name = Man;
-			sourceTree = "<group>";
-		};
-		3B69BDB62A73BAAE00415A8E /* Tests */ = {
-			isa = PBXGroup;
-			children = (
-				3B69BDB42A73BAA700415A8E /* README.md */,
-				3B69BDB52A73BAA700415A8E /* testpdfmaker.zsh */,
-			);
-			name = Tests;
-			sourceTree = "<group>";
-		};
 		3B69BDB72A73BAC500415A8E /* Misc */ = {
 			isa = PBXGroup;
 			children = (
 				3B69BDB92A73BADE00415A8E /* README.md */,
 				3B69BDB82A73BADE00415A8E /* LICENSE.md */,
+				3BD584582D130247006388F1 /* Package.swift */,
 			);
 			name = Misc;
 			sourceTree = "<group>";
@@ -64,8 +55,8 @@
 			isa = PBXGroup;
 			children = (
 				3B746090235726550032EA96 /* pdfmaker */,
-				3B69BDB62A73BAAE00415A8E /* Tests */,
-				3B2E41A12C95BA1E00B3A868 /* Man */,
+				3BD584552D1300E9006388F1 /* tests */,
+				3BD584572D130147006388F1 /* manpage */,
 				3B69BDB72A73BAC500415A8E /* Misc */,
 				3B74608F235726550032EA96 /* Products */,
 			);
@@ -87,6 +78,37 @@
 				3B41AE822360D9D8009FE993 /* Info.plist */,
 			);
 			path = pdfmaker;
+			sourceTree = "<group>";
+		};
+		3BD584522D1300E9006388F1 /* source */ = {
+			isa = PBXGroup;
+			children = (
+				3BD5844C2D1300E9006388F1 /* BBC Space Themes.jpg */,
+				3BD5844D2D1300E9006388F1 /* Fourth Dimension.jpg */,
+				3BD5844E2D1300E9006388F1 /* Out of this World.jpg */,
+				3BD5844F2D1300E9006388F1 /* Space Invaded.jpg */,
+				3BD584502D1300E9006388F1 /* Star Wars and Other Great Space Themes.jpg */,
+				3BD584512D1300E9006388F1 /* test.pdf */,
+			);
+			path = source;
+			sourceTree = "<group>";
+		};
+		3BD584552D1300E9006388F1 /* tests */ = {
+			isa = PBXGroup;
+			children = (
+				3BD584522D1300E9006388F1 /* source */,
+				3BD584532D1300E9006388F1 /* README.md */,
+				3BD584542D1300E9006388F1 /* testpdfmaker.zsh */,
+			);
+			path = tests;
+			sourceTree = "<group>";
+		};
+		3BD584572D130147006388F1 /* manpage */ = {
+			isa = PBXGroup;
+			children = (
+				3BD584562D130147006388F1 /* pdfmaker.1 */,
+			);
+			path = manpage;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
