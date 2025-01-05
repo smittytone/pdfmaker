@@ -26,7 +26,7 @@
 		3BD584512D1300E9006388F1 /* test.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = test.pdf; sourceTree = "<group>"; };
 		3BD584532D1300E9006388F1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3BD584542D1300E9006388F1 /* testpdfmaker.zsh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = testpdfmaker.zsh; sourceTree = "<group>"; };
-		3BD584562D130147006388F1 /* pdfmaker.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = pdfmaker.1; sourceTree = "<group>"; };
+		3BD584562D130147006388F1 /* pdfmaker.1 */ = {isa = PBXFileReference; explicitFileType = text.man; path = pdfmaker.1; sourceTree = "<group>"; };
 		3BD584582D130247006388F1 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -303,7 +303,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 151;
+				CURRENT_PROJECT_VERSION = 171;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y5J3K52DNA;
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = Y5J3K52DNA;
@@ -326,7 +326,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 151;
+				CURRENT_PROJECT_VERSION = 171;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y5J3K52DNA;
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = Y5J3K52DNA;
