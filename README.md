@@ -84,7 +84,10 @@ Contributions are welcome, but pull requestss can only be accepted when they tar
 ## Release Notes ##
 
 - 2.3.8 *Unreleased*
-    - "Code reorganisation: no code changes."
+    - Support WebP and HEIC source images.
+    - Allow compound flags.
+    - "A little refactoring: make Swift code more idiomatic."
+    - A clearer function comments.
 - 2.3.7 *13 September 2024*
     - Catch PDFKit image initialisation errors and hide from console, but report in a *pdfmaker* fashion.
 - 2.3.6 *10 August 2023*
@@ -130,4 +133,4 @@ Contributions are welcome, but pull requestss can only be accepted when they tar
 
 ## Copyright ##
 
-*pdfmaker* is copyright © 2024, Tony Smith. The source code is licensed under the terms of the MIT licence.
+*pdfmaker* is copyright © 2025, Tony Smith. The source code is licensed under the terms of the MIT licence.
