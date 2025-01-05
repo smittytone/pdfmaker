@@ -2,7 +2,7 @@
     pdfmaker
     output-grabber.swift
 
-    Copyright © 2024 Tony Smith. All rights reserved.
+    Copyright © 2025 Tony Smith. All rights reserved.
 
     MIT License
     Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -29,66 +29,90 @@ import Foundation
 
 class OutputGrabber {
     
-    // Public properties
+    // MARK: -  Public properties
     var errors: [String] = []
     var errorCounts: [Int] = []
     var verboseErrSet: Bool = false
     
-    // Private properties
+    
+    // MARK: -  Private properties
     private var inputPipe: Pipe? = nil
     private var pipeReadHandle: FileHandle? = nil
     private var contents: String = ""
+    private var doDeDupe: Bool = false
     
-    // Constants
+    
+    // MARK: -  Constants
     private let savedStderr = dup(STDERR_FILENO)
     
     
-    init() {
+    
+    // MARK: - Methods: Instance Lifecyle
+    
+    init(dedupe: Bool = false) {
         // Check for the `CG_PDF_VERBOSE` env var
         // NOTE Only relevant when trapping STDERR messages from PDFKit
+        //      within my pdfmaker app -- you probably will not require this.
         if let _ = ProcessInfo.processInfo.environment["CG_PDF_VERBOSE"] {
             self.verboseErrSet = true
         }
+        
+        // Record whether the user wants to de-dupe incomimg messages
+        self.doDeDupe = dedupe
     }
     
     
+    // MARK: -  Methods: Pipe Management
+    
+    ///
+    /// Open a new Pipe to consume the messages on `STDERR`.
+    ///
     func openConsolePipe() {
         
-        // Open a new Pipe to consume the messages on STDERR.
-        // We do this to catch PDFKit's irritating issuing of warnings to
-        // STDERR rather than bubble up to the calling code.
         if self.inputPipe == nil {
             self.inputPipe = Pipe()
             self.pipeReadHandle = inputPipe!.fileHandleForReading
             self.pipeReadHandle!.readabilityHandler = { [weak self] fileHandle in
+                // NOTE Pass in `weak self` to avoid reference cycle to `self`.
+                //      Hence the following check: bail if the instance reference
+                //      is `nil`.
                 guard let strongSelf = self else { return }
 
+                // If there's available output to the redirected file handle,
+                // get it and store it for processing later
                 let data = fileHandle.availableData
                 if let string = String(data: data, encoding: String.Encoding.utf8) {
                     strongSelf.contents += string
                 }
                 
-                let messages: [String] = strongSelf.contents.components(separatedBy: .newlines)
-                if messages.count > 0 {
-                    strongSelf.contents = ""
-                    for message in messages {
-                        if message == "" {
-                            return
-                        } else {
-                            var doAdd: Bool = true
-                            for (index, error) in strongSelf.errors.enumerated() {
-                                if error == message {
-                                    strongSelf.errorCounts[index] += 1
-                                    doAdd = false
-                                    break
-                                }
-                            }
-                            
-                            if doAdd {
-                                strongSelf.errors.append(message)
-                                strongSelf.errorCounts.append(1)
+                if strongSelf.doDeDupe {
+                    // Separate out the received messages and de dupe
+                    let messages: [String] = strongSelf.contents.components(separatedBy: .newlines)
+                    if messages.count > 0 {
+                        strongSelf.contents = ""
+                        for message in messages {
+                            if message == "" {
+                                return
                             } else {
-                                strongSelf.contents += message + "\n"
+                                // Have we got the received message? Assume we don't
+                                var doAdd: Bool = true
+                                for (index, error) in strongSelf.errors.enumerated() {
+                                    if error == message {
+                                        strongSelf.errorCounts[index] += 1
+                                        doAdd = false
+                                        break
+                                    }
+                                }
+                                
+                                if doAdd {
+                                    // Record the new message
+                                    strongSelf.errors.append(message)
+                                    strongSelf.errorCounts.append(1)
+                                } else {
+                                    // Put the duplicate message back into the buffer
+                                    // TODO Is this really beneficial?
+                                    strongSelf.contents += message + "\n"
+                                }
                             }
                         }
                     }
@@ -99,8 +123,13 @@ class OutputGrabber {
             dup2(self.inputPipe!.fileHandleForWriting.fileDescriptor, STDERR_FILENO)
         }
     }
-
-
+    
+    
+    ///
+    /// Restore output to `STDERR`.
+    ///
+    /// Returns: `true` on success, otherwise `false`.
+    ///
     func closeConsolePipe() -> Bool {
         
         // Restore output to STDERR

@@ -2,7 +2,7 @@
     pdfmaker
     main.swift
 
-    Copyright © 2024 Tony Smith. All rights reserved.
+    Copyright © 2025 Tony Smith. All rights reserved.
 
     MIT License
     Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -75,26 +75,28 @@ var doMakeSubDirectories: Bool = false
 var isPiped: Bool = false
 
 // FROM 2.3.7
-let grabber: OutputGrabber = OutputGrabber.init()
+let grabber: OutputGrabber = OutputGrabber.init(dedupe: true)
 
 
 // MARK: - Functions
 
-func imagesToPdf() -> Bool {
-
-    // Iterate through the source directory's files, or the named source file, adding
-    // any JPEGs we find to the new PDF
-
-    // Check the supplied paths
-    // NOTE 'checkDirectory()' will exit if the either item doesn't exist
-    let isSrcADir: Bool = checkDirectory(sourcePath, "Source")
-    let isDestADir: Bool = checkDirectory(destPath, "Target")
-    var filename: String
+///
+/// Convert a set of images to a PDF. Images must be of supported types:
+/// currently PNG, JPG, TIF.
+///
+/// - Parameters:
+///     - isSrcADir  Does the global source file path lead to a directory?
+///     - isDestADir Does the global destination file path lead to a directory?
+///
+/// - Returns `true` on a successful completion, otherwise `false`.
+///
+func imagesToPdf(_ isSrcADir: Bool, _ isDestADir: Bool) -> Bool {
 
     // Determine the destination filename
+    var filename: String
     if isDestADir {
         // Destination path indicates a directory, so prepare the filename
-        filename = getFilename(destPath, (outputName == nil ? "PDF From Images" : outputName!))
+        filename = getFilename(destPath, (outputName == nil ? "PDF From Images via pdfmaker" : outputName!))
     } else {
         // Destination path indicates a file, so extract the filename
         // NOTE The file may not exist at this point -- we will make it later.
@@ -102,11 +104,12 @@ func imagesToPdf() -> Bool {
         destPath = (destPath as NSString).deletingLastPathComponent
 
         // FROM 2.3.0 - Bug Fix
-        // Ensure that the intermediate path is good
+        // Ensure that the intermediate path is good (call will fail if it isn't)
         _ = checkDirectory(destPath, "Target")
 
         // Assemble the file name that will be used
-        // NOTE Add a number to the end to avoid replacement
+        // NOTE Call adds a number to the end to avoid replacing an existing file
+        //      of the same name
         filename = getFilename(destPath, filename)
     }
 
@@ -139,7 +142,6 @@ func imagesToPdf() -> Bool {
     }
 
     // Initialise counters and flags
-    var gotFirstImage: Bool = false
     var pageCount: Int = 0
     var pdfKitErr: Bool = false
 
@@ -162,15 +164,12 @@ func imagesToPdf() -> Bool {
         // Get the file extension
         let ext: String = (file as NSString).pathExtension.lowercased()
 
-        if doShowInfo {
-            let extra: String = ext.count == 0 ? "ignoring" : "processing"
-            writeToStderr("Found file: \(file), \(extra)")
-        }
+        reportInfo("Found file: \(file), \(ext.count == 0 ? "ignoring" : "processing")")
 
         // FROM 2.1.1
-        // Support loading of PNG and TIFF as well as JPEG images
-        let imageTypes: [String] = ["jpg", "jpeg", "png", "tiff", "tif"]
-        if imageTypes.contains(ext) {
+        // Support loading of PNG, JPG, HEIC, TIF, WEBP
+        let supportedImageTypes: [String] = ["jpg", "jpeg", "png", "tiff", "tif", "heic", "webp", "bmp"]
+        if supportedImageTypes.contains(ext) {
             // Load the image
             var image: NSImage? = NSImage.init(contentsOfFile: file)
             if image != nil {
@@ -181,7 +180,7 @@ func imagesToPdf() -> Bool {
 
                     // Break on error
                     if image == nil {
-                        if doShowInfo { writeToStderr("Could not compress image \(file), ignoring") }
+                        reportWarning("Could not compress image \(file), ignoring")
                         continue
                     }
                 }
@@ -205,7 +204,6 @@ func imagesToPdf() -> Bool {
                         // This will be the first page in the PDF, so initialize
                         // the PDF with the page data
                         if let pageData: Data = page.dataRepresentation {
-                            gotFirstImage = true
                             pdf = PDFDocument.init(data: pageData)
                             pageCount += 1
                         } else {
@@ -215,7 +213,6 @@ func imagesToPdf() -> Bool {
                         if let newpdf: PDFDocument = pdf {
                             // We're adding a page to the already created PDF,
                             // so just insert the page
-                            gotFirstImage = true
                             newpdf.insert(page, at: pageCount)
                             pageCount += 1
                         } else {
@@ -223,21 +220,21 @@ func imagesToPdf() -> Bool {
                         }
                     }
                 } else {
-                    reportError("Could not create page for image \(file), ignoring")
+                    reportError("Could not create page for image \(file)")
                 }
             } else {
                 reportError("Could not load image \(file)")
             }
+        } else {
+            reportWarning("File \(file) is not a supported image type, ignoring")
         }
     }
 
     // Did we add any images to the PDF?
-    if gotFirstImage {
+    if pageCount > 0 {
         // Yes we did, so save the PDF to disk
         if let newpdf: PDFDocument = pdf {
-            if doShowInfo {
-                writeToStderr("Writing PDF file \(savePath)")
-            }
+            reportInfo("Writing PDF file \(savePath)")
             
             // Did PDFKit complain?
             if pdfKitErr {
@@ -249,19 +246,23 @@ func imagesToPdf() -> Bool {
             return true
         }
     } else {
-        if doShowInfo {
-            writeToStderr("No suitable image files found in the source directory")
-        }
+        reportWarning("No suitable image files found in the source directory")
     }
 
     return false
 }
 
 
+///
+/// Display errors generated directly by PDFKit.
+///
+/// PDFKit issues file errors directly to `STDERR`, so we trap these elsewhere
+/// (see `output-grabber.swift` and here de-dupe the errors from PDFKit and
+/// output the remaining errors.
+///
+/// FROM 2.3.7
+///
 func processPdfKitErrors() {
-    
-    // FROM 2.3.7
-    // Display PDFKit errors
     
     if doShowInfo || grabber.verboseErrSet {
         // List all the errors if we're in pdfmaker verbose mode,
@@ -281,12 +282,16 @@ func processPdfKitErrors() {
 }
 
 
-func pdfToImages() -> Bool {
-
-    // Check the supplied paths
-    // NOTE 'checkDirectory()' will exit if the either item doesn't exist
-    let isSrcADir: Bool = checkDirectory(sourcePath, "Source")
-    let isDestADir: Bool = checkDirectory(destPath, "Target")
+///
+/// Convert a PDF files to a set of images.
+///
+/// - Parameters:
+///     - isSrcADir  Does the global source file path lead to a directory?
+///     - isDestADir Does the global destination file path lead to a directory?
+///
+/// - Returns `true` on a successful completion, otherwise `false`.
+///
+func pdfToImages(_ isSrcADir: Bool, _ isDestADir: Bool) -> Bool {
 
     // Make sure we're loading a PDF and outputting to a directory
     if !isDestADir {
@@ -324,7 +329,7 @@ func pdfToImages() -> Bool {
                 // Process the PDF page by page
                 for i in 0..<pdfRep.pageCount {
                     // Run in an autorelease closure to avoid MAJOR memory gobbling. It all gets
-                    // free by the garbage collector after the loop has completed, but while looping,
+                    // freed by the garbage collector after the loop has completed, but while looping,
                     // this code can allocate gigabytes of RAM (without autorelease)
                     autoreleasepool {
                         // Draw the PDF page into an NSImage of the correct pixel dimensions
@@ -352,11 +357,8 @@ func pdfToImages() -> Bool {
                                 let path: String = destPath + "/page " + String(format: "%03d", i + 1) + ".jpg"
                                 do {
                                     try finalData.write(to: URL.init(fileURLWithPath: path))
+                                    reportInfo("Written image: \(path) of pixel size \(bmp.pixelsWide)x\(bmp.pixelsHigh)")
                                     count += 1
-
-                                    if doShowInfo {
-                                        writeToStderr("Written image: \(path) of pixel size \(bmp.pixelsWide)x\(bmp.pixelsHigh)")
-                                    }
                                 } catch {
                                     reportError("Could not write file \(path)")
                                 }
@@ -372,7 +374,7 @@ func pdfToImages() -> Bool {
                 reportError("Could not extract the PDF data from \(sourcePath)")
             }
         } catch {
-            reportError("Could not load \(sourcePath)")
+            reportError("Could not load file \(sourcePath)")
         }
     } else {
         reportError("Source \(sourcePath) is not a .pdf file")
@@ -382,10 +384,18 @@ func pdfToImages() -> Bool {
 }
 
 
+///
+/// Run through the files in the specified directory and set the output
+/// file's name so that it doesn't clash with existing files. For example,
+/// if `Untitled.pdf` exists, this will generate `Untitled 01.pdf`
+///
+/// - Parameters:
+///     - filepath The directory's path.
+///     - basename The base output filename to which integers will be appended.
+///
+/// - Returns: The new file name, or the existing one if it's OK.
+///
 func getFilename(_ filepath: String, _ basename: String) -> String {
-
-    // Run through the files in the specified directory ('filepath') and set
-    // the output file's name so that it doesn't clash with existing files
 
     // If the passed filename has a '.pdf' extension, remove it
     var newBasename: String = basename
@@ -411,6 +421,7 @@ func getFilename(_ filepath: String, _ basename: String) -> String {
 
     // FROM 2.0.1
     // Bail if the filename exceeds 255 UTF-8 characters
+    // TODO Make this more intelligent: truncate the file name?
     if newFilename.count > 255 {
         reportErrorAndExit("Generated filename \(newFilename) is too long -- please provide a filename")
     }
@@ -420,14 +431,17 @@ func getFilename(_ filepath: String, _ basename: String) -> String {
 }
 
 
+///
+/// Check whether the item at the provided path is a directory or a regular file.
+///
+/// - Parameters:
+///     - path    A path to a file or directory, existent or non-existent.
+///     - dirType Whether the path leads to a source or target entity.
+///
+/// - Returns: `true` if the file is an existing directory, `false` if it's a file,
+///            a non-existent file, or a non-existent directory that can't be created/
+///
 func checkDirectory(_ path: String, _ dirType: String) -> Bool {
-
-    // Check that item at 'path' is a directory or a regular file, returning
-    // true or false, respectively. If the item is a file and it exists, we deal with
-    // it later (in 'getFilename()'), but if it doesn't exist, we also return false
-    // so that it can be created later.
-    // NOTE 'dirType' is passed into the error report, if issued.
-    //      It is the type of directory: 'Source' or 'Target'
 
     var isDir: ObjCBool = true
     let success: Bool = FileManager.default.fileExists(atPath: path, isDirectory: &isDir)
@@ -464,9 +478,15 @@ func checkDirectory(_ path: String, _ dirType: String) -> Bool {
 }
 
 
+///
+/// Compress an image.
+///
+/// - Parameters:
+///     - image The chosen image.
+///
+/// - Returns: The compressed image, or `nil` on error.
+///
 func compressImage(_ image: NSImage) -> NSImage? {
-
-    // Take an existing image, and compress it
 
     if let tiff = image.tiffRepresentation {
         if let imageRep: NSBitmapImageRep = NSBitmapImageRep.init(data: tiff) {
@@ -484,9 +504,16 @@ func compressImage(_ image: NSImage) -> NSImage? {
 }
 
 
+///
+/// Ensure an image dimension, whether width or height, is an integral multiple of 2.
+///
+/// - Parameters:
+///     - dimension The chosen base (width or height)
+///
+/// - Returns: The dimension's closest even value.
+///
 func sizeAlign(_ dimension: CGFloat) -> CGFloat {
 
-    // Ensure an image dimension, whether width or height, is an integral multiple of 2
     var returnValue: CGFloat = dimension.rounded(.down)
 
     if returnValue.truncatingRemainder(dividingBy: 2.0) != 0 {
@@ -497,9 +524,14 @@ func sizeAlign(_ dimension: CGFloat) -> CGFloat {
 }
 
 
+///
+/// Set the image DPI based on its pixel dimensions and the standard ('BASE') DPI.
+///
+/// - Parameters:
+///     - imageRep The image for which the DPI will be set.
+///     - dpi      The required DPI.
+///
 func setDPI(_ imageRep: NSBitmapImageRep, _ dpi: CGFloat) {
-
-    // Set the image DPI based on its pixel dimensions and the standard ('BASE') DPI
 
     var size: CGSize = imageRep.size
     size.width = CGFloat(imageRep.pixelsWide) * BASE_DPI / dpi
@@ -508,9 +540,11 @@ func setDPI(_ imageRep: NSBitmapImageRep, _ dpi: CGFloat) {
 }
 
 
+///
+/// Display the chosen image compression level.
+///
 func showCompression() {
 
-    // Display the chosen image compression level
     let percent: Int = Int(compressionLevel * 100)
     var amount = "\(percent)%"
     if percent == 0 { amount = "Least (" + amount + ")" }
@@ -519,10 +553,16 @@ func showCompression() {
 }
 
 
+///
+/// Convert a partial path to an absolute path.
+/// FROM 2.3.0
+///
+/// - Parameters:
+///     - relativePath A path.
+///
+/// - Returns: An absolute path.
+///
 func getFullPath(_ relativePath: String) -> String {
-
-    // FROM 2.3.0
-    // Convert a partial path to an absolute path
 
     // Standardise the path as best as we can (this covers most cases)
     var absolutePath: String = (relativePath as NSString).standardizingPath
@@ -538,21 +578,32 @@ func getFullPath(_ relativePath: String) -> String {
 }
 
 
+///
+/// Add the basepath (the current working directory of the call) to the
+/// supplied relative path - and then resolve it.
+/// FROM 2.3.0
+///
+/// - Parameters:
+///     - relativePath A path.
+///
+/// - Returns: An absolute path.
+///
 func processRelativePath(_ relativePath: String) -> String {
-
-    // FROM 2.3.0
-    // Add the basepath (the current working directory of the call) to the
-    // supplied relative path - and then resolve it
 
     let absolutePath = FileManager.default.currentDirectoryPath + "/" + relativePath
     return (absolutePath as NSString).standardizingPath
 }
 
 
+///
+/// Generic error display routine that also quits the app.
+/// FROM 2.3.0
+///
+/// - Parameters:
+///     - message The text to print.
+///     - code    The shell `exit` error code.
+///
 func reportErrorAndExit(_ message: String, _ code: Int32 = EXIT_FAILURE) {
-
-    // FROM 2.3.0
-    // Generic error display routine that also quits the app
 
     writeToStderr(RED + BOLD + "ERROR" + RESET + " " + message + " -- exiting")
     dss.cancel()
@@ -560,46 +611,80 @@ func reportErrorAndExit(_ message: String, _ code: Int32 = EXIT_FAILURE) {
 }
 
 
+///
+/// Generic warning display routine.
+/// FROM 2.3.0
+///
+/// - Parameters:
+///     - message The text to print.
+///
 func reportError(_ message: String) {
-
-    // FROM 2.3.0
-    // Generic error display routine
 
     writeToStderr(RED + BOLD + "ERROR" + RESET + " " + message)
 }
 
 
+///
+/// Generic warning display routine.
+/// FROM 2.3.7
+///
+/// - Parameters:
+///     - message The text to print.
+///
 func reportWarning(_ message: String) {
-
-    // FROM 2.3.7
-    // Generic warning display routine
 
     writeToStderr(YELLOW + BOLD + "WARNING" + RESET + " " + message)
 }
 
 
-func writeToStderr(_ message: String) {
+///
+/// Post extra information but only if requested by the user.
+/// FROM 2.3.8
+///
+/// - Parameters:
+///     - message The text to print.
+///
+func reportInfo(_ message: String) {
+    
+    if doShowInfo {
+        writeToStderr(message)
+    }
+}
 
-    // FROM 2.3.0
-    // Write errors and other messages to stderr
+
+///
+/// Issue the supplied text to `STDERR`.
+///
+/// - Parameters:
+///     - message The text to print.
+///
+func writeToStderr(_ message: String) {
 
     writeOut(message, STD_ERR)
 }
 
 
+///
+/// Issue the supplied text to `STDOUT`.
+///
+/// - Parameters:
+///     - message The text to print.
+///
 func writeToStdout(_ message: String) {
-
-    // FROM 2.3.2
-    // Write errors and other messages to stderr
 
     writeOut(message, STD_OUT)
 }
 
 
+///
+/// Generic text output routine.
+/// FROM 2.3.2
+///
+/// - Parameters:
+///     - message           The text to print.
+///     - targetFileHandle: Where the message will be sent.
+///
 func writeOut(_ message: String, _ targetFileHandle: FileHandle) {
-
-    // FROM 2.3.2
-    // Write errors and other messages to `target`
 
     let messageAsString = message + "\r\n"
     if let messageAsData: Data = messageAsString.data(using: .utf8) {
@@ -608,9 +693,10 @@ func writeOut(_ message: String, _ targetFileHandle: FileHandle) {
 }
 
 
+///
+/// Display the help screen.
+///
 func showHelp() {
-
-    // Display the help screen
 
     showHeader()
 
@@ -622,7 +708,7 @@ func showHelp() {
     writeToStdout("    -s | --source      {path}    The path to the images or an image. Default: current folder")
     writeToStdout("    -d | --destination {path}    Where to save the new PDF. The file name is optional.")
     writeToStdout("                                 Default: ~/Desktop folder/\'PDF From Images.pdf\'.")
-    writeToStdout("    -n | --name                  Specify the target file name. Only used when your destination")
+    writeToStdout("    -n | --name        {name}    Specify the target file name. Only used when your destination")
     writeToStdout("                                 is a directory.")
     writeToStdout("    -c | --compress    {amount}  Apply an image compression filter to the PDF:")
     writeToStdout("                                 0.0 = maximum compression, lowest image quality.")
@@ -640,20 +726,22 @@ func showHelp() {
 }
 
 
+///
+/// Display the app's version and other information.
+/// FROM 2.1.0
+///
 func showVersion() {
 
-    // FROM 2.1.0
-    // Display the utility's version
-
     showHeader()
-    writeToStdout("Copyright © 2024, Tony Smith (@smittytone).\r\nSource code available under the MIT licence.")
+    writeToStdout("Copyright © 2025, Tony Smith (@smittytone).\r\nSource code available under the MIT licence.")
 }
 
 
+///
+/// Display the app's version.
+/// FROM 2.1.0
+///
 func showHeader() {
-
-    // FROM 2.1.0
-    // Display the utility's version number
 
     let version: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
     let build: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
@@ -684,15 +772,41 @@ dss.resume()
 
 // FROM 2.3.0
 // No arguments? Show Help
-var args = CommandLine.arguments
-if args.count == 1 {
+if CommandLine.arguments.count == 1 {
     showHelp()
     dss.cancel()
     exit(EXIT_SUCCESS)
 }
 
-for argument in args {
+// Expand composite flags
+var args: [String] = []
+for arg in CommandLine.arguments {
+    // Look for compound flags, ie. a single dash followed by
+    // more than one flag identifier
+    if arg.prefix(1) == "-" && arg.prefix(2) != "--" {
+        if arg.count > 2 {
+            // arg is of form '-mfs'
+            for sub_arg in arg {
+                // Check for and ignore interior dashes
+                // eg. in `-mf-l`
+                if sub_arg == "-" {
+                    continue
+                }
+                
+                // Retain the flag as a standard arg for subsequent processing
+                args.append("-\(sub_arg)")
+            }
 
+            continue
+        }
+    }
+    
+    // It's an ordinary arg, so retain it
+    args.append(arg)
+}
+
+// Process the (separated) arguments
+for argument in args {
     // Ignore the first comand line argument
     if argCount == 0 {
         argCount += 1
@@ -802,7 +916,12 @@ for argument in args {
 destPath = getFullPath(destPath)
 sourcePath = getFullPath(sourcePath)
 
+// Check the supplied paths
+// NOTE 'checkDirectory()' will exit if the either item doesn't exist
+let isSrcADir: Bool = checkDirectory(sourcePath, "Source")
+let isDestADir: Bool = checkDirectory(destPath, "Target")
+
 // Convert the images
-var success: Bool = doBreak ? pdfToImages() : imagesToPdf()
+var success: Bool = doBreak ? pdfToImages(isSrcADir, isDestADir) : imagesToPdf(isSrcADir, isDestADir)
 dss.cancel()
 exit(success ? 0 : 1)
