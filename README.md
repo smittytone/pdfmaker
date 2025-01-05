@@ -1,8 +1,8 @@
 # pdfmaker 2.3.8 #
 
-*pdfmaker* is a command line tool for combining multiple JPEG images into a single PDF file.
+*pdfmaker* is a command line tool for combining multiple images into a single PDF file. It supports JPEG, HEIC, PNG, TIFF, BMP and WebP as source-image formats.
 
-It can also be used to convert a PDF into separate page images.
+It can also be used to convert a PDF into separate page JPEG images.
 
 For some background on the development of this tool, please see [this blog post](https://smittytone.wordpress.com/2019/10/25/macos-make-pdf-from-images/).
 
@@ -79,12 +79,12 @@ This converts `Project X.pdf` to a series of images that will be written to the 
 
 ## Contributions ##
 
-Contributions are welcome, but pull requestss can only be accepted when they target the `develop` branch. PRs targetting `main` will be rejected.
+Contributions are welcome, but pull requests can only be accepted when they target the `develop` branch. PRs targeting `main` will be rejected.
 
 ## Release Notes ##
 
 - 2.3.8 *Unreleased*
-    - Support WebP and HEIC source images.
+    - Support WebP, BMP and HEIC source images.
     - Allow compound flags.
     - "A little refactoring: make Swift code more idiomatic."
     - A clearer function comments.
@@ -127,7 +127,7 @@ Contributions are welcome, but pull requestss can only be accepted when they tar
     - Allow the user to name the target file as part of the target path.
         - Remove the `--name` switch.
     - Ignore dot files in the source image search.
-    - Support easier notarization.
+    - Support easier notarisation.
 - 1.0.0 *18 October 2019*
     - Initial public release.
 
