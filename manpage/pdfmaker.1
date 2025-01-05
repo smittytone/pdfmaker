@@ -4,7 +4,7 @@
 pdfmaker \- Create PDFs from images.
 
 .SH SYNOPSIS
-\fBpdfmaker\fR [\fB\-s\fR path] [\fB\-d\fR path] [\fB\-c\fR value] [\fB\-r\fR value] [\fB\-b\fR] [\fB\-v\fR] [\fB\-h\fR]
+\fBpdfmaker\fR [\fB\-s\fR path] [\fB\-d\fR path] [\fB\-n\fR filename] [\fB\-c\fR value] [\fB\-r\fR value] [\fB\-b\fR] [\fB\-v\fR] [\fB\-h\fR]
 
 .SH DESCRIPTION
 .P
@@ -16,7 +16,11 @@ expand a single PDF file into a collection of image files.
 \fB\-s\fR | \fB\-\-source\fR {path}       The path to the images or an image. Default: current folder.
 .P
 \fB\-d\fR | \fB\-\-destination\fR {path}  Where to save the new PDF. The file name is optional.
-                           Default: ~/Desktop/'PDF From Images.pdf'.
+                           Default: ~/Desktop/'PDF From Images via pdfmaker.pdf'.
+
+.P
+\fB\-n\fR | \fB\-\-name\fR {name}         Specify the target file name. Only used when your destination
+                           is a directory.
 
 .P
 \fB\-c\fR | \fB\-\-compress\fR {amount}   Apply an image compression filter to the PDF:
@@ -29,7 +33,7 @@ expand a single PDF file into a collection of image files.
 .P
 \fB\-r\fR | \fB\-\-resolution\fR {dpi}    The output resolution of extracted images. Max: \fI9999\fR.
 .P
-\fB\-v\fR | \fB\-\-verbose\fR             Show progress information. Otherwise only errors are shown.
+\fB\-v\fR | \fB\-\-verbose\fR             Show progress information. Otherwise only errors/warnings are shown.
 .P
 \fB\-h\fR | \fB\-\-help\fR                This help screen.
 .P
@@ -41,6 +45,8 @@ expand a single PDF file into a collection of image files.
 pdfmaker \fB\-\-source\fR $IMAGES_DIR \fB\-\-destination\fR $PDFS_DIR/'Project X.pdf' \fB\-\-compress 0.8\fR
 .P
 pdfmaker \fB\-\-source\fR $IMAGES_DIR/cover.jpg \fB\-\-destination\fR $PDFS_DIR \fB\-\-compress 0.5\fR
+.P
+pdfmaker \fB\-\-source\fR $IMAGES_DIR/cover.jpg \fB\-\-destination\fR $PDFS_DIR \fB\-\-name cover.pdf\fR
 .P
 pdfmaker \fB\-\-break\fR \fB\-\-source\fR $PDFS_DIR/'Project X.pdf' \fB\-\-destination\fR $IMAGES_DIR
 
