@@ -86,7 +86,7 @@ Contributions are welcome, but pull requests can only be accepted when they targ
 - 2.3.8 *5 January 2025*
     - Support WebP, BMP and HEIC source images.
     - Allow compound flags.
-    - "A little refactoring: make Swift code more idiomatic."
+    - A little refactoring: make Swift code more idiomatic.
     - Clearer function comments.
 - 2.3.7 *13 September 2024*
     - Catch PDFKit image initialisation errors and hide from console, but report in a *pdfmaker* fashion.
