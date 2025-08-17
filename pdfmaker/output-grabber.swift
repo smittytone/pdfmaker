@@ -28,27 +28,29 @@ import Foundation
 
 
 class OutputGrabber {
-    
-    // MARK: -  Public properties
+
+    // MARK: Public properties
+
     var errors: [String] = []
     var errorCounts: [Int] = []
     var verboseErrSet: Bool = false
-    
-    
-    // MARK: -  Private properties
+
+
+    // MARK: Private properties
+
     private var inputPipe: Pipe? = nil
     private var pipeReadHandle: FileHandle? = nil
     private var contents: String = ""
     private var doDeDupe: Bool = false
-    
-    
-    // MARK: -  Constants
+
+
+    // MARK: Constants
+
     private let savedStderr = dup(STDERR_FILENO)
-    
-    
-    
-    // MARK: - Methods: Instance Lifecyle
-    
+
+
+    // MARK: Methods: Instance Lifecyle
+
     init(dedupe: Bool = false) {
         // Check for the `CG_PDF_VERBOSE` env var
         // NOTE Only relevant when trapping STDERR messages from PDFKit
@@ -60,13 +62,13 @@ class OutputGrabber {
         // Record whether the user wants to de-dupe incomimg messages
         self.doDeDupe = dedupe
     }
-    
-    
-    // MARK: -  Methods: Pipe Management
-    
-    ///
-    /// Open a new Pipe to consume the messages on `STDERR`.
-    ///
+
+
+    // MARK: Methods: Pipe Management
+
+    /**
+     Open a new Pipe to consume the messages on `STDERR`.
+     */
     func openConsolePipe() {
         
         if self.inputPipe == nil {
@@ -123,16 +125,15 @@ class OutputGrabber {
             dup2(self.inputPipe!.fileHandleForWriting.fileDescriptor, STDERR_FILENO)
         }
     }
-    
-    
-    ///
-    /// Restore output to `STDERR`.
-    ///
-    /// Returns: `true` on success, otherwise `false`.
-    ///
+
+
+    /**
+     Restore output to `STDERR`.
+
+     - Returns `true` on success, otherwise `false`.
+     */
     func closeConsolePipe() -> Bool {
         
-        // Restore output to STDERR
         // NOTE Docs say invalidaing `inputPipe` zaps `pipeReadHandle`.
         if self.inputPipe != nil {
             // Redirect STDERR back to tty...

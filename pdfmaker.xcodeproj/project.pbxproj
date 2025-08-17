@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		3B2E41A02C95AC7300B3A868 /* output-grabber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2E419F2C95AC7300B3A868 /* output-grabber.swift */; };
+		3B71EEF32E52512E008DBBAB /* stdio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B71EEF22E52512E008DBBAB /* stdio.swift */; };
+		3B71EEF42E52512E008DBBAB /* cli.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B71EEF12E52512E008DBBAB /* cli.swift */; };
+		3B71EEF62E525230008DBBAB /* path.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B71EEF52E525230008DBBAB /* path.swift */; };
+		3B71EEF82E52544C008DBBAB /* pdf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B71EEF72E52544C008DBBAB /* pdf.swift */; };
 		3B746092235726550032EA96 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B746091235726550032EA96 /* main.swift */; };
 /* End PBXBuildFile section */
 
@@ -16,6 +20,11 @@
 		3B41AE822360D9D8009FE993 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3B69BDB82A73BADE00415A8E /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
 		3B69BDB92A73BADE00415A8E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		3B71EEF02E524FE0008DBBAB /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
+		3B71EEF12E52512E008DBBAB /* cli.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = cli.swift; sourceTree = "<group>"; };
+		3B71EEF22E52512E008DBBAB /* stdio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = stdio.swift; sourceTree = "<group>"; };
+		3B71EEF52E525230008DBBAB /* path.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = path.swift; sourceTree = "<group>"; };
+		3B71EEF72E52544C008DBBAB /* pdf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pdf.swift; sourceTree = "<group>"; };
 		3B74608E235726550032EA96 /* pdfmaker */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = pdfmaker; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B746091235726550032EA96 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		3BD5844C2D1300E9006388F1 /* BBC Space Themes.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "BBC Space Themes.jpg"; sourceTree = "<group>"; };
@@ -46,6 +55,7 @@
 			children = (
 				3B69BDB92A73BADE00415A8E /* README.md */,
 				3B69BDB82A73BADE00415A8E /* LICENSE.md */,
+				3B71EEF02E524FE0008DBBAB /* CHANGELOG.md */,
 				3BD584582D130247006388F1 /* Package.swift */,
 			);
 			name = Misc;
@@ -74,6 +84,10 @@
 			isa = PBXGroup;
 			children = (
 				3B746091235726550032EA96 /* main.swift */,
+				3B71EEF72E52544C008DBBAB /* pdf.swift */,
+				3B71EEF12E52512E008DBBAB /* cli.swift */,
+				3B71EEF52E525230008DBBAB /* path.swift */,
+				3B71EEF22E52512E008DBBAB /* stdio.swift */,
 				3B2E419F2C95AC7300B3A868 /* output-grabber.swift */,
 				3B41AE822360D9D8009FE993 /* Info.plist */,
 			);
@@ -169,7 +183,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3B71EEF62E525230008DBBAB /* path.swift in Sources */,
 				3B2E41A02C95AC7300B3A868 /* output-grabber.swift in Sources */,
+				3B71EEF82E52544C008DBBAB /* pdf.swift in Sources */,
+				3B71EEF32E52512E008DBBAB /* stdio.swift in Sources */,
+				3B71EEF42E52512E008DBBAB /* cli.swift in Sources */,
 				3B746092235726550032EA96 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -303,7 +321,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 175;
+				CURRENT_PROJECT_VERSION = 179;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y5J3K52DNA;
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = Y5J3K52DNA;
@@ -311,7 +329,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/pdfmaker/Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 11.5;
-				MARKETING_VERSION = 2.3.8;
+				MARKETING_VERSION = 2.3.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bps.pdfmaker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -326,7 +344,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 175;
+				CURRENT_PROJECT_VERSION = 179;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y5J3K52DNA;
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = Y5J3K52DNA;
@@ -334,7 +352,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/pdfmaker/Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 11.5;
-				MARKETING_VERSION = 2.3.8;
+				MARKETING_VERSION = 2.3.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bps.pdfmaker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
