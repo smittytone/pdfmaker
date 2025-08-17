@@ -1,0 +1,51 @@
+## Release Notes ##
+
+- 2.3.9 *Unreleased*
+    - Code reorganisation and migration to separate files.
+- 2.3.8 *5 January 2025*
+    - Support WebP, BMP and HEIC source images.
+    - Allow compound flags.
+    - A little refactoring: make Swift code more idiomatic.
+    - Clearer function comments.
+- 2.3.7 *13 September 2024*
+    - Catch PDFKit image initialisation errors and hide from console, but report in a *pdfmaker* fashion.
+- 2.3.6 *10 August 2023*
+    - Fix missing `--name` switch.
+- 2.3.5 *09 July 2023*
+    - Maintenance.
+- 2.3.4 *14 March 2023*
+    - Under-the-hood code changes.
+- 2.3.3 *24 May 2022*
+    - `man` page textual changes.
+- 2.3.2 *23 May 2022*
+    - Add `man` page.
+    - Under-the-hood code changes.
+- 2.3.1 *21 July 2021*
+    - Add async signal safe ctrl-c trapping code.
+- 2.3.0 *19 December 2020*
+    - Add `--createdirs` switch to create intermediate directories to the specified target.
+    - Improved handling of relative paths.
+    - Improved argument checking.
+    - Colourise output for greater visibility.
+    - Make error reporting consistent with [*imageprep*](https://smittytone.net/imageprep/index.html).
+    - Fixed a bug in which target PDFs at non-existent locations were not trapped.
+    - Write all messages to user via `stderr` ([click here to see why](https://clig.dev/#the-basics)).
+    - Correctly trap `SIGINT`.
+    - Add test suite.
+- 2.2.0 *18 November 2020*
+    - Apple Silicon version included.
+    - Support adding PNG and TIFFs to PDFs.
+    - More informative error reporting.
+- 2.1.0 *09 July 2020*
+    - Better reporting of bad arguments.
+    - Add '--version' option.
+- 2.0.0 *14 November 2019*
+    - Add PDF-to-images functionality.
+- 1.1.0 *28 October 2019*
+    - Allow the user to select a single source image, not just source directories.
+    - Allow the user to name the target file as part of the target path.
+        - Remove the `--name` switch.
+    - Ignore dot files in the source image search.
+    - Support easier notarisation.
+- 1.0.0 *18 October 2019*
+    - Initial public release.
