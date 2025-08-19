@@ -1,4 +1,4 @@
-# pdfmaker 2.3.9 #
+# pdfmaker 2.4.0 #
 
 *pdfmaker* is a command line tool for combining multiple images into a single PDF file. It supports JPEG, HEIC, PNG, TIFF, BMP and WebP as source-image formats.
 

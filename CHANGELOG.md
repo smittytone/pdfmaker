@@ -1,7 +1,7 @@
 ## Release Notes ##
 
-- 2.3.9 *Unreleased*
-    - Code reorganisation and migration to separate files.
+- 2.4.0 *Unreleased*
+    - Code reorganisation and migration to separate files using my standard CLI components.
 - 2.3.8 *5 January 2025*
     - Support WebP, BMP and HEIC source images.
     - Allow compound flags.

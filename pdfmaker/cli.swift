@@ -33,6 +33,15 @@ struct Cli {
     static let CtrlCMessage: String = "\(Stdio.ShellCursor.Return)\(Stdio.ShellCursor.Clearline)"
 
 
+    /**
+     Locate combined args (eg. -lj) and convert into separate args
+     for later processing by the host app.
+
+     - Parameters:
+        - args The arguments from the command line.
+
+     - Returns Regular args plus converted ones.
+     */
     static func unify(args: [String]) -> [String] {
 
         var newArgs: [String] = []
@@ -63,5 +72,21 @@ struct Cli {
         }
 
         return newArgs
+    }
+
+
+    /**
+    Get the value of a named shell environment variable.
+
+    - Parameters:
+       - envVar The environment variable, eg. `TERM`.
+
+    - Returns The environment variable's value as a string,
+              or an empty string on error/absence.
+     */
+    static func getEnvVar(_ envVar: String) -> String {
+
+        guard let rawValue = getenv(envVar) else { return "" }
+        return String(utf8String: rawValue) ?? ""
     }
 }

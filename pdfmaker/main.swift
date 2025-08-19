@@ -63,27 +63,13 @@ let grabber: OutputGrabber = OutputGrabber.init(dedupe: true)
 
 // FROM 2.3.2
 // Make sure the signal does not terminate the application
-signal(SIGINT, SIG_IGN)
-
-// Set up an event source for SIGINT...
-Stdio.dispatchSource = DispatchSource.makeSignalSource(signal: SIGINT, queue: DispatchQueue.main)
-
-// ...add an event handler (from above)...
-Stdio.dispatchSource?.setEventHandler {
-    Stdio.report(Cli.CtrlCMessage)
-    Stdio.reportWarning("pdfmaker ")
-    Stdio.dispatchSource?.cancel()
-    exit(Cli.CtrlCExitCode)
-}
-
-// ...and start the event flow
-Stdio.dispatchSource?.resume()
+Stdio.enableCtrlHandler("pdfmaker interrupted -- halting")
 
 // FROM 2.3.0
 // No arguments? Show Help
 if CommandLine.arguments.count == 1 {
     showHelp()
-    Stdio.dispatchSource?.cancel()
+    Stdio.disableCtrlHandler()
     exit(EXIT_SUCCESS)
 }
 
@@ -176,11 +162,11 @@ for argument in args {
             fallthrough
         case "--help":
             showHelp()
-            Stdio.dispatchSource?.cancel()
+            Stdio.disableCtrlHandler()
             exit(EXIT_SUCCESS)
         case "--version":
             showHeader()
-            Stdio.dispatchSource?.cancel()
+            Stdio.disableCtrlHandler()
             exit(EXIT_SUCCESS)
         default:
             Stdio.reportErrorAndExit("Unknown argument: \(argument)")
@@ -210,7 +196,7 @@ let isDestADir: Bool = Pdf.checkDirectory(destPath, "Target")
 
 // Convert the images
 var success: Bool = doBreak ? Pdf.pdfToImages(isSrcADir, isDestADir) : Pdf.imagesToPdf(isSrcADir, isDestADir)
-Stdio.dispatchSource?.cancel()
+Stdio.disableCtrlHandler()
 exit(success ? EXIT_SUCCESS : EXIT_FAILURE)
 
 

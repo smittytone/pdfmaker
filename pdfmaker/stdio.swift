@@ -220,6 +220,44 @@ struct Stdio {
     static var dispatchSource: DispatchSourceSignal? = nil
 
 
+    // MARK: Public Functions for Ctrl-C Support
+
+    /**
+     Trap Ctrl-C to display a friendly messgage.
+     */
+    static func enableCtrlHandler(_ handlerWarning: String?) {
+
+        // Make sure the signal does not terminate the application
+        signal(SIGINT, SIG_IGN)
+
+        // Set up an event source for SIGINT...
+        dispatchSource = DispatchSource.makeSignalSource(signal: SIGINT, queue: DispatchQueue.main)
+
+        // ...add an event handler (from above)...
+        if let ds = dispatchSource {
+            ds.setEventHandler {
+                write(message: Cli.CtrlCMessage, to: Stdio.ShellRoutes.Error)
+                if let hw = handlerWarning {
+                    reportWarning(hw)
+                }
+                ds.cancel()
+                exit(Cli.CtrlCExitCode)
+            }
+
+            // ...and start the event flow
+            ds.resume()
+        }
+    }
+
+
+    static func disableCtrlHandler() {
+
+        if let ds = dispatchSource {
+            ds.cancel()
+        }
+    }
+
+
     // MARK: Public Functions for Reporting and Data Output
 
     /**
@@ -255,7 +293,7 @@ struct Stdio {
     static func reportErrorAndExit(_ message: String, _ code: Int32 = EXIT_FAILURE) {
 
         writeToStderr(String(.red) + String(.bold) + "ERROR " + String(.normal) + message + " -- exiting")
-        dispatchSource?.cancel()
+        disableCtrlHandler()
         exit(code)
     }
 
@@ -274,7 +312,12 @@ struct Stdio {
      */
     static func writeln(message text: String, to fileHandle: FileHandle) {
 
-        if let textAsData: Data = (text  + "\r\n").data(using: .utf8) {
+#if os(macOS)
+        let EOL = "\n"
+#else
+        let EOL = "\r\n"
+#endif
+        if let textAsData: Data = (text + EOL).data(using: .utf8) {
             fileHandle.write(textAsData)
         }
     }
