@@ -10,9 +10,7 @@
 		3B2E41A02C95AC7300B3A868 /* output-grabber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2E419F2C95AC7300B3A868 /* output-grabber.swift */; };
 		3B71EEF82E52544C008DBBAB /* pdfmaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B71EEF72E52544C008DBBAB /* pdfmaker.swift */; };
 		3B746092235726550032EA96 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B746091235726550032EA96 /* main.swift */; };
-		3B757F752E54934800567756 /* path.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B757F732E54934800567756 /* path.swift */; };
-		3B757F762E54934800567756 /* stdio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B757F742E54934800567756 /* stdio.swift */; };
-		3B757F772E54934800567756 /* cli.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B757F722E54934800567756 /* cli.swift */; };
+		3BC360D82E54DC2000E71422 /* Clicore in Frameworks */ = {isa = PBXBuildFile; productRef = 3BC360D72E54DC2000E71422 /* Clicore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,9 +22,6 @@
 		3B71EEF72E52544C008DBBAB /* pdfmaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pdfmaker.swift; sourceTree = "<group>"; };
 		3B74608E235726550032EA96 /* pdfmaker */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = pdfmaker; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B746091235726550032EA96 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		3B757F722E54934800567756 /* cli.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = cli.swift; path = clicore/cli.swift; sourceTree = SOURCE_ROOT; };
-		3B757F732E54934800567756 /* path.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = path.swift; path = clicore/path.swift; sourceTree = SOURCE_ROOT; };
-		3B757F742E54934800567756 /* stdio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = stdio.swift; path = clicore/stdio.swift; sourceTree = SOURCE_ROOT; };
 		3BD5844C2D1300E9006388F1 /* BBC Space Themes.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "BBC Space Themes.jpg"; sourceTree = "<group>"; };
 		3BD5844D2D1300E9006388F1 /* Fourth Dimension.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Fourth Dimension.jpg"; sourceTree = "<group>"; };
 		3BD5844E2D1300E9006388F1 /* Out of this World.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Out of this World.jpg"; sourceTree = "<group>"; };
@@ -44,6 +39,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3BC360D82E54DC2000E71422 /* Clicore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -86,9 +82,6 @@
 				3B746091235726550032EA96 /* main.swift */,
 				3B71EEF72E52544C008DBBAB /* pdfmaker.swift */,
 				3B2E419F2C95AC7300B3A868 /* output-grabber.swift */,
-				3B757F722E54934800567756 /* cli.swift */,
-				3B757F732E54934800567756 /* path.swift */,
-				3B757F742E54934800567756 /* stdio.swift */,
 				3B41AE822360D9D8009FE993 /* Info.plist */,
 			);
 			path = pdfmaker;
@@ -169,6 +162,9 @@
 				Base,
 			);
 			mainGroup = 3B746085235726550032EA96;
+			packageReferences = (
+				3BC360D62E54DC2000E71422 /* XCRemoteSwiftPackageReference "clicore" */,
+			);
 			productRefGroup = 3B74608F235726550032EA96 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -186,9 +182,6 @@
 				3B2E41A02C95AC7300B3A868 /* output-grabber.swift in Sources */,
 				3B71EEF82E52544C008DBBAB /* pdfmaker.swift in Sources */,
 				3B746092235726550032EA96 /* main.swift in Sources */,
-				3B757F752E54934800567756 /* path.swift in Sources */,
-				3B757F762E54934800567756 /* stdio.swift in Sources */,
-				3B757F772E54934800567756 /* cli.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -321,7 +314,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 183;
+				CURRENT_PROJECT_VERSION = 188;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y5J3K52DNA;
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = Y5J3K52DNA;
@@ -344,7 +337,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 183;
+				CURRENT_PROJECT_VERSION = 188;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y5J3K52DNA;
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = Y5J3K52DNA;
@@ -382,6 +375,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3BC360D62E54DC2000E71422 /* XCRemoteSwiftPackageReference "clicore" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/smittytone/clicore";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3BC360D72E54DC2000E71422 /* Clicore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3BC360D62E54DC2000E71422 /* XCRemoteSwiftPackageReference "clicore" */;
+			productName = Clicore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3B746086235726550032EA96 /* Project object */;
 }

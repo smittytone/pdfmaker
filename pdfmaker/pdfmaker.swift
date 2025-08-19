@@ -26,6 +26,7 @@
 
 import Foundation
 import Quartz
+import Clicore
 
 
 struct Pdf {

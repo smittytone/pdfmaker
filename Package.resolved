@@ -1,0 +1,15 @@
+{
+  "originHash" : "9232eaa017b51afd45bb03c57966eb17051d54f56f89ba010953fdeaf8ea55bd",
+  "pins" : [
+    {
+      "identity" : "clicore",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/smittytone/clicore",
+      "state" : {
+        "branch" : "main",
+        "revision" : "ce4fd3b616f13301f18c8c5da0a9fe2537c4b472"
+      }
+    }
+  ],
+  "version" : 3
+}
