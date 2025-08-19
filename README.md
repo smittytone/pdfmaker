@@ -8,7 +8,7 @@ For some background on the development of this tool, please see [this blog post]
 
 ## Installation ##
 
-Build and copy the binary to the `/usr/local/bin` directory.
+Build and copy the binary to the `/usr/local/bin` directory. You will first need to retrieve the git submodule used by the code.
 
 ## Usage ##
 
