@@ -124,44 +124,28 @@ for argument in args {
         argIsAValue = false
     } else {
         switch argument {
-        case "-d":
-            fallthrough
-        case "--destination":
+        case "-d", "--destination":
             argType = 0
             argIsAValue = true
-        case "-s":
-            fallthrough
-        case "--source":
+        case "-s", "--source":
             argType = 1
             argIsAValue = true
-        case "-n":
-            fallthrough
-        case "--name":
+        case "-n", "--name":
             argType = 2
             argIsAValue = true
-        case "-c":
-            fallthrough
-        case "--compress":
+        case "-c", "--compress":
             argType = 3
             argIsAValue = true
-        case "-r":
-            fallthrough
-        case "--resolution":
+        case "-r", "--resolution":
             argType = 4
             argIsAValue = true
-        case "-b":
-            fallthrough
-        case "--break":
+        case "-b", "--break":
             doBreak = true
         case "--createdirs":
             doMakeSubDirectories = true
-        case "-v":
-            fallthrough
-        case "--verbose":
+        case "-v", "--verbose":
             doShowInfo = true
-        case "-h":
-            fallthrough
-        case "--help":
+        case "-h", "--help":
             showHelp()
             Stdio.disableCtrlHandler()
             exit(EXIT_SUCCESS)
