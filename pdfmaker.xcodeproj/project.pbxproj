@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -15,6 +15,10 @@
 
 /* Begin PBXFileReference section */
 		3B2E419F2C95AC7300B3A868 /* output-grabber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "output-grabber.swift"; sourceTree = "<group>"; };
+		3B38EA0C2E5897DC00BAD457 /* BBC Space Themes.webp */ = {isa = PBXFileReference; lastKnownFileType = file; path = "BBC Space Themes.webp"; sourceTree = "<group>"; };
+		3B38EA0D2E5897F000BAD457 /* Out of this World.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "Out of this World.bmp"; sourceTree = "<group>"; };
+		3B38EA0E2E5897F000BAD457 /* Out of this World.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "Out of this World.gif"; sourceTree = "<group>"; };
+		3B38EA0F2E58980500BAD457 /* Star Wars and Other Great Space Themes.heic */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Star Wars and Other Great Space Themes.heic"; sourceTree = "<group>"; };
 		3B41AE822360D9D8009FE993 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3B69BDB82A73BADE00415A8E /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
 		3B69BDB92A73BADE00415A8E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -91,10 +95,14 @@
 			isa = PBXGroup;
 			children = (
 				3BD5844C2D1300E9006388F1 /* BBC Space Themes.jpg */,
+				3B38EA0C2E5897DC00BAD457 /* BBC Space Themes.webp */,
 				3BD5844D2D1300E9006388F1 /* Fourth Dimension.jpg */,
 				3BD5844E2D1300E9006388F1 /* Out of this World.jpg */,
+				3B38EA0D2E5897F000BAD457 /* Out of this World.bmp */,
+				3B38EA0E2E5897F000BAD457 /* Out of this World.gif */,
 				3BD5844F2D1300E9006388F1 /* Space Invaded.jpg */,
 				3BD584502D1300E9006388F1 /* Star Wars and Other Great Space Themes.jpg */,
+				3B38EA0F2E58980500BAD457 /* Star Wars and Other Great Space Themes.heic */,
 				3BD584512D1300E9006388F1 /* test.pdf */,
 			);
 			path = source;
@@ -154,7 +162,6 @@
 				};
 			};
 			buildConfigurationList = 3B746089235726550032EA96 /* Build configuration list for PBXProject "pdfmaker" */;
-			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -165,6 +172,7 @@
 			packageReferences = (
 				3BC360D62E54DC2000E71422 /* XCRemoteSwiftPackageReference "clicore" */,
 			);
+			preferredProjectObjectVersion = 77;
 			productRefGroup = 3B74608F235726550032EA96 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -314,7 +322,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 194;
+				CURRENT_PROJECT_VERSION = 198;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y5J3K52DNA;
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = Y5J3K52DNA;
@@ -337,7 +345,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 194;
+				CURRENT_PROJECT_VERSION = 198;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y5J3K52DNA;
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = Y5J3K52DNA;
