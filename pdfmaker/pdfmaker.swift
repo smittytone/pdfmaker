@@ -340,6 +340,84 @@ struct Pdf {
 
 
     /**
+     Extract the text from the PDF file, if possible, and save it.
+
+     FROM 2.4.0
+
+     - Parameters:
+        - isSrcADir  Does the global source file path lead to a directory?
+        - isDestADir Does the global destination file path lead to a directory?
+
+     - Returns: `true` on a successful completion, otherwise `false`.
+     */
+    static func pdfToText(_ isSrcADir: Bool, _ isDestADir: Bool) -> Bool {
+
+        // Make sure we're loading a PDF and outputting to a directory
+        if isSrcADir {
+            Stdio.reportError("Source \(sourcePath) is a directory")
+            return false
+        }
+
+        // Hold data is an attributed string, in case we want to make something
+        // with it in a future release, eg. RTF file
+        let documentContent = NSMutableAttributedString()
+        let ext: String = (sourcePath as NSString).pathExtension.lowercased()
+
+        // Only proceed if the file is a PDF
+        if ext == "pdf" {
+            do {
+                // Get data from the file...
+                let fileData: Data = try Data(contentsOf: URL(fileURLWithPath: sourcePath))
+
+                // ...and see if it's a PDF
+                if let pdf = PDFDocument(data: fileData) {
+                    // Extract the text from each page as an NSAttributedString
+                    for i in 0 ..< pdf.pageCount {
+                        guard let page = pdf.page(at: i) else { continue }
+                        guard let pageContent = page.attributedString else { continue }
+                        documentContent.append(pageContent)
+                    }
+
+                    // If we have gathered some text, output it to a file
+                    if !documentContent.string.isEmpty {
+                        if let finalData: Data = documentContent.string.data(using: .utf8) {
+                            var path: String
+                            if isDestADir {
+                                // User has passed a directory as the destination so assemble
+                                // a filename based on the source
+                                let fileName = (sourcePath as NSString).lastPathComponent
+                                let parts = fileName.components(separatedBy: ".")
+                                path = destPath + "/" + parts[0] + ".txt"
+                            } else {
+                                path = destPath
+                            }
+
+                            do {
+                                try finalData.write(to: URL(fileURLWithPath: path))
+                                reportInfo("Written text: \(path)")
+                                return true
+                            } catch {
+                                Stdio.reportError("Could not write file \(path)")
+                            }
+                        } else {
+                            Stdio.reportError("Could not create a file for \(sourcePath)’s text content")
+                        }
+                    } else {
+                        Stdio.reportError("Could not create a text file for \(sourcePath)")
+                    }
+                } else {
+                    Stdio.reportError("\(sourcePath) does not appear to be a PDF file")
+                }
+            } catch {
+                Stdio.reportError("Could not load file \(sourcePath)")
+            }
+        }
+
+        return false
+    }
+
+
+    /**
      Run through the files in the specified directory and set the output
      file's name so that it doesn't clash with existing files. For example,
      if `Untitled.pdf` exists, this will generate `Untitled 01.pdf`

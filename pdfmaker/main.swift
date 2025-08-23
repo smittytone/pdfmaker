@@ -58,6 +58,9 @@ var doMakeSubDirectories: Bool = false
 var isPiped: Bool = false
 // FROM 2.3.7
 let grabber: OutputGrabber = OutputGrabber.init(dedupe: true)
+// FROM 2.4.0
+var breakToText: Bool = false
+var hasSetRes: Bool = false
 
 
 // MARK: Runtime Start
@@ -111,6 +114,7 @@ for argument in args {
         case 4:
             if let rs = Float(argument) {
                 outputResolution = CGFloat(rs)
+                hasSetRes = true
             }
 
             // FROM 2.3.0 -- check values!
@@ -141,6 +145,8 @@ for argument in args {
             argIsAValue = true
         case "-b", "--break":
             doBreak = true
+        case "-t", "--text":
+            breakToText = true
         case "--createdirs":
             doMakeSubDirectories = true
         case "-v", "--verbose":
@@ -168,6 +174,21 @@ for argument in args {
     }
 }
 
+// FROM 2.4.8
+if !doBreak {
+    if breakToText {
+        reportUnnecessary(option: "-t/--text")
+    }
+
+    if doCompress {
+        reportUnnecessary(option: "-c/--compress")
+    }
+} else {
+    if hasSetRes {
+        reportUnnecessary(option: "-r/--resultion")
+    }
+}
+
 // FROM 2.3.0
 // Fix source and destination paths here, not if they were set
 // (so we catch the defaults)
@@ -179,10 +200,32 @@ sourcePath = Path.getFullPath(sourcePath)
 let isSrcADir: Bool = Pdf.checkDirectory(sourcePath, "Source")
 let isDestADir: Bool = Pdf.checkDirectory(destPath, "Target")
 
-// Convert the images
-var success: Bool = doBreak ? Pdf.pdfToImages(isSrcADir, isDestADir) : Pdf.imagesToPdf(isSrcADir, isDestADir)
+// Process files
+// FROM 2.4.0 support output to text
+var success: Bool
+if doBreak {
+    success = breakToText ? Pdf.pdfToText(isSrcADir, isDestADir) : Pdf.pdfToImages(isSrcADir, isDestADir)
+} else {
+    success = Pdf.imagesToPdf(isSrcADir, isDestADir)
+}
 Stdio.disableCtrlHandler()
 exit(success ? EXIT_SUCCESS : EXIT_FAILURE)
+
+
+// MARK: Utility Functions
+
+/**
+ Generic warning handler for flags included but irrelevant to requested action.
+
+ FROM 2.4.0
+
+ - Parameters:
+    - option The unneceesary flag, eg. `--compress`
+ */
+func reportUnnecessary(option: String) {
+
+    Stdio.reportWarning("\(option) flag is not relevant -- ignoring")
+}
 
 
 // MARK: Help and Info Functions

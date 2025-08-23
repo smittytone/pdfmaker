@@ -71,23 +71,27 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-s"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-r 300 -b -t -s &apos;/Users/smitty/Library/Mobile Documents/com~apple~CloudDocs/Documents/eBooks/PDF/SF/The Machine Stops.pdf&apos; -d ~/Desktop"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "$HOME/downloads/pdfmaker_test"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-d"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "$HOME/downloads/pdfmaker_test.pdf"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-v"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-c"
@@ -99,11 +103,11 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-r"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "300"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
    </LaunchAction>
