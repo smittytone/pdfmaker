@@ -1,6 +1,6 @@
 ## Release Notes ##
 
-- 2.4.0 *Unreleased*
+- 2.4.0 *24 August 2025*
     - Add text extraction where permitted by the source file.
     - Code reorganisation and migration to separate files using my standard CLI components.
 - 2.3.8 *5 January 2025*
