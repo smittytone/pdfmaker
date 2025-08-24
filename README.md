@@ -2,9 +2,9 @@
 
 *pdfmaker* is a command line tool for combining multiple images into a single PDF file. It supports JPEG, HEIC, PNG, TIFF, BMP and WebP as source-image formats.
 
-It can also be used to convert a PDF into separate page JPEG images.
+It can also be used to convert a PDF into separate page JPEG images or to a single text file.
 
-For some background on the development of this tool, please see [this blog post](https://smittytone.wordpress.com/2019/10/25/macos-make-pdf-from-images/).
+For some background on the development of this tool, [please see this blog post](https://smittytone.wordpress.com/2019/10/25/macos-make-pdf-from-images/).
 
 ## Installation ##
 
@@ -40,6 +40,12 @@ The compression option will compress images before adding them to the PDF. This 
 To convert a PDF to a set of images, in Terminal, run `pdfmaker --break --source <path to pdf> --destination <path to folder> --resolution <output dpi value>`
 
 You can use `-b`, and `-r` as shorthand for the `--break` and `--resolution` switches. The `-c` switch may also be used to compress the output images.
+
+To extract the text from a PDF, run `pdfmaker --break --text --source <path to pdf> --destination <path to folder|path to output file>`
+
+You can use `-t` as shorthand for `--text`.
+
+If you don’t specify a destination, *pdfmaker* uses the Desktop as the target folder for image extraction. For text extraction, the Desktop is also used as the destination but the file will take the same name as the source but appended with `.txt` in place of `.pdf`. 
 
 *pdfmaker* does not delete the source file.
 
