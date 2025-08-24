@@ -7,7 +7,7 @@
 #
 # @author    Tony Smith
 # @copyright 2025, Tony Smith
-# @version   1.0.1
+# @version   1.1.0
 # @license   MIT
 #
 
@@ -64,7 +64,7 @@ fi
 "$test_app" --version
 echo "Running tests..."
 
-# TEST -- create pdf, make target directory
+# TEST 01 -- create pdf, make target directory
 new_test
 targetfile=test1
 result=$("$test_app" -s "$image_src" -d "$targetfile" --createdirs 2>&1)
@@ -76,7 +76,7 @@ check_dir_exists "$targetfile" $test_num
 check_file_exists "$targetfile/PDF From Images via pdfmaker.pdf" $test_num
 pass
 
-# TEST -- break pdf, make target directory
+# TEST 02 -- break pdf, make target directory
 new_test
 sourcefile=test1
 targetfile=test2
@@ -92,7 +92,7 @@ rm -rf "$sourcefile"
 rm -rf "$targetfile"
 pass
 
-# TEST -- create pdf, make target by name with good extension
+# TEST 03 -- create pdf, make target by name with good extension
 new_test
 targetfile=test1.pdf
 result=$("$test_app" -s "$image_src" -d "$targetfile" 2>&1)
@@ -102,143 +102,165 @@ check_file_exists "$targetfile" $test_num
 rm "$targetfile"
 pass
 
-# TEST -- create pdf, make target by name with bad extension
+# TEST 04 -- create pdf, make target by name with bad extension
 new_test
 targetfile=test1.biff
 result=$("$test_app" -s "$image_src" -d "$targetfile" 2>&1)
 
 # Check for error message in output
 result=$(echo -e "$result" | grep 'does not reference')
-if [[ -z "$result" ]]; then
-    fail "Bad extension not trapped" $test_num
-fi
+[[ -z "$result" ]] && fail "Bad extension not trapped" $test_num
 pass
 
-# TEST -- create pdf, make target by bad name (too long)
+# TEST 05 -- create pdf, make target by bad name (too long)
 new_test
 targetfile=ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd.pdf
 result=$("$test_app" -s "$image_src" -d "$targetfile" 2>&1)
 
 # Check for error message in output
 result=$(echo -e "$result" | grep 'is too long')
-if [[ -z "$result" ]]; then
-    fail "Bad filename not trapped" $test_num
-fi
+[[ -z "$result" ]] && fail "Bad filename not trapped" $test_num
 pass
 
-# TEST -- break pdf, make target by name with bad extension
+# TEST 06 -- break pdf, make target by name with bad extension
 new_test
 targetfile=test1.biff
 result=$("$test_app" -s "$image_src/test.pdf" -d "$targetfile" -b 2>&1)
 
 # Check for error message in output
 result=$(echo -e "$result" | grep 'is not a directory')
-if [[ -z "$result" ]]; then
-    fail "Bad target name not trapped" $test_num
-fi
+[[ -z "$result" ]] && fail "Bad target name not trapped" $test_num
 pass
 
-# TEST -- break pdf, source is a directory
+# TEST 07 -- break pdf, source is a directory
 new_test
 result=$("$test_app" -s "$image_src" -b --createdirs 2>&1)
 
 # Check for error message in output
 result=$(echo -e "$result" | grep 'is a directory')
-if [[ -z "$result" ]]; then
-    fail "Bad source name not trapped" $test_num
-fi
+[[ -z "$result" ]] && fail "Bad source name not trapped" $test_num
 pass
 
-# TEST -- detect bad switch
+# TEST 08 -- detect bad switch
 new_test
 result=$("$test_app" -s "$image_src" -d "$targetfile" --createdirs -y 2>&1)
 
 # Check for error message in output
 result=$(echo -e "$result" | grep 'Unknown argument')
-if [[ -z "$result" ]]; then
-    fail "Bad switch not trapped" $test_num
-fi
+[[ -z "$result" ]] && fail "Bad switch not trapped" $test_num
 pass
 
-# TEST -- detect good switch, missing value (end of line)
+# TEST 09 -- detect good switch, missing value (end of line)
 new_test
 result=$("$test_app" -s "$image_src" -d "$targetfile" --createdirs -c 2>&1)
 
 # Check for error message in output
 result=$(echo -e "$result" | grep 'Missing value for')
-if [[ -z "$result" ]]; then
-    fail "Missing value not trapped" $test_num
-fi
+[[ -z "$result" ]] && fail "Missing value not trapped" $test_num
 pass
 
-# TEST -- detect good switch, missing value (mid line)
+# TEST 10 -- detect good switch, missing value (mid line)
 new_test
 result=$("$test_app" -s "$image_src" -c -d "$targetfile" --createdirs 2>&1)
 
 # Check for error message  in output
 result=$(echo -e "$result" | grep 'Missing value for')
-if [[ -z "$result" ]]; then
-    fail "Missing value not trapped" $test_num
-fi
+[[ -z "$result" ]] && fail "Missing value not trapped" $test_num
 pass
 
-# TEST -- detect bad compression value (too high)
+# TEST 11 -- detect bad compression value (too high)
 new_test
 result=$("$test_app" -s "$image_src" -c 2.0 -d "$targetfile" --createdirs 2>&1)
 
 # Check for error message in output
 result=$(echo -e "$result" | grep 'out of range')
-if [[ -z "$result" ]]; then
-    fail "Bad value not trapped" $test_num
-fi
+[[ -z "$result" ]] && fail "Bad value not trapped" $test_num
 pass
 
-# TEST -- detect bad compression value (too low)
+# TEST 12 -- detect bad compression value (too low)
 new_test
 result=$("$test_app" -s "$image_src" -c -1.1 -d "$targetfile" --createdirs 2>&1)
 
 # Check for error message in output
 result=$(echo -e "$result" | grep 'Missing value for')
-if [[ -z "$result" ]]; then
-    fail "*Bad value not trapped" $test_num
-fi
+[[ -z "$result" ]] && fail "*Bad value not trapped" $test_num
 pass
 
-# TEST -- detect bad resolution value (too low)
+# TEST 13 -- detect bad resolution value (too low)
 new_test
 result=$("$test_app" -s "$image_src" -r 0.7 -d "$targetfile" --createdirs 2>&1)
 
 # Check for error message in output
 result=$(echo -e "$result" | grep 'out of range')
-if [[ -z "$result" ]]; then
-    fail "Bad value not trapped" $test_num
-fi
+[[ -z "$result" ]] && fail "Bad value not trapped" $test_num
 pass
 
-# TEST -- detect bad resolution value (too high)
+# TEST 14 -- detect bad resolution value (too high)
 new_test
 result=$("$test_app" -s "$image_src" -r 9999999 -d "$targetfile" --createdirs 2>&1)
 
 # Check for error message in output
 result=$(echo -e "$result" | grep 'out of range')
-if [[ -z "$result" ]]; then
-    fail "Bad value not trapped" $test_num
-fi
+[[ -z "$result" ]] && fail "Bad value not trapped" $test_num
 pass
 
-# TEST -- detect unsupported file type
+# TEST 15 -- detect unsupported file type
 new_test
 sourcefile="source/Out of this World.gif"
 targetfile=test3
 result=$("$test_app" -s "$sourcefile" -d "$targetfile" --createdirs 2>&1)
-
 result=$(echo -e "$result" | grep 'is not a supported image type')
-if [[ -z "$result" ]]; then
-    fail "Unsupported file warning not issued" $test_num
-fi
+[[ -z "$result" ]] && fail "Unsupported file warning not issued" $test_num
 
 # Check for error message in output
 check_file_not_exists "$targetfile/PDF From Images via pdfmaker.pdf" $test_num
+rm -r "$targetfile"
+pass
+
+# TEST 16 -- text extraction
+new_test
+sourcefile="source/lorem-ipsum.pdf"
+targetfile=test4.txt
+result=$("$test_app" -b -t -s "$sourcefile" -d "$targetfile" 2>&1)
+check_file_exists "$targetfile" $test_num
+result=$(cat "$targetfile" | grep 'Sed ut perspiciatis')
+[ -z "$result" ] && fail "Unsupported file warning not issued" $test_num
+rm "$targetfile"
+pass
+
+# TEST 17 -- text extraction, output naming
+new_test
+sourcefile="source/lorem-ipsum.pdf"
+targetfile=lorem-ipsum.txt
+result=$("$test_app" -b -t -s "$sourcefile" -d "$PWD" 2>&1)
+check_file_exists "$targetfile" $test_num
+rm "$targetfile"
+pass
+
+# TEST 18 -- creating pdf, irrelevant flag detection: --text
+new_test
+targetfile=test1
+result=$("$test_app" -t -s "$image_src" -d "$targetfile" --createdirs 2>&1)
+result=$(echo "$result" | grep 'text flag is not relevant')
+[ -z "$result" ] && fail "Irrelevant flag warning not issued" $test_num
+rm -rf "$targetfile"
+pass
+
+# TEST 19 -- creating pdf, irrelevant flag detection: --compression
+new_test
+sourcefile="source/lorem-ipsum.pdf"
+result=$("$test_app" -b -c 0.5 -s "$sourcefile" -d "$PWD" 2>&1)
+rm *.jpg
+pass
+
+# TEST 20 -- creating pdf, irrelevant flag detection: --resolution
+new_test
+sourcefile="source/lorem-ipsum.pdf"
+targetfile=lorem-ipsum.txt
+result=$("$test_app" -b -t -r 315 -s "$sourcefile" -d "$targetfile" 2>&1)
+result=$(echo "$result" | grep 'resolution flag is not relevant')
+[ -z "$result" ] && fail "Irrelevant flag warning not issued" $test_num
+rm "$targetfile"
 pass
 
 echo "ALL TESTS PASSED"
