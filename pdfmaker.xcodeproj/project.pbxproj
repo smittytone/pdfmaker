@@ -26,6 +26,7 @@
 		3B71EEF72E52544C008DBBAB /* pdfmaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pdfmaker.swift; sourceTree = "<group>"; };
 		3B74608E235726550032EA96 /* pdfmaker */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = pdfmaker; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B746091235726550032EA96 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		3BA49C4B2E5B0EAA0095839E /* lorem-ipsum.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "lorem-ipsum.pdf"; sourceTree = "<group>"; };
 		3BD5844C2D1300E9006388F1 /* BBC Space Themes.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "BBC Space Themes.jpg"; sourceTree = "<group>"; };
 		3BD5844D2D1300E9006388F1 /* Fourth Dimension.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Fourth Dimension.jpg"; sourceTree = "<group>"; };
 		3BD5844E2D1300E9006388F1 /* Out of this World.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Out of this World.jpg"; sourceTree = "<group>"; };
@@ -104,6 +105,7 @@
 				3BD584502D1300E9006388F1 /* Star Wars and Other Great Space Themes.jpg */,
 				3B38EA0F2E58980500BAD457 /* Star Wars and Other Great Space Themes.heic */,
 				3BD584512D1300E9006388F1 /* test.pdf */,
+				3BA49C4B2E5B0EAA0095839E /* lorem-ipsum.pdf */,
 			);
 			path = source;
 			sourceTree = "<group>";
@@ -322,7 +324,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 217;
+				CURRENT_PROJECT_VERSION = 219;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y5J3K52DNA;
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = Y5J3K52DNA;
@@ -345,7 +347,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 217;
+				CURRENT_PROJECT_VERSION = 219;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y5J3K52DNA;
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = Y5J3K52DNA;

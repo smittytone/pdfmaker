@@ -179,13 +179,13 @@ if !doBreak {
     if breakToText {
         reportUnnecessary(option: "-t/--text")
     }
-
+} else {
     if doCompress {
         reportUnnecessary(option: "-c/--compress")
     }
-} else {
+
     if hasSetRes {
-        reportUnnecessary(option: "-r/--resultion")
+        reportUnnecessary(option: "-r/--resolution")
     }
 }
 
