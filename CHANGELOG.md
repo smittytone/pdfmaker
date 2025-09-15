@@ -1,5 +1,7 @@
 ## Release Notes ##
 
+- 2.4.1 *Unreleased*
+    - Fix incorrect resolution-not-necessary message.
 - 2.4.0 *24 August 2025*
     - Add text extraction where permitted by the source file.
     - Code reorganisation and migration to separate files using my standard CLI components.
