@@ -203,7 +203,7 @@ for argument in args {
     argCount += 1
 
     // Trap commands that come last and therefore have missing args
-    if argCount == CommandLine.arguments.count && argIsAValue {
+    if argCount == args.count && argIsAValue {
         Stdio.reportErrorAndExit("Missing value for \(argument)")
     }
 }

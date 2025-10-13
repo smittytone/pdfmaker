@@ -5,6 +5,7 @@
     - Add new command line option for a document admin password.
     - Limit document output and editing options for encrypted PDFs.
     - Fix incorrect resolution-not-necessary message.
+    - Fix incorrect last-argument-has-no-value message. 
 - 2.4.0 *24 August 2025*
     - Add text extraction where permitted by the source file.
     - Code reorganisation and migration to separate files using my standard CLI components.
