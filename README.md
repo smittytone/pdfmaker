@@ -2,7 +2,7 @@
 
 *pdfmaker* is a command line tool for combining multiple images into a single PDF file. It supports JPEG, HEIC, PNG, TIFF, BMP and WebP as source-image formats.
 
-It can also be used to convert a PDF into separate page JPEG images or to a single text file.
+It can also be used to convert a PDF into separate page JPEG images or to a single text file (if it contains actual text, not merely images of textual content).
 
 For some background on the development of this tool, [please see this blog post](https://smittytone.wordpress.com/2019/10/25/macos-make-pdf-from-images/).
 
@@ -36,6 +36,18 @@ Use the `--name` switch to provide a filename for your file if you are making a 
 The compression option will compress images before adding them to the PDF. This allows you to reduce the size of the final PDF, as required. Provide an amount in the range 0.0 to 1.0, where 0.0 is maximum compression (lowest quality) and 1.0 is no compression (highest quality).
 
 **Note** Building a PDF from JPEG files means that you are already using compressed images. If those JPEGs are highly compressed, applying a low compression amount to *pdfmaker* will not increase image quality but will make your PDF file larger.
+
+#### Metadata ####
+
+From 2.5.0, you can add metadata — title, subject and/or author — to generated PDFs by including them at the command line:
+
+```
+pdfmaker --source ~/Documents/'Project X'/Images --destination ~/Documents/PDFs/'Project X.pdf' --title 'My Photos' --author 'A Photographer' --subject Photography
+```
+
+#### Encryption ####
+
+From 2.5.0, use the `--password` option to specify an admin password for the generated PDF. This will allow the PDF to be viewed, but encrypt it and (on well behaved software) prevent it from being printed, its content copied and so on. These accessibility settings can only be changed after entering the admin password. 
 
 ### ‘Breaking’ PDFs ###
 
