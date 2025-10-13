@@ -1,6 +1,9 @@
 ## Release Notes ##
 
-- 2.4.1 *Unreleased*
+- 2.5.0 *Unreleased*
+    - Add new command line options for document title, subject and author.
+    - Add new command line option for a document admin password.
+    - Limit document output and editing options for encrypted PDFs.
     - Fix incorrect resolution-not-necessary message.
 - 2.4.0 *24 August 2025*
     - Add text extraction where permitted by the source file.

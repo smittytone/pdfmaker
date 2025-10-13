@@ -34,6 +34,18 @@ import Clicore
 // FROM 2.0.0
 let BASE_DPI: CGFloat    = 72.0
 let DEFAULT_DPI: CGFloat = 300.0
+// FROM 2.5.0
+struct ARG_ID {
+    static let PATH_DESTINATION = 0
+    static let PATH_SOURCE = 1
+    static let NAME_TARGET = 2
+    static let COMPRESSION = 3
+    static let RESOLUTION = 4
+    static let METADATA_TITLE = 5
+    static let METADATA_SUBJECT = 6
+    static let METADATA_AUTHOR = 7
+    static let METADATA_ADMIN = 8
+}
 
 
 // MARK: Global Variables
@@ -61,6 +73,8 @@ let grabber: OutputGrabber = OutputGrabber.init(dedupe: true)
 // FROM 2.4.0
 var breakToText: Bool = false
 var hasSetRes: Bool = false
+// FROM 2.5.0
+var metadata = Metadata()
 
 
 // MARK: Runtime Start
@@ -95,13 +109,13 @@ for argument in args {
         }
 
         switch argType {
-        case 0:
+        case ARG_ID.PATH_DESTINATION:
             destPath = argument
-        case 1:
+        case ARG_ID.PATH_SOURCE:
             sourcePath = argument
-        case 2:
+        case ARG_ID.NAME_TARGET:
             outputName = argument
-        case 3:
+        case ARG_ID.COMPRESSION:
             doCompress = true
             if let cl = Float(argument) {
                 compressionLevel = CGFloat(cl)
@@ -111,7 +125,7 @@ for argument in args {
             if compressionLevel < 0.0 || compressionLevel > 1.0 {
                 Stdio.reportErrorAndExit("Compression level out of range")
             }
-        case 4:
+        case ARG_ID.RESOLUTION:
             if let rs = Float(argument) {
                 outputResolution = CGFloat(rs)
                 hasSetRes = true
@@ -121,6 +135,14 @@ for argument in args {
             if outputResolution < 1 || outputResolution > 9999 {
                 Stdio.reportErrorAndExit("Output resolution out of range")
             }
+        case ARG_ID.METADATA_TITLE:
+            metadata.title = argument
+        case ARG_ID.METADATA_SUBJECT:
+            metadata.subject = argument
+        case ARG_ID.METADATA_AUTHOR:
+            metadata.author = argument
+        case ARG_ID.METADATA_ADMIN:
+            metadata.password = argument
         default:
                 Stdio.reportErrorAndExit("Unknown argument: \(argument)")
         }
@@ -129,19 +151,19 @@ for argument in args {
     } else {
         switch argument {
         case "-d", "--destination":
-            argType = 0
+            argType = ARG_ID.PATH_DESTINATION
             argIsAValue = true
         case "-s", "--source":
-            argType = 1
+            argType = ARG_ID.PATH_SOURCE
             argIsAValue = true
         case "-n", "--name":
-            argType = 2
+            argType = ARG_ID.NAME_TARGET
             argIsAValue = true
         case "-c", "--compress":
-            argType = 3
+            argType = ARG_ID.COMPRESSION
             argIsAValue = true
         case "-r", "--resolution":
-            argType = 4
+            argType = ARG_ID.RESOLUTION
             argIsAValue = true
         case "-b", "--break":
             doBreak = true
@@ -151,6 +173,18 @@ for argument in args {
             doMakeSubDirectories = true
         case "-v", "--verbose":
             doShowInfo = true
+        case "--title":
+            argIsAValue = true
+            argType = ARG_ID.METADATA_TITLE
+        case "--subject":
+            argIsAValue = true
+            argType = ARG_ID.METADATA_SUBJECT
+        case "--author":
+            argIsAValue = true
+            argType = ARG_ID.METADATA_AUTHOR
+        case "--password":
+            argIsAValue = true
+            argType = ARG_ID.METADATA_ADMIN
         case "-h", "--help":
             showHelp()
             Stdio.disableCtrlHandler()
@@ -233,7 +267,7 @@ func reportUnnecessary(option: String) {
 /**
  Display the help screen.
  */
-func showHelp() {
+internal func showHelp() {
 
     showHeader()
 
@@ -246,10 +280,14 @@ func showHelp() {
     Stdio.report("                                 Default: ~/Desktop folder/\'PDF From Images.pdf\'.")
     Stdio.report("    -n | --name        {name}    Specify the target file name. Only used when your destination")
     Stdio.report("                                 is a directory.")
-    Stdio.report("    -c | --compress    {amount}  Apply an image compression filter to the PDF:")
+    Stdio.report("    -c | --compress    {amount}  Apply an image compression filter to the generated PDF:")
     Stdio.report("                                 0.0 = maximum compression, lowest image quality.")
     Stdio.report("                                 1.0 = no compression, best image quality.")
     Stdio.report("         --createdirs            Make target intermediate directories if they do not exist.")
+    Stdio.report("         --title                 Set the title of the generated PDF.")
+    Stdio.report("         --subject               Add subject information to the generated PDF.")
+    Stdio.report("         --author                Set the author of the generated PDF.")
+    Stdio.report("         --password              Specify an admin password, used to encrypt the generated PDF.")
     Stdio.report("    -b | --break                 Break a PDF into JPEG images unless the --text flag is set.")
     Stdio.report("    -r | --resolution  {dpi}     The output resolution of extracted images. Max: 9999.")
     Stdio.report("    -t | --text                  Extract the source’s text and don’t generate images.")
@@ -270,11 +308,25 @@ func showHelp() {
 
  FROM 2.1.0
  */
-func showHeader() {
+internal func showHeader() {
+
+    let version: String = getVersion(withBuild: true)
+    let name:String = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String
+    Stdio.report("\(String(.bold))\(name) \(version)\(String(.normal))")
+    Stdio.report("Copyright © 2025, Tony Smith (@smittytone). Source code available under the MIT licence.")
+}
+
+
+/**
+ Get the version number.
+
+ FROM 2.5.0
+
+ - returns: The version as a string
+ */
+internal func getVersion(withBuild: Bool = false) -> String {
 
     let version: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
     let build: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
-    let name:String = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String
-    Stdio.report("\(String(.bold))\(name) \(version) (\(build))\(String(.normal))")
-    Stdio.report("Copyright © 2025, Tony Smith (@smittytone). Source code available under the MIT licence.")
+    return withBuild ? "\(version) (\(build))" : version
 }

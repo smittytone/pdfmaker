@@ -194,8 +194,39 @@ struct Pdf {
                     processPdfKitErrors()
                 }
 
+                // FROM 2.5.0
+                // If metadata has been set, apply it to the PDFDocument
+                if newpdf.documentAttributes != nil {
+                    if !metadata.title.isEmpty {
+                        newpdf.documentAttributes![PDFDocumentAttribute.titleAttribute] = metadata.title
+                    }
+
+                    if !metadata.subject.isEmpty {
+                        newpdf.documentAttributes![PDFDocumentAttribute.subjectAttribute] = metadata.subject
+                    }
+
+                    if !metadata.author.isEmpty {
+                        newpdf.documentAttributes![PDFDocumentAttribute.authorAttribute] = metadata.author
+                    }
+
+                    // Set the standard creator
+                    newpdf.documentAttributes![PDFDocumentAttribute.creatorAttribute] = "pdfmaker " + getVersion(withBuild: false)
+                }
+
                 // Write the file to disk
-                newpdf.write(toFile: savePath)
+                if !metadata.password.isEmpty {
+                    // FROM 2.5.0
+                    // If a password has been set, apply it as the admin password to the PDFDocument
+                    // NOTE Only apply access permissions for encrypted docs
+                    newpdf.write(toFile: savePath, withOptions: [
+                        .ownerPasswordOption: metadata.password,
+                        .accessPermissionsOption: setPermissions()
+                    ])
+                } else {
+                    // Or, as before, just write an unencrypted PDF
+                    newpdf.write(toFile: savePath)
+                }
+
                 return true
             }
         } else {
@@ -594,5 +625,29 @@ struct Pdf {
         if doShowInfo {
             Stdio.report(message)
         }
+    }
+
+
+    static private func setPermissions() -> UInt {
+
+        /*
+         PDFKit defines the following enum:
+
+        public enum PDFAccessPermissions : UInt, @unchecked Sendable {
+            case allowsLowQualityPrinting = 1
+            case allowsHighQualityPrinting = 2
+            case allowsDocumentChanges = 4
+            case allowsDocumentAssembly = 8
+            case allowsContentCopying = 16
+            case allowsContentAccessibility = 32
+            case allowsCommenting = 64
+            case allowsFormFieldEntry = 128
+        }
+
+         These are clearly bitfield values, so we return the combination
+         of OR'd permissions that we want
+         */
+
+        return PDFAccessPermissions.allowsContentAccessibility.rawValue
     }
 }

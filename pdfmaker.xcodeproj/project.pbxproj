@@ -11,6 +11,7 @@
 		3B71EEF82E52544C008DBBAB /* pdfmaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B71EEF72E52544C008DBBAB /* pdfmaker.swift */; };
 		3B746092235726550032EA96 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B746091235726550032EA96 /* main.swift */; };
 		3BC360D82E54DC2000E71422 /* Clicore in Frameworks */ = {isa = PBXBuildFile; productRef = 3BC360D72E54DC2000E71422 /* Clicore */; };
+		3BFF7DBB2E9D45090043B4B0 /* metadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFF7DBA2E9D45090043B4B0 /* metadata.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +38,7 @@
 		3BD584542D1300E9006388F1 /* testpdfmaker.zsh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = testpdfmaker.zsh; sourceTree = "<group>"; };
 		3BD584562D130147006388F1 /* pdfmaker.1 */ = {isa = PBXFileReference; explicitFileType = text.man; path = pdfmaker.1; sourceTree = "<group>"; };
 		3BD584582D130247006388F1 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
+		3BFF7DBA2E9D45090043B4B0 /* metadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = metadata.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +87,7 @@
 			isa = PBXGroup;
 			children = (
 				3B746091235726550032EA96 /* main.swift */,
+				3BFF7DBA2E9D45090043B4B0 /* metadata.swift */,
 				3B71EEF72E52544C008DBBAB /* pdfmaker.swift */,
 				3B2E419F2C95AC7300B3A868 /* output-grabber.swift */,
 				3B41AE822360D9D8009FE993 /* Info.plist */,
@@ -191,6 +194,7 @@
 			files = (
 				3B2E41A02C95AC7300B3A868 /* output-grabber.swift in Sources */,
 				3B71EEF82E52544C008DBBAB /* pdfmaker.swift in Sources */,
+				3BFF7DBB2E9D45090043B4B0 /* metadata.swift in Sources */,
 				3B746092235726550032EA96 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -325,15 +329,15 @@
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				CODE_SIGN_STYLE = Manual;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 264;
+				CURRENT_PROJECT_VERSION = 266;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y5J3K52DNA;
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = Y5J3K52DNA;
 				DSTROOT = $SRCROOT/build/pkgroot;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/pdfmaker/Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 11.5;
-				MARKETING_VERSION = 2.4.1;
+				MACOSX_DEPLOYMENT_TARGET = 12.4;
+				MARKETING_VERSION = 2.5.0;
 				OTHER_CODE_SIGN_FLAGS = "--timestamp";
 				PRODUCT_BUNDLE_IDENTIFIER = com.bps.pdfmaker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -350,15 +354,15 @@
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				CODE_SIGN_STYLE = Manual;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 264;
+				CURRENT_PROJECT_VERSION = 266;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y5J3K52DNA;
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = Y5J3K52DNA;
 				DSTROOT = $SRCROOT/build/pkgroot;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/pdfmaker/Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 11.5;
-				MARKETING_VERSION = 2.4.1;
+				MACOSX_DEPLOYMENT_TARGET = 12.4;
+				MARKETING_VERSION = 2.5.0;
 				OTHER_CODE_SIGN_FLAGS = "--timestamp";
 				PRODUCT_BUNDLE_IDENTIFIER = com.bps.pdfmaker;
 				PRODUCT_NAME = "$(TARGET_NAME)";

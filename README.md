@@ -1,10 +1,12 @@
-# pdfmaker 2.4.1 #
+# pdfmaker 2.5.0 #
 
 *pdfmaker* is a command line tool for combining multiple images into a single PDF file. It supports JPEG, HEIC, PNG, TIFF, BMP and WebP as source-image formats.
 
 It can also be used to convert a PDF into separate page JPEG images or to a single text file.
 
 For some background on the development of this tool, [please see this blog post](https://smittytone.wordpress.com/2019/10/25/macos-make-pdf-from-images/).
+
+*pdfmaker 2.5.0 requires macOS 12 or above.
 
 ## Installation ##
 

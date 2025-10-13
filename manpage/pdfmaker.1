@@ -1,4 +1,4 @@
-.TH PDFMAKER "1" "September 2025" "pdfmaker 2.4.1"
+.TH PDFMAKER "1" "October 2025" "pdfmaker 2.5.0"
 
 .SH NAME
 pdfmaker \- Create PDFs from images.
@@ -29,6 +29,14 @@ It may also be used to expand a single PDF file into a collection of image files
                            \fI1.0\fR = no compression, best image quality.
 .P
 \fB\-\-createdirs\fR               Make target intermediate directories if they do not exist.
+.P
+\fB\-\-title\fR                    Set the title of the generated PDF.
+.P
+\fB\-\-subject\fR                  Add subject information to the generated PDF.
+.P
+\fB\-\-author\fR                   Set the author of the generated PDF.
+.P
+\fB\-\-password\fR                 Specify an admin password, used to encrypt the generated PDF.
 .P
 \fB\-b\fR | \fB\-\-break\fR               Break a PDF into JPEG images unless the \fB\-\-text\fR flag is set.
 .P
