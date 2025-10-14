@@ -1,6 +1,6 @@
 ## Release Notes ##
 
-- 2.5.0 *Unreleased*
+- 2.5.0 *14 October 2025*
     - Add new command line options for document title, subject and author.
     - Add new command line option for a document admin password.
     - Limit document output and editing options for encrypted PDFs.
