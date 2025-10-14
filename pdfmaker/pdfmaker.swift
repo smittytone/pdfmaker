@@ -99,7 +99,7 @@ struct Pdf {
         var pdfKitErr: Bool = false
 
         // Prepare a PDF Document
-        var pdf: PDFDocument? = nil
+        let pdf: PDFDocument? = PDFDocument()
 
         // Iterate through the list of files
         for i in 0..<files.count {
@@ -157,29 +157,15 @@ struct Pdf {
                                                    height: image!.size.height),
                                        for: .mediaBox)
 
-                        if pageCount == 0 {
-                            // This will be the first page in the PDF, so initialize the PDF with the page data
-                            // NOTE From macOS 26, the following line triggers a `Drawing a PDFPage when its PDFDocument is nil is unsupported.`
-                            grabber.openConsolePipe()
-                            if let pageData: Data = page.dataRepresentation {
-                                // Don't clear `pdfKitErr` if `closeConsolePipe()` returns `false` on subsequent run
-                                if grabber.closeConsolePipe(), !pdfKitErr {
-                                    pdfKitErr = true
-                                }
-                                pdf = PDFDocument.init(data: pageData)
-                                pageCount += 1
-                            } else {
-                                Stdio.reportError("Could not add page \(pageCount) for image \(file)")
-                            }
+                        // FROM 2.5.0
+                        // Simplify PDF document creation and addition
+                        // NOTE This avoids the Tahoe-introduced `can't draw page when it has no document` issue
+                        if let newpdf = pdf {
+                            // Insert the page
+                            newpdf.insert(page, at: pageCount)
+                            pageCount += 1
                         } else {
-                            if let newpdf: PDFDocument = pdf {
-                                // We're adding a page to the already created PDF,
-                                // so just insert the page
-                                newpdf.insert(page, at: pageCount)
-                                pageCount += 1
-                            } else {
-                                Stdio.reportError("Could not add page \(pageCount) for image \(file)")
-                            }
+                            Stdio.reportError("Could not add page \(pageCount) for image \(file)")
                         }
                     } else {
                         Stdio.reportError("Could not create page for image \(file)")

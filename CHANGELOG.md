@@ -4,6 +4,7 @@
     - Add new command line options for document title, subject and author.
     - Add new command line option for a document admin password.
     - Limit document output and editing options for encrypted PDFs.
+    - Simplify PDF generation and page adding.
     - Fix incorrect resolution-not-necessary message.
     - Fix incorrect last-argument-has-no-value message. 
 - 2.4.0 *24 August 2025*
