@@ -1,4 +1,4 @@
-# pdfmaker 2.5.0 #
+# pdfmaker 2.5.1 #
 
 *pdfmaker* is a command line tool for combining multiple images into a single PDF file. It supports JPEG, HEIC, PNG, TIFF, BMP and WebP as source-image formats.
 
@@ -107,4 +107,4 @@ See [CHANGELOG.md](./CHANGELOG.md)
 
 ## Copyright ##
 
-*pdfmaker* is copyright © 2025, Tony Smith. The source code is licensed under the terms of the MIT licence.
+*pdfmaker* is copyright © 2026, Tony Smith. The source code is licensed under the terms of the MIT licence.

@@ -1,5 +1,9 @@
 ## Release Notes ##
 
+- 2.5.1 *Unreleased*
+    - Suppress irritating PDFKit `stderr` output during text extraction.
+    - Fix missing resolution-not-necessary message.
+    - Fix tests.
 - 2.5.0 *14 October 2025*
     - Add new command line options for document title, subject and author.
     - Add new command line option for a document admin password.
