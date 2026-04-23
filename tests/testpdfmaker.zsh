@@ -6,7 +6,7 @@
 # pdfmaker test harness
 #
 # @author    Tony Smith
-# @copyright 2025, Tony Smith
+# @copyright 2026, Tony Smith
 # @version   1.1.0
 # @license   MIT
 #
@@ -250,6 +250,8 @@ pass
 new_test
 sourcefile="source/lorem-ipsum.pdf"
 result=$("$test_app" -b -c 0.5 -s "$sourcefile" -d "$PWD" 2>&1)
+result=$(echo "$result" | grep 'compress flag is not relevant')
+[ -z "$result" ] && fail "Irrelevant flag warning not issued" $test_num
 rm *.jpg
 pass
 
@@ -258,6 +260,7 @@ new_test
 sourcefile="source/lorem-ipsum.pdf"
 targetfile=lorem-ipsum.txt
 result=$("$test_app" -b -t -r 315 -s "$sourcefile" -d "$targetfile" 2>&1)
+echo $result
 result=$(echo "$result" | grep 'resolution flag is not relevant')
 [ -z "$result" ] && fail "Irrelevant flag warning not issued" $test_num
 rm "$targetfile"
