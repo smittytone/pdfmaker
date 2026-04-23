@@ -2,7 +2,7 @@
     pdfmaker
     metadata.swift
 
-    Copyright © 2025 Tony Smith. All rights reserved.
+    Copyright © 2026 Tony Smith. All rights reserved.
 
     MIT License
     Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -34,8 +34,8 @@ import Foundation
 
 struct Metadata {
 
-    var title: String = ""
-    var subject: String = ""
-    var author: String = ""
-    var password: String = ""
+    var title: String       = ""
+    var subject: String     = ""
+    var author: String      = ""
+    var password: String    = ""
 }

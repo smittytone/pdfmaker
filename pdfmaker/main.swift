@@ -2,7 +2,7 @@
     pdfmaker
     main.swift
 
-    Copyright © 2025 Tony Smith. All rights reserved.
+    Copyright © 2026 Tony Smith. All rights reserved.
 
     MIT License
     Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -51,30 +51,30 @@ struct ARG_ID {
 // MARK: Global Variables
 
 // CLI argument management
-var argIsAValue: Bool = false
-var argType: Int      = -1
-var argCount: Int     = 0
-var prevArg: String   = ""
+var argIsAValue: Bool           = false
+var argType: Int                = -1
+var argCount: Int               = 0
+var prevArg: String             = ""
 // PDF processing variables
-var destPath: String          = "~/Desktop"
-var outputName: String?       = nil
-var sourcePath: String        = FileManager.default.currentDirectoryPath
-var doCompress: Bool          = false
-var compressionLevel: CGFloat = 0.8
-var doShowInfo: Bool          = false
+var destPath: String            = "~/Desktop"
+var outputName: String?         = nil
+var sourcePath: String          = FileManager.default.currentDirectoryPath
+var doCompress: Bool            = false
+var compressionLevel: CGFloat   = 0.8
+var doShowInfo: Bool            = false
 // FROM 2.0.0
-var doBreak: Bool = false
-var outputResolution: CGFloat = BASE_DPI
+var doBreak: Bool               = false
+var outputResolution: CGFloat   = BASE_DPI
 // FROM 2.3.0
-var doMakeSubDirectories: Bool = false
-var isPiped: Bool = false
+var doMakeSubDirectories: Bool  = false
+var isPiped: Bool               = false
 // FROM 2.3.7
-let grabber: OutputGrabber = OutputGrabber.init(dedupe: true)
+let grabber: OutputGrabber      = OutputGrabber(dedupe: true)
 // FROM 2.4.0
-var breakToText: Bool = false
-var hasSetRes: Bool = false
+var breakToText: Bool           = false
+var hasSetRes: Bool             = false
 // FROM 2.5.0
-var metadata = Metadata()
+var metadata: Metadata          = Metadata()
 
 
 // MARK: Runtime Start
@@ -92,7 +92,7 @@ if CommandLine.arguments.count == 1 {
 }
 
 // Expand composite flags
-var args: [String] = Cli.unify(args: CommandLine.arguments)
+var args = Cli.unify(args: CommandLine.arguments)
 
 // Process the (separated) arguments
 for argument in args {
@@ -209,17 +209,21 @@ for argument in args {
 }
 
 // FROM 2.4.8
-if !doBreak {
+if doBreak {
+    if doCompress {
+        reportUnnecessary(option: "-c/--compress")
+    }
+
+    if breakToText && hasSetRes {
+        reportUnnecessary(option: "-r/--resolution")
+    }
+} else {
     if breakToText {
         reportUnnecessary(option: "-t/--text")
     }
 
     if hasSetRes {
         reportUnnecessary(option: "-r/--resolution")
-    }
-} else {
-    if doCompress {
-        reportUnnecessary(option: "-c/--compress")
     }
 }
 
@@ -236,12 +240,13 @@ let isDestADir: Bool = Pdf.checkDirectory(destPath, "Target")
 
 // Process files
 // FROM 2.4.0 support output to text
-var success: Bool
+let success: Bool
 if doBreak {
     success = breakToText ? Pdf.pdfToText(isSrcADir, isDestADir) : Pdf.pdfToImages(isSrcADir, isDestADir)
 } else {
     success = Pdf.imagesToPdf(isSrcADir, isDestADir)
 }
+
 Stdio.disableCtrlHandler()
 exit(success ? EXIT_SUCCESS : EXIT_FAILURE)
 
@@ -310,10 +315,10 @@ internal func showHelp() {
  */
 internal func showHeader() {
 
-    let version: String = getVersion(withBuild: true)
-    let name:String = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String
-    Stdio.report("\(String(.bold))\(name) \(version)\(String(.normal))")
-    Stdio.report("Copyright © 2025, Tony Smith (@smittytone). Source code available under the MIT licence.")
+    let version = getVersion(withBuild: true)
+    let appName = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String
+    Stdio.report("\(String(.bold))\(appName) \(version)\(String(.normal))")
+    Stdio.report("Copyright © 2026, Tony Smith (@smittytone). Source code available under the MIT licence.")
 }
 
 
@@ -326,7 +331,7 @@ internal func showHeader() {
  */
 internal func getVersion(withBuild: Bool = false) -> String {
 
-    let version: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
-    let build: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
+    let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
+    let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
     return withBuild ? "\(version) (\(build))" : version
 }

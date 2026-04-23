@@ -2,7 +2,7 @@
     pdfmaker
     output-grabber.swift
 
-    Copyright © 2025 Tony Smith. All rights reserved.
+    Copyright © 2026 Tony Smith. All rights reserved.
 
     MIT License
     Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -31,17 +31,17 @@ class OutputGrabber {
 
     // MARK: Public properties
 
-    var errors: [String] = []
-    var errorCounts: [Int] = []
-    var verboseErrSet: Bool = false
+    var errors: [String]                        = []
+    var errorCounts: [Int]                      = []
+    var verboseErrSet: Bool                     = false
 
 
     // MARK: Private properties
 
-    private var inputPipe: Pipe? = nil
-    private var pipeReadHandle: FileHandle? = nil
-    private var contents: String = ""
-    private var doDeDupe: Bool = false
+    private var inputPipe: Pipe?                = nil
+    private var pipeReadHandle: FileHandle?     = nil
+    private var contents: String                = ""
+    private var doDeDupe: Bool                  = false
 
 
     // MARK: Constants
@@ -89,7 +89,7 @@ class OutputGrabber {
                 
                 if strongSelf.doDeDupe {
                     // Separate out the received messages and de dupe
-                    let messages: [String] = strongSelf.contents.components(separatedBy: .newlines)
+                    let messages = strongSelf.contents.components(separatedBy: .newlines)
                     if messages.count > 0 {
                         strongSelf.contents = ""
                         for message in messages {
@@ -97,7 +97,7 @@ class OutputGrabber {
                                 return
                             } else {
                                 // Have we got the received message? Assume we don't
-                                var doAdd: Bool = true
+                                var doAdd = true
                                 for (index, error) in strongSelf.errors.enumerated() {
                                     if error == message {
                                         strongSelf.errorCounts[index] += 1
