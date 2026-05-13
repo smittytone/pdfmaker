@@ -2,6 +2,7 @@
 
 - 2.5.1 *Unreleased*
     - Suppress irritating PDFKit `stderr` output during text extraction.
+    - Adopt `clicore` emoji output.
     - Fix missing resolution-not-necessary message.
     - Fix tests.
 - 2.5.0 *14 October 2025*
