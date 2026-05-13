@@ -622,7 +622,7 @@ struct Pdf {
     static func reportInfo(_ message: String) {
 
         if doShowInfo {
-            Stdio.report(message)
+            Stdio.reportNote(message)
         }
     }
 

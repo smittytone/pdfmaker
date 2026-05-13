@@ -82,6 +82,7 @@ var metadata: Metadata          = Metadata()
 // FROM 2.3.2
 // Make sure the signal does not terminate the application
 Stdio.enableCtrlHandler("pdfmaker interrupted -- halting")
+Stdio.settings.useEmoji = true
 
 // FROM 2.3.0
 // No arguments? Show Help
