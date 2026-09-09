@@ -1,5 +1,8 @@
 ## Release Notes ##
 
+- 2.6.0 *Unreleased*
+    - Generate an extracted text file that contains (as best as can be determined) proper paragraphs.
+    - Fix a CLI argument processing bug preventing certain flags from being registered.
 - 2.5.1 *13 May 2026*
     - Suppress irritating PDFKit `stderr` output during text extraction.
     - Adopt `clicore` emoji output.
