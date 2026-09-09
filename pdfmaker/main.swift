@@ -32,49 +32,49 @@ import Clicore
 // MARK: Constants
 
 // FROM 2.0.0
-let BASE_DPI: CGFloat    = 72.0
-let DEFAULT_DPI: CGFloat = 300.0
+let BASE_DPI: CGFloat               = 72.0
+let DEFAULT_DPI: CGFloat            = 300.0
 // FROM 2.5.0
 struct ARG_ID {
-    static let PATH_DESTINATION = 0
-    static let PATH_SOURCE = 1
-    static let NAME_TARGET = 2
-    static let COMPRESSION = 3
-    static let RESOLUTION = 4
-    static let METADATA_TITLE = 5
-    static let METADATA_SUBJECT = 6
-    static let METADATA_AUTHOR = 7
-    static let METADATA_ADMIN = 8
+    static let PATH_DESTINATION     = 0
+    static let PATH_SOURCE          = 1
+    static let NAME_TARGET          = 2
+    static let COMPRESSION          = 3
+    static let RESOLUTION           = 4
+    static let METADATA_TITLE       = 5
+    static let METADATA_SUBJECT     = 6
+    static let METADATA_AUTHOR      = 7
+    static let METADATA_ADMIN       = 8
 }
 
 
 // MARK: Global Variables
 
 // CLI argument management
-var argIsAValue: Bool           = false
-var argType: Int                = -1
-var argCount: Int               = 0
-var prevArg: String             = ""
+var argIsAValue: Bool               = false
+var argType: Int                    = -1
+var argCount: Int                   = 0
+var prevArg: String                 = ""
 // PDF processing variables
-var destPath: String            = "~/Desktop"
-var outputName: String?         = nil
-var sourcePath: String          = FileManager.default.currentDirectoryPath
-var doCompress: Bool            = false
-var compressionLevel: CGFloat   = 0.8
-var doShowInfo: Bool            = false
+var destPath: String                = "~/Desktop"
+var outputName: String?             = nil
+var sourcePath: String              = FileManager.default.currentDirectoryPath
+var doCompress: Bool                = false
+var compressionLevel: CGFloat       = 0.8
+var doShowInfo: Bool                = false
 // FROM 2.0.0
-var doBreak: Bool               = false
-var outputResolution: CGFloat   = BASE_DPI
+var doBreak: Bool                   = false
+var outputResolution: CGFloat       = BASE_DPI
 // FROM 2.3.0
-var doMakeSubDirectories: Bool  = false
-var isPiped: Bool               = false
+var doMakeSubDirectories: Bool      = false
+var isPiped: Bool                   = false
 // FROM 2.3.7
-let grabber: OutputGrabber      = OutputGrabber(dedupe: true)
+let grabber: OutputGrabber          = OutputGrabber(dedupe: true)
 // FROM 2.4.0
-var breakToText: Bool           = false
-var hasSetRes: Bool             = false
+var breakToText: Bool               = false
+var hasSetRes: Bool                 = false
 // FROM 2.5.0
-var metadata: Metadata          = Metadata()
+var metadata: Metadata              = Metadata()
 
 
 // MARK: Runtime Start
@@ -97,12 +97,6 @@ var args = Cli.unify(args: CommandLine.arguments)
 
 // Process the (separated) arguments
 for argument in args {
-    // Ignore the first comand line argument
-    if argCount == 0 {
-        argCount += 1
-        continue
-    }
-
     if argIsAValue {
         // Make sure we're not reading in an option rather than a value
         if argument.prefix(1) == "-" {
@@ -317,7 +311,7 @@ internal func showHelp() {
 internal func showHeader() {
 
     let version = getVersion(withBuild: true)
-    let appName = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String
+    let appName = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? "pdfmaker"
     Stdio.report("\(String(.bold))\(appName) \(version)\(String(.normal))")
     Stdio.report("Copyright © 2026, Tony Smith (@smittytone). Source code available under the MIT licence.")
 }
@@ -332,7 +326,7 @@ internal func showHeader() {
  */
 internal func getVersion(withBuild: Bool = false) -> String {
 
-    let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
-    let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
+    let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "unknown"
+    let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "unknown"
     return withBuild ? "\(version) (\(build))" : version
 }
