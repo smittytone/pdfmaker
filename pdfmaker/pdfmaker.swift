@@ -29,6 +29,15 @@ import Quartz
 import Clicore
 
 
+/*
+ FROM 2.6.0
+ */
+private struct PdfLine {
+    let text: String
+    let bounds: CGRect
+}
+
+
 struct Pdf {
 
     /**
@@ -386,14 +395,15 @@ struct Pdf {
 
         // Hold data is an attributed string, in case we want to make something
         // with it in a future release, eg. RTF file
-        let documentContent = NSMutableAttributedString()
-        let ext = (sourcePath as NSString).pathExtension.lowercased()
+        let ext = URL(fileURLWithPath: sourcePath).pathExtension
 
         // Only proceed if the file is a PDF
         if ext == "pdf" {
             do {
                 // Get data from the file...
                 let fileData = try Data(contentsOf: URL(fileURLWithPath: sourcePath))
+                // FROM 2.6.0
+                var paragraphs: [String] = []
 
                 // ...and see if it's a PDF
                 if let pdf = PDFDocument(data: fileData) {
@@ -404,14 +414,53 @@ struct Pdf {
                     // Extract the text from each page as an NSAttributedString
                     for i in 0 ..< pdf.pageCount {
                         guard let page = pdf.page(at: i) else { continue }
-                        guard let pageContent = page.attributedString else { continue }
-                        documentContent.append(pageContent)
+
+                        // FROM 2.6.0
+                        // Make a selection of characters from the page
+                        guard page.numberOfCharacters > 0, let pageSelection = page.selection(for: NSRange(location: 0, length: page.numberOfCharacters)) else { continue }
+                        
+                        // Convert the selection into lines of text and the area of the page
+                        // encompassed by the text. We'll use this to estimate which lines
+                        // comprise paragraphs
+                        var lines: [PdfLine] = []
+                        for lineSelection in pageSelection.selectionsByLine() {
+                            guard let text = lineSelection.string?.trimmingCharacters(in: .whitespacesAndNewlines), !text.isEmpty else { continue }
+                            let line = PdfLine(text: text, bounds: lineSelection.bounds(for: page).standardized)
+                            lines.append(line)
+                        }
+
+                        // Convert the line data to an array of paragraphs
+                        Pdf.constructParagraphs(from: lines, to: &paragraphs)
                     }
 
                     _ = grabber.closeConsolePipe()
+
+                    // FROM 2.6.0
+                    // Assemble the final paragraphs by checking for those that span page breaks
+                    // (and so will appear as separate paragraphs) and so should be joined
+                    var previous = ""
+                    var joinedParagraphs: [String] = []
+                    for paragraph in paragraphs {
+                        if !previous.isEmpty {
+                            if let initial = paragraph.first, !initial.isUppercase {
+                                joinedParagraphs.append(previous + " " + paragraph)
+                                previous = ""
+                                continue
+                            }
+                        }
+
+                        if !paragraph.hasSuffix(".") {
+                            previous = paragraph
+                        } else {
+                            joinedParagraphs.append(paragraph)
+                        }
+                    }
+
+                    let combined = joinedParagraphs.joined(separator: "\n\n")
+
                     // If we have gathered some text, output it to a file
-                    if !documentContent.string.isEmpty {
-                        if let finalData = documentContent.string.data(using: .utf8) {
+                    if !combined.isEmpty {
+                        if let finalData = combined.data(using: .utf8) {
                             var path: String
                             if isDestADir {
                                 // User has passed a directory as the destination so assemble
@@ -622,7 +671,7 @@ struct Pdf {
     static func reportInfo(_ message: String) {
 
         if doShowInfo {
-            Stdio.reportNote(message)
+            Stdio.report(withEmoji: "✅", message)
         }
     }
 
@@ -649,4 +698,164 @@ struct Pdf {
 
         return PDFAccessPermissions.allowsContentAccessibility.rawValue
     }
+
+
+    /**
+     Construct a putative sequence of paragraphs from a series of lines.
+
+     - Parameters:
+        - from: An array of lines (as text and bounds in the PDF).
+        - to:   A pointer to the array of paragraphs to assemble.
+     */
+    private static func constructParagraphs(from lines: [PdfLine], to paragraphs: inout [String]) {
+
+        // No line to process? We're all done.
+        guard !lines.isEmpty else { return }
+
+        // Determine the gaps between lines: large gaps are indicative
+        // of paragraph breaks
+        let gaps = zip(lines, lines.dropFirst())
+            .map { current, next in
+                max(0, current.bounds.minY - next.bounds.maxY)
+            }
+            .filter { $0 > 0 }
+
+        let normalGap = median(gaps)
+
+        // Get a typical right edge for normal, full-width lines.
+        let rightEdges = lines.map(\.bounds.maxX).sorted()
+        let typicalRightEdge = rightEdges[rightEdges.count * 3 / 4]
+
+        var paragraph = ""
+        for index in lines.indices {
+            append(lines[index].text, to: &paragraph)
+
+            // If we're at the last line in a paragraph,
+            // add the assembled paragraph to the array and
+            // move on to the next line of text
+            if index == lines.index(before: lines.endIndex) {
+                paragraphs.append(paragraph)
+                continue
+            }
+
+            let currentLine = lines[index]
+            let nextLine = lines[index + 1]
+
+            // Check for a break between the current and following lines.
+            // Store the current paragraph if that's the case, and prep a new one.
+            if isParagraphBreak(currentLine, nextLine, normalGap, typicalRightEdge) {
+                paragraphs.append(paragraph)
+                paragraph = ""
+            }
+        }
+    }
+
+
+    /**
+     Determine whether there is a paragraph break between the current line and the next one.
+
+     Run of a series of checks, in order of likelihood that they indicate a paragraph break.
+
+     - Parameters:
+        - current:          The current line as a PdfLine instance (text plus page bounds).
+        - next:             The next line as a PdfLine instance.
+        - normalGap:        The median distance between lines in the PDF.
+        - typicalRightEdge: The distance between the page edge (bounds) and the start of un-indented text.
+
+     - Returns: `true` if it looks like the two lines are parts of different paragraphs,
+                otherwise `false`.
+     */
+    private static func isParagraphBreak(_ current: PdfLine, _ next: PdfLine, _ normalGap: CGFloat, _ typicalRightEdge: CGFloat) -> Bool {
+
+        // A larger-than-normal vertical gap is the strongest signal
+        // of a gap between paragraphs
+        let verticalGap = max(0, current.bounds.minY - next.bounds.maxY)
+        if verticalGap > max(3, normalGap * 1.7) {
+            return true
+        }
+
+        // Bullets and numbered items normally begin new paragraphs
+        if isListItem(next.text) {
+            return true
+        }
+
+        // Detect a first-line indent, but avoid treating a wrapped list
+        // item's hanging indent as a new paragraph.
+        let indentation = next.bounds.minX - current.bounds.minX
+        if indentation > max(8, current.bounds.height * 0.75), !isListItem(current.text) {
+            return true
+        }
+
+        // A short line ending with punctuation is likely the last line of a paragraph
+        let unusedWidth = typicalRightEdge - current.bounds.maxX
+        let isShort = unusedWidth > current.bounds.height * 2
+        let endsSentence = current.text.range(of: #"[.!?][”’"')\]]*$"#, options: .regularExpression) != nil
+        return isShort && endsSentence
+    }
+
+
+    /**
+     Add a line of text to an existing paragraph.
+
+     - Parameters:
+        - line: The current line's text
+        - to:   The paragraph string the line may be added to.
+     */
+    private static func append(_ line: String, to paragraph: inout String) {
+
+        guard !paragraph.isEmpty else {
+            paragraph = line
+            return
+        }
+
+        // Optionally repair words hyphenated across visual lines.
+        // NOTE This will catch some genuinely hyphenated words that span lines.
+        if paragraph.hasSuffix("-"), line.first?.isLowercase == true {
+            paragraph.removeLast()
+            paragraph += line
+        } else {
+            paragraph += " " + line
+        }
+    }
+
+
+    /**
+     Determine whether a line of text is a bullet point or number item.
+
+     - Parameters:
+        - text: The line to check.
+
+     - Returns: `true` if it appears the line is a list item, otherwise `false`.
+     */
+    private static func isListItem(_ text: String) -> Bool {
+
+        text.range(
+            of: #"^(?:[•▪◦-]\s+|\d+[.)]\s+|[A-Za-z][.)]\s+)"#,
+            options: .regularExpression
+        ) != nil
+    }
+
+
+    /**
+     Determine the median of a series of values.
+
+     - Parameters:
+        - values: An array of floating-point values.
+
+     - Returns: The median value.
+     */
+    private static func median(_ values: [CGFloat]) -> CGFloat {
+
+        guard !values.isEmpty else { return 0 }
+
+        let sorted = values.sorted()
+        let middle = sorted.count / 2
+
+        if sorted.count.isMultiple(of: 2) {
+            return (sorted[middle - 1] + sorted[middle]) / 2
+        }
+
+        return sorted[middle]
+    }
+
 }
