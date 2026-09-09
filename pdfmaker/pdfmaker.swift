@@ -442,19 +442,34 @@ struct Pdf {
                     var joinedParagraphs: [String] = []
                     for paragraph in paragraphs {
                         if !previous.isEmpty {
+                            // We have a store previous paragraph, so we need to check the current one
                             if let initial = paragraph.first, !initial.isUppercase {
+                                // Current paragraph doesn't start with a capital, so join it to
+                                // the previous, full-top-less paragraph and store
                                 joinedParagraphs.append(previous + " " + paragraph)
+                                //print("'\(previous.suffix(10))...' joined to '...\(paragraph.prefix(10))'")
                                 previous = ""
-                                continue
+                            } else {
+                                // Current paragraph starts with a capital, so assume it's a new one:
+                                // just add the saved paragraph to the stack
+                                joinedParagraphs.append(previous)
+                                previous = paragraph
                             }
+
+                            continue
                         }
 
                         if !paragraph.hasSuffix(".") {
+                            // Paragraph doesn't with a full-stop, so store it in case we need
+                            // to add it to the next paragraph on the next pass
                             previous = paragraph
                         } else {
+                            // Paragraph ends with a full-stop, so push it to the stack
                             joinedParagraphs.append(paragraph)
                         }
                     }
+
+                    print("Lines lost: \(paragraphs.count)-\(joinedParagraphs.count)=\(paragraphs.count - joinedParagraphs.count)")
 
                     let combined = joinedParagraphs.joined(separator: "\n\n")
 
