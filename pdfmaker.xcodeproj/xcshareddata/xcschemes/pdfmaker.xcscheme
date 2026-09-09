@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "2640"
+   LastUpgradeVersion = "2660"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -57,8 +57,12 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-r 300 -b -t -s &apos;/Users/smitty/Library/Mobile Documents/com~apple~CloudDocs/Documents/eBooks/PDF/SF/The Machine Stops.pdf&apos; -d ~/Desktop"
+            argument = "-bt -s &apos;/Users/smitty/Library/Mobile Documents/com~apple~CloudDocs/Documents/eBooks/PDF/Fiction/The Man Who Would be King - Kipling.pdf&apos; -d ~/Desktop"
             isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-r 300 -b -t -s &apos;/Users/smitty/Library/Mobile Documents/com~apple~CloudDocs/Documents/eBooks/PDF/SF/The Machine Stops.pdf&apos; -d ~/Desktop"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "$HOME/downloads/pdfmaker_test"
