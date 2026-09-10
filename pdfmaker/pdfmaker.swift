@@ -35,6 +35,7 @@ import Clicore
 private struct PdfLine {
     let text: String
     let bounds: CGRect
+    let line: Int
 }
 
 
@@ -423,9 +424,9 @@ struct Pdf {
                         // encompassed by the text. We'll use this to estimate which lines
                         // comprise paragraphs
                         var lines: [PdfLine] = []
-                        for lineSelection in pageSelection.selectionsByLine() {
+                        for (count, lineSelection) in pageSelection.selectionsByLine().enumerated() {
                             guard let text = lineSelection.string?.trimmingCharacters(in: .whitespacesAndNewlines), !text.isEmpty else { continue }
-                            let line = PdfLine(text: text, bounds: lineSelection.bounds(for: page).standardized)
+                            let line = PdfLine(text: text, bounds: lineSelection.bounds(for: page).standardized, line: count)
                             lines.append(line)
                         }
 
@@ -433,6 +434,7 @@ struct Pdf {
                         Pdf.constructParagraphs(from: lines, to: &paragraphs)
                     }
 
+                    // Stop watching for CoreGraphics PDF errors
                     _ = grabber.closeConsolePipe()
 
                     // FROM 2.6.0
@@ -440,14 +442,22 @@ struct Pdf {
                     // (and so will appear as separate paragraphs) and so should be joined
                     var previous = ""
                     var joinedParagraphs: [String] = []
-                    for paragraph in paragraphs {
+                    for (index, paragraph) in paragraphs.enumerated() {
                         if !previous.isEmpty {
+                            // Does previous end with a non-alpha character?
+                            var endsWithPunc = false
+                            if let last = previous.last {
+                                endsWithPunc = !CharacterSet.alphanumerics.contains(last.unicodeScalars.first!)
+                            }
+
                             // We have a store previous paragraph, so we need to check the current one
-                            if let initial = paragraph.first, !initial.isUppercase {
-                                // Current paragraph doesn't start with a capital, so join it to
+                            if let initial = paragraph.first, !initial.isUppercase, CharacterSet.alphanumerics.contains(initial.unicodeScalars.first!), !endsWithPunc {
+                                // Current paragraph doesn't start with an alpha capital, and previous ends with an alpha so join it to
                                 // the previous, full-top-less paragraph and store
                                 joinedParagraphs.append(previous + " " + paragraph)
-                                //print("'\(previous.suffix(10))...' joined to '...\(paragraph.prefix(10))'")
+#if DEBUG
+                                print("Para \(index): '\(previous.suffix(10))...' joined to '...\(paragraph.prefix(10))'")
+#endif
                                 previous = ""
                             } else {
                                 // Current paragraph starts with a capital, so assume it's a new one:
@@ -460,20 +470,20 @@ struct Pdf {
                         }
 
                         if !paragraph.hasSuffix(".") {
-                            // Paragraph doesn't with a full-stop, so store it in case we need
-                            // to add it to the next paragraph on the next pass
+                            // Paragraph doesn't end with a full-stop, so store it in case we need
+                            // combine it with the next paragraph, on the next pass
                             previous = paragraph
                         } else {
                             // Paragraph ends with a full-stop, so push it to the stack
                             joinedParagraphs.append(paragraph)
                         }
                     }
-
+#if DEBUG
                     print("Lines lost: \(paragraphs.count)-\(joinedParagraphs.count)=\(paragraphs.count - joinedParagraphs.count)")
-
-                    let combined = joinedParagraphs.joined(separator: "\n\n")
+#endif
 
                     // If we have gathered some text, output it to a file
+                    let combined = joinedParagraphs.joined(separator: "\n\n")
                     if !combined.isEmpty {
                         if let finalData = combined.data(using: .utf8) {
                             var path: String
@@ -805,7 +815,13 @@ struct Pdf {
         let unusedWidth = typicalRightEdge - current.bounds.maxX
         let isShort = unusedWidth > current.bounds.height * 2
         let endsSentence = current.text.range(of: #"[.!?][”’"')\]]*$"#, options: .regularExpression) != nil
-        return isShort && endsSentence
+        let endsWithoutPuncuation = (current.text.range(of: #"[,;:-]["'"')\]]*$"#, options: .regularExpression) == nil) && !endsSentence
+
+        if isShort && (endsSentence || endsWithoutPuncuation) {
+            return true
+        }
+
+        return false
     }
 
 
