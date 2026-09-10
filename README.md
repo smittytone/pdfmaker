@@ -47,7 +47,7 @@ pdfmaker --source ~/Documents/'Project X'/Images --destination ~/Documents/PDFs/
 
 #### Encryption ####
 
-From 2.5.0, use the `--password` option to specify an admin password for the generated PDF. This will allow the PDF to be viewed, but encrypt it and (on well behaved software) prevent it from being printed, its content copied and so on. These accessibility settings can only be changed after entering the admin password. 
+Use the `--password` option to specify an admin password for the generated PDF. This will allow the PDF to be viewed, but encrypt it and (on well behaved software) prevent it from being printed, its content copied and so on. These accessibility settings can only be changed after entering the admin password. 
 
 ### ‘Breaking’ PDFs ###
 
@@ -59,7 +59,19 @@ To extract the text from a PDF, run `pdfmaker --break --text --source <path to p
 
 You can use `-t` as shorthand for `--text`.
 
-If you don’t specify a destination, *pdfmaker* uses the Desktop as the target folder for image extraction. For text extraction, the Desktop is also used as the destination but the file will take the same name as the source but appended with `.txt` in place of `.pdf`. 
+If you don’t specify a destination, *pdfmaker* uses the Desktop as the target folder for image extraction. For text extraction, the Desktop is also used as the destination but the file will take the same name as the source but appended with `.txt` in place of `.pdf`.
+
+When extracting text, *pdfmaker* will attempt to group lines of text into paragraphs, which are then separated by two linebreak symbols (`\n`). Its goal is to produce text more readily suitable for editing, rather than ready-formatted copy, that is easier to work with than multiple lines of text that show no distinction between breaks at the end of line and breaks at the end of paragraphs. Its success depends very much on the layout of a given PDF page. Columns, for example, may not be stored within the PDF as continuous text, and this will be refelected in the text output. Likewise tabulated material. Page headers and footers are retained throughout the text, and will need to be removed manually.
+
+PDF stores text non-contiguously and in unexpected ways. For example, in one PDF I have, this line of code:
+
+```
+imp.net.setserverinterfaces(["wifi", "cell"]);
+```
+
+Is actually stored as three lines: `imp.net.setserverinterfaces(["wifi"`, `,` and `"cell"]);`
+
+In short, this is an extraction tool, not a text-processing utility. You will still need to edit extracted material.
 
 *pdfmaker* does not delete the source file.
 
