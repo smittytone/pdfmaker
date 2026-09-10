@@ -35,7 +35,7 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      launchStyle = "0"
+      launchStyle = "1"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
@@ -57,7 +57,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-bt -s &apos;/Users/smitty/Library/Mobile Documents/com~apple~CloudDocs/Documents/eBooks/PDF/Fiction/The Man Who Would be King - Kipling.pdf&apos; -d ~/Desktop"
+            argument = "-btv -s &apos;/Users/smitty/test.pdf&apos; -d ~"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
