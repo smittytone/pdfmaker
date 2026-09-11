@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		3B2E41A02C95AC7300B3A868 /* output-grabber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2E419F2C95AC7300B3A868 /* output-grabber.swift */; };
 		3B71EEF82E52544C008DBBAB /* pdfmaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B71EEF72E52544C008DBBAB /* pdfmaker.swift */; };
+		3B72B53E3052D9ED00BEEBD0 /* pdfline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B72B53D3052D9DE00BEEBD0 /* pdfline.swift */; };
 		3B746092235726550032EA96 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B746091235726550032EA96 /* main.swift */; };
 		3BC360D82E54DC2000E71422 /* Clicore in Frameworks */ = {isa = PBXBuildFile; productRef = 3BC360D72E54DC2000E71422 /* Clicore */; };
 		3BFF7DBB2E9D45090043B4B0 /* metadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFF7DBA2E9D45090043B4B0 /* metadata.swift */; };
@@ -25,6 +26,7 @@
 		3B69BDB92A73BADE00415A8E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3B71EEF02E524FE0008DBBAB /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		3B71EEF72E52544C008DBBAB /* pdfmaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pdfmaker.swift; sourceTree = "<group>"; };
+		3B72B53D3052D9DE00BEEBD0 /* pdfline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pdfline.swift; sourceTree = "<group>"; };
 		3B74608E235726550032EA96 /* pdfmaker */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = pdfmaker; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B746091235726550032EA96 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		3BA49C4B2E5B0EAA0095839E /* lorem-ipsum.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "lorem-ipsum.pdf"; sourceTree = "<group>"; };
@@ -88,6 +90,7 @@
 			children = (
 				3B746091235726550032EA96 /* main.swift */,
 				3BFF7DBA2E9D45090043B4B0 /* metadata.swift */,
+				3B72B53D3052D9DE00BEEBD0 /* pdfline.swift */,
 				3B71EEF72E52544C008DBBAB /* pdfmaker.swift */,
 				3B2E419F2C95AC7300B3A868 /* output-grabber.swift */,
 				3B41AE822360D9D8009FE993 /* Info.plist */,
@@ -193,6 +196,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3B2E41A02C95AC7300B3A868 /* output-grabber.swift in Sources */,
+				3B72B53E3052D9ED00BEEBD0 /* pdfline.swift in Sources */,
 				3B71EEF82E52544C008DBBAB /* pdfmaker.swift in Sources */,
 				3BFF7DBB2E9D45090043B4B0 /* metadata.swift in Sources */,
 				3B746092235726550032EA96 /* main.swift in Sources */,
@@ -336,7 +340,7 @@
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				CODE_SIGN_STYLE = Manual;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 273;
+				CURRENT_PROJECT_VERSION = 274;
 				DEAD_CODE_STRIPPING = YES;
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = Y5J3K52DNA;
 				DSTROOT = $SRCROOT/build/pkgroot;
@@ -373,7 +377,7 @@
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				CODE_SIGN_STYLE = Manual;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 273;
+				CURRENT_PROJECT_VERSION = 274;
 				DEAD_CODE_STRIPPING = YES;
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = Y5J3K52DNA;
 				DSTROOT = $SRCROOT/build/pkgroot;
