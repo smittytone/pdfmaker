@@ -1,6 +1,6 @@
 /*
     pdfmaker
-    metadata.swift
+    pdfline.swift
 
     Copyright © 2026 Tony Smith. All rights reserved.
 
@@ -28,14 +28,14 @@ import Foundation
 
 
 /*
- A simple structure to record PDF document metadata provided to the app
- at the command line.
+ A basic structure to record text lines and their PDF geometry during
+ text extraction routines.
  */
 
-internal struct Metadata {
+internal struct PdfLine {
 
-    var title: String       = ""
-    var subject: String     = ""
-    var author: String      = ""
-    var password: String    = ""
+    let text: String
+    let bounds: CGRect
+    let page: Int
+    let line: Int
 }
