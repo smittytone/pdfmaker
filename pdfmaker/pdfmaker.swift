@@ -29,16 +29,6 @@ import Quartz
 import Clicore
 
 
-/*
- FROM 2.6.0
- */
-private struct PdfLine {
-    let text: String
-    let bounds: CGRect
-    let line: Int
-}
-
-
 struct Pdf {
 
     /**
@@ -426,7 +416,7 @@ struct Pdf {
                         var lines: [PdfLine] = []
                         for (count, lineSelection) in pageSelection.selectionsByLine().enumerated() {
                             guard let text = lineSelection.string?.trimmingCharacters(in: .whitespacesAndNewlines), !text.isEmpty else { continue }
-                            let line = PdfLine(text: text, bounds: lineSelection.bounds(for: page).standardized, line: count)
+                            let line = PdfLine(text: text, bounds: lineSelection.bounds(for: page).standardized, page: i, line: count)
                             lines.append(line)
                         }
 
@@ -746,7 +736,9 @@ struct Pdf {
             .filter { $0 > 0 }
 
         let normalGap = median(gaps)
-
+#if DEBUG
+        print("Page \(lines[1].page + 1) average vertical line gap: \(normalGap)pt")
+#endif
         // Get a typical right edge for normal, full-width lines.
         let rightEdges = lines.map(\.bounds.maxX).sorted()
         let typicalRightEdge = rightEdges[rightEdges.count * 3 / 4]
@@ -792,10 +784,18 @@ struct Pdf {
      */
     private static func isParagraphBreak(_ current: PdfLine, _ next: PdfLine, _ normalGap: CGFloat, _ typicalRightEdge: CGFloat) -> Bool {
 
+        // This is a typical character width, equivalent to the line height
+        // (used as a proxy for the font size)
+        let approxCharWidth = current.bounds.height
+
         // A larger-than-normal vertical gap is the strongest signal
-        // of a gap between paragraphs
+        // of a gap between paragraphs. We use 10% as the minimum
+        // gap delta to indicate a new paragraph
         let verticalGap = max(0, current.bounds.minY - next.bounds.maxY)
-        if verticalGap > max(3, normalGap * 1.7) {
+#if DEBUG
+        print("Page \(current.page + 1), line \(current.line) vertical gap: \(verticalGap)pt")
+#endif
+        if verticalGap > normalGap * 1.1 { // max(3, normalGap * 1.25) {
             return true
         }
 
@@ -806,14 +806,17 @@ struct Pdf {
 
         // Detect a first-line indent, but avoid treating a wrapped list
         // item's hanging indent as a new paragraph.
-        let indentation = next.bounds.minX - current.bounds.minX
-        if indentation > max(8, current.bounds.height * 0.75), !isListItem(current.text) {
+        let nextLineIndentation = next.bounds.minX - current.bounds.minX
+#if DEBUG
+        print("Page \(current.page + 1), line \(current.line) indentation: \(nextLineIndentation) points")
+#endif
+        if nextLineIndentation > max(0, approxCharWidth), !isListItem(current.text) {
             return true
         }
 
         // A short line ending with punctuation is likely the last line of a paragraph
         let unusedWidth = typicalRightEdge - current.bounds.maxX
-        let isShort = unusedWidth > current.bounds.height * 2
+        let isShort = unusedWidth > approxCharWidth * 2
         let endsSentence = current.text.range(of: #"[.!?][”’"')\]]*$"#, options: .regularExpression) != nil
         let endsWithoutPuncuation = (current.text.range(of: #"[,;:-]["'"')\]]*$"#, options: .regularExpression) == nil) && !endsSentence
 
