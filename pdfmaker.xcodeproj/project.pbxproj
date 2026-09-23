@@ -11,6 +11,7 @@
 		3B71EEF82E52544C008DBBAB /* pdfmaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B71EEF72E52544C008DBBAB /* pdfmaker.swift */; };
 		3B72B53E3052D9ED00BEEBD0 /* pdfline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B72B53D3052D9DE00BEEBD0 /* pdfline.swift */; };
 		3B746092235726550032EA96 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B746091235726550032EA96 /* main.swift */; };
+		3BBD32D93064020B0010D73D /* swift_version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BBD32D83064020B0010D73D /* swift_version.swift */; };
 		3BC360D82E54DC2000E71422 /* Clicore in Frameworks */ = {isa = PBXBuildFile; productRef = 3BC360D72E54DC2000E71422 /* Clicore */; };
 		3BFF7DBB2E9D45090043B4B0 /* metadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFF7DBA2E9D45090043B4B0 /* metadata.swift */; };
 /* End PBXBuildFile section */
@@ -30,6 +31,8 @@
 		3B74608E235726550032EA96 /* pdfmaker */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = pdfmaker; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B746091235726550032EA96 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		3BA49C4B2E5B0EAA0095839E /* lorem-ipsum.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "lorem-ipsum.pdf"; sourceTree = "<group>"; };
+		3BBD32D7306402030010D73D /* swift.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = swift.plist; sourceTree = "<group>"; };
+		3BBD32D83064020B0010D73D /* swift_version.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = swift_version.swift; sourceTree = "<group>"; };
 		3BD5844C2D1300E9006388F1 /* BBC Space Themes.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "BBC Space Themes.jpg"; sourceTree = "<group>"; };
 		3BD5844D2D1300E9006388F1 /* Fourth Dimension.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Fourth Dimension.jpg"; sourceTree = "<group>"; };
 		3BD5844E2D1300E9006388F1 /* Out of this World.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Out of this World.jpg"; sourceTree = "<group>"; };
@@ -94,6 +97,8 @@
 				3B71EEF72E52544C008DBBAB /* pdfmaker.swift */,
 				3B2E419F2C95AC7300B3A868 /* output-grabber.swift */,
 				3B41AE822360D9D8009FE993 /* Info.plist */,
+				3BBD32D7306402030010D73D /* swift.plist */,
+				3BBD32D83064020B0010D73D /* swift_version.swift */,
 			);
 			path = pdfmaker;
 			sourceTree = "<group>";
@@ -161,7 +166,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1110;
-				LastUpgradeCheck = 2660;
+				LastUpgradeCheck = 2700;
 				ORGANIZATIONNAME = "Tony Smith";
 				TargetAttributes = {
 					3B74608D235726550032EA96 = {
@@ -199,6 +204,7 @@
 				3B72B53E3052D9ED00BEEBD0 /* pdfline.swift in Sources */,
 				3B71EEF82E52544C008DBBAB /* pdfmaker.swift in Sources */,
 				3BFF7DBB2E9D45090043B4B0 /* metadata.swift in Sources */,
+				3BBD32D93064020B0010D73D /* swift_version.swift in Sources */,
 				3B746092235726550032EA96 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -433,7 +439,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/smittytone/clicore";
 			requirement = {
-				branch = main;
+				branch = develop;
 				kind = branch;
 			};
 		};

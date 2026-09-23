@@ -3,6 +3,8 @@
 - 2.6.0 *Unreleased*
     - Generate an extracted text file that contains (as best as can be determined) proper paragraphs.
     - Fix a CLI argument processing bug preventing certain flags from being registered.
+    - Begin migration to new CLI tool development format.
+    - Update to Clicore 0.7.0 (tracks `develop` branch).
 - 2.5.1 *13 May 2026*
     - Suppress irritating PDFKit `stderr` output during text extraction.
     - Adopt `clicore` emoji output.
