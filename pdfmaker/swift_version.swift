@@ -1,5 +1,5 @@
 /*
-    gitcheck
+    pdfmaker
     swift_version.swift
 
     Copyright © 2026 Tony Smith. All rights reserved.
@@ -30,4 +30,4 @@
 */
 
 let SWIFT_BUILD_PROCESS_VERSION = "2.6.0"
-let SWIFT_BUILD_PROCESS_BUILD = 274
+let SWIFT_BUILD_PROCESS_BUILD = 275

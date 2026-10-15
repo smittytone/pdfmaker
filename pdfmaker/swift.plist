@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleGetInfoString</key>
-	<string>pdfmaker copyright © 2026 Tony Smith. All rights reserved.</string>
+	<string>utitool 2.6.0 copyright © 2026, Tony Smith. All rights reserved</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.bps.pdfmaker</string>
 	<key>CFBundleName</key>
@@ -11,10 +11,10 @@
 	<key>CFBundleShortVersionString</key>
 	<string>2.6.0</string>
 	<key>CFBundleVersion</key>
-	<string>274</string>
+	<string>275</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>12</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2026 Tony Smith. All rights reserved.</string>
+	<string>Copyright © 2026, Tony Smith. All rights reserved</string>
 </dict>
 </plist>

@@ -113,6 +113,12 @@ This converts `Project X.pdf` to a series of images that will be written to the 
 
 Contributions are welcome, but pull requests can only be accepted when they target the `develop` branch. PRs targeting `main` will be rejected.
 
+## Version Management
+
+The source of truth for version information is the *Xcode* project. If you compile `pdfmaker` for macOS using the Swift compiler, the file `swift.plist` will be compiled into the binary to provide version information and to permit subsequent notarisation (after code signing).
+
+The `sync-version.sh` script is my tool to update the subsidiary files after I have updated the app using *Xcode*. The current version of the app, in the `main` branch of the repo, will always contain up-to-date `pdfmaker` version information with the subsidiary version information files, so you should not need to alter these files yourself. The script is currently macOS only.
+
 ## Release Notes ##
 
 See [CHANGELOG.md](./CHANGELOG.md)

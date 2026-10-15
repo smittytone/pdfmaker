@@ -35,6 +35,7 @@
 		3B746091235726550032EA96 /* pdfmaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pdfmaker.swift; sourceTree = "<group>"; };
 		3B766DD6308108C800D72E0C /* combineImages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = combineImages.swift; sourceTree = "<group>"; };
 		3B766DD830811B8C00D72E0C /* extractText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extractText.swift; sourceTree = "<group>"; };
+		3B766DDA30812E8200D72E0C /* sync-version.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "sync-version.sh"; sourceTree = "<group>"; };
 		3BA49C4B2E5B0EAA0095839E /* lorem-ipsum.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "lorem-ipsum.pdf"; sourceTree = "<group>"; };
 		3BAB74D63080E66900180C95 /* help.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = help.swift; sourceTree = "<group>"; };
 		3BAB74D83080E71700180C95 /* entities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = entities.swift; sourceTree = "<group>"; };
@@ -73,6 +74,7 @@
 				3B69BDB82A73BADE00415A8E /* LICENSE.md */,
 				3B71EEF02E524FE0008DBBAB /* CHANGELOG.md */,
 				3BD584582D130247006388F1 /* Package.swift */,
+				3B766DDA30812E8200D72E0C /* sync-version.sh */,
 			);
 			name = Misc;
 			sourceTree = "<group>";
@@ -160,6 +162,7 @@
 			buildPhases = (
 				3B74608A235726550032EA96 /* Sources */,
 				3B74608B235726550032EA96 /* Frameworks */,
+				3B766DDB3081302B00D72E0C /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -206,6 +209,28 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		3B766DDB3081302B00D72E0C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/pdfmaker/swift.plist",
+				"$(DERIVED_FILE_DIR)/pdfmaker/swift_version.swift",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n./sync-version.sh\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		3B74608A235726550032EA96 /* Sources */ = {
@@ -362,7 +387,7 @@
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				CODE_SIGN_STYLE = Manual;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 274;
+				CURRENT_PROJECT_VERSION = 275;
 				DEAD_CODE_STRIPPING = YES;
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = Y5J3K52DNA;
 				DSTROOT = $SRCROOT/build/pkgroot;
@@ -373,6 +398,7 @@
 				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
 				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
 				ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/pdfmaker/Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
 				MARKETING_VERSION = 2.6.0;
@@ -399,7 +425,7 @@
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				CODE_SIGN_STYLE = Manual;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 274;
+				CURRENT_PROJECT_VERSION = 275;
 				DEAD_CODE_STRIPPING = YES;
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = Y5J3K52DNA;
 				DSTROOT = $SRCROOT/build/pkgroot;
@@ -410,6 +436,7 @@
 				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
 				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
 				ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/pdfmaker/Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
 				MARKETING_VERSION = 2.6.0;

@@ -1,5 +1,5 @@
 {
-  "originHash" : "a38348b87fbac6843093fd580d51259d7a1608eb21a0a320f2f83085274d5dbc",
+  "originHash" : "225d935549d7b092f64055a60c7e500b39fb624db0832325b82055a30d248297",
   "pins" : [
     {
       "identity" : "clicore",
@@ -7,7 +7,7 @@
       "location" : "https://github.com/smittytone/clicore",
       "state" : {
         "branch" : "develop",
-        "revision" : "cd78f869f328e44929813e984a8ac2ecabbf1c59"
+        "revision" : "d2f7af25f74585a4fcd70cb528174f20849d3ee6"
       }
     }
   ],
