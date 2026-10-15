@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleGetInfoString</key>
-	<string>utitool 2.6.0 copyright © 2026, Tony Smith. All rights reserved</string>
+	<string>pdfmaker 2.6.0 copyright © 2026, Tony Smith. All rights reserved</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.bps.pdfmaker</string>
 	<key>CFBundleName</key>
