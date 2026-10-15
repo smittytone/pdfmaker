@@ -27,15 +27,4 @@
 import Foundation
 
 
-/*
- A simple structure to record PDF document metadata provided to the app
- at the command line.
- */
 
-internal struct Metadata {
-
-    var title: String       = ""
-    var subject: String     = ""
-    var author: String      = ""
-    var password: String    = ""
-}

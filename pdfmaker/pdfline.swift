@@ -27,15 +27,4 @@
 import Foundation
 
 
-/*
- A basic structure to record text lines and their PDF geometry during
- text extraction routines.
- */
 
-internal struct PdfLine {
-
-    let text: String
-    let bounds: CGRect
-    let page: Int
-    let line: Int
-}
