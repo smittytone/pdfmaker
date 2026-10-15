@@ -51,7 +51,6 @@ struct Pdfmaker {
 
         // Expand composite flags
         let arguments = Cli.unify(args: CommandLine.arguments)
-        var argumentIsAValue = false
         var argumentType: ArgumentID = .unknown
         var argumentCount = 0
         var previousArgument = ""
@@ -66,9 +65,9 @@ struct Pdfmaker {
 
                 switch argumentType {
                     case .pathDestination:
-                        settings.destPath = argument
+                        settings.destinationPath = Path.getFullPath(argument)
                     case .pathSource:
-                        settings.sourcePath = argument
+                        settings.sourcePath = Path.getFullPath(argument)
                     case .nameTarget:
                         settings.outputName = argument
                     case .compressionLevel:
@@ -102,24 +101,18 @@ struct Pdfmaker {
                 }
 
                 argumentType = .unknown
-                argumentIsAValue = false
             } else {
                 switch argument {
                     case "-d", "--destination":
                         argumentType = .pathDestination
-                        argumentIsAValue = true
                     case "-s", "--source":
                         argumentType = .pathSource
-                        argumentIsAValue = true
                     case "-n", "--name":
                         argumentType = .nameTarget
-                        argumentIsAValue = true
                     case "-c", "--compress":
                         argumentType = .compressionLevel
-                        argumentIsAValue = true
                     case "-r", "--resolution":
                         argumentType = .resolution
-                        argumentIsAValue = true
                     case "-b", "--break":
                         settings.doBreak = true
                     case "-t", "--text":
@@ -129,16 +122,12 @@ struct Pdfmaker {
                     case "-v", "--verbose":
                         settings.doShowInfo = true
                     case "--title":
-                        argumentIsAValue = true
                         argumentType = .metadataTitle
                     case "--subject":
-                        argumentIsAValue = true
                         argumentType = .metadataSubject
                     case "--author":
-                        argumentIsAValue = true
                         argumentType = .metadataAuthor
                     case "--password":
-                        argumentIsAValue = true
                         argumentType = .metadataAdmin
                     case "-h", "--help":
                         showHelp()
@@ -156,12 +145,13 @@ struct Pdfmaker {
             argumentCount += 1
 
             // Trap commands that come last and therefore have missing args
-            if argumentCount == arguments.count && argumentIsAValue {
+            if argumentCount == arguments.count && argumentType != .unknown {
                 Stdio.reportErrorAndExit("Missing value for \(argument)")
             }
         }
 
         // FROM 2.4.8
+        // Warn on unnecessary options if they've been included
         if settings.doBreak {
             if settings.doCompress {
                 reportUnnecessary(option: "-c/--compress")
@@ -180,21 +170,17 @@ struct Pdfmaker {
             }
         }
 
-        // FROM 2.3.0
-        // Fix source and destination paths here, not if they were set
-        // (so we catch the defaults)
-        settings.destPath = Path.getFullPath(settings.destPath)
-        settings.destination = URL(fileURLWithPath: settings.destPath)
-        settings.sourcePath = Path.getFullPath(settings.sourcePath)
+        // Convert path arguments to URLs
+        settings.destination = URL(fileURLWithPath: settings.destinationPath)
         settings.source = URL(fileURLWithPath: settings.sourcePath)
 
         // Check the supplied paths
+        // NOTE This will make directories, if the user has asked us to
         settings.sourceIsDir = check(directory: settings.source, .source, settings.doMakeSubDirectories) == .existingDirectory
-        settings.destIsDir = check(directory: settings.destination, .target, settings.doMakeSubDirectories) == .existingDirectory
+        settings.destinationIsDir = check(directory: settings.destination, .target, settings.doMakeSubDirectories) == .existingDirectory
 
         // Process files
         // FROM 2.4.0 support output to text
-        var outcome = EXIT_FAILURE
         let result: Result<Bool, ProcessError>
         if settings.doBreak {
             result = settings.breakToText ? pdfToText(settings) : pdfToImages(settings)
@@ -202,30 +188,15 @@ struct Pdfmaker {
             result = imagesToPdf(settings)
         }
 
+        var exitCode = EXIT_FAILURE
         switch result {
             case .failure(let error):
                 Stdio.reportError(error.localizedDescription)
-            case .success(_):
-                outcome = EXIT_SUCCESS
+            case .success(let opCompleted):
+                exitCode = opCompleted ? EXIT_SUCCESS : EXIT_NO_OP
         }
 
-        Stdio.exitApp(outcome)
-    }
-
-
-    // MARK: Utility Functions
-
-    /**
-     Generic warning handler for flags included but irrelevant to requested action.
-
-     FROM 2.4.0
-
-     - Parameters:
-     - option The unneceesary flag, eg. `--compress`
-     */
-    internal static func reportUnnecessary(option: String) {
-
-        Stdio.reportWarning("\(option) flag is not relevant -- ignoring")
+        Stdio.exitApp(exitCode)
     }
 
 }

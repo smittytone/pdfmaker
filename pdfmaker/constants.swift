@@ -30,3 +30,4 @@ import Foundation
 let BASE_DPI: CGFloat               = 72.0
 let DEFAULT_DPI: CGFloat            = 300.0
 let SUPPORTED_IMAGE_TYPES           = ["jpg", "jpeg", "png", "tiff", "tif", "heic", "webp", "bmp"]
+let EXIT_NO_OP: Int32               = 404

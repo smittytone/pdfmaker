@@ -37,7 +37,7 @@ extension Pdfmaker {
 
      - Parameters:
         - sourceIsDir  Does the global source file path lead to a directory?
-        - destIsDir Does the global destination file path lead to a directory?
+        - destinationIsDir Does the global destination file path lead to a directory?
 
      - Returns: `true` on a successful completion, otherwise `false`.
      */
@@ -46,7 +46,7 @@ extension Pdfmaker {
         // Determine the destination filename
         var targetFilename = ""
         var targetDirectory = settings.destination
-        if settings.destIsDir {
+        if settings.destinationIsDir {
             // Destination is a directory, so prepare the filename
             targetFilename = getFilename(settings.destination, (settings.outputName == nil ? "PDF From Images via pdfmaker" : settings.outputName!))
         } else {
@@ -234,8 +234,11 @@ extension Pdfmaker {
             }
         }
 
+        // Warn the user and exit as a success: nothing actually went wrong,
+        // there were just no valid files to work with. Right now this is not an error,
+        // so we exit as success (TODO exit is no op)
         Stdio.reportWarning("No suitable image files found in the source directory")
-        return .failure(ProcessError(code: .noError))
+        return .success(false)
     }
 
 

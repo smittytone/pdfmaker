@@ -125,4 +125,18 @@ extension Pdfmaker {
         Stdio.report(withEmoji: "✅", message)
     }
 
+
+    /**
+     Generic warning handler for flags included but irrelevant to requested action.
+
+     FROM 2.4.0
+
+     - Parameters:
+     - option The unneceesary flag, eg. `--compress`
+     */
+    internal static func reportUnnecessary(option: String) {
+
+        Stdio.reportWarning("\(option) flag is not relevant -- ignoring")
+    }
+
 }

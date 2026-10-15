@@ -36,14 +36,14 @@ extension Pdfmaker {
 
      - Parameters:
         - sourceIsDir  Does the global source file path lead to a directory?
-        - destIsDir Does the global destination file path lead to a directory?
+        - destinationIsDir Does the global destination file path lead to a directory?
 
      - Returns: `true` on a successful completion, otherwise `false`.
      */
     internal static func pdfToImages(_ settings: Settings) -> Result<Bool, ProcessError> {
 
         // Make sure we're loading a PDF and outputting to a directory
-        if !settings.destIsDir {
+        if !settings.destinationIsDir {
             return .failure(ProcessError(code: .destNotDir, text: "Chosen image destination \(settings.destination.path) is not a directory"))
         }
 

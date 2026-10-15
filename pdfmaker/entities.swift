@@ -98,10 +98,10 @@ struct Settings {
     var breakToText: Bool               = false
     var hasSetRes: Bool                 = false
     var sourceIsDir: Bool                 = true  // DEP
-    var destIsDir: Bool                = true  // DEP
+    var destinationIsDir: Bool                = true  // DEP
     var outputResolution: CGFloat       = BASE_DPI
     var compressionLevel: CGFloat       = 0.8
-    var destPath: String                = "~/Desktop"   // DEP
+    var destinationPath: String                = "~/Desktop"   // DEP
     var sourcePath: String              = FileManager.default.currentDirectoryPath  // DEP
     var outputName: String?             = nil
     let grabber: OutputGrabber          = OutputGrabber(dedupe: true)
@@ -112,6 +112,10 @@ struct Settings {
 }
 
 
+/*
+    Generic error to cover all image->pdf, pdf->images, pdf->text operational
+    failures.
+ */
 public struct ProcessError: Error, LocalizedError {
 
     public var code: ProcessErrorKind                  = .noError
@@ -120,6 +124,8 @@ public struct ProcessError: Error, LocalizedError {
         switch self.code {
             case .noError:
                 return nil
+            case .genericError:
+                return "Something... unknown... went wrong"
             case .badPdfWrite:
                 guard let text = self.text else { return "Error message not provided" }
                 return "could not write PDF file \(text)"
@@ -132,12 +138,12 @@ public struct ProcessError: Error, LocalizedError {
 
 
 /*
-    Word file processing error codes.
-    NOTE We require raw values for these, for output as stderr codes.
+    File and directory processing error codes.
 */
 public enum ProcessErrorKind: Int, Error {
 
     case noError
+    case genericError
     case badPdfExtract
     case badPdfWrite
     case badPdfFile
