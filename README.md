@@ -120,3 +120,5 @@ See [CHANGELOG.md](./CHANGELOG.md)
 ## Copyright ##
 
 *pdfmaker* is copyright © 2026, Tony Smith. The source code is licensed under the terms of the MIT licence.
+
+_AI was not used in the development of this software. This is a statement of plain fact, not of policy. AI tools may be used in future._
