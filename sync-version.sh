@@ -32,9 +32,9 @@ fi
 NAME=pdfmaker
 ##########################
 SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
-XCODEPROJ="${SCRIPT_DIR}/pdfmaker.xcodeproj"
-TARGET_FILE="${SCRIPT_DIR}/pdfmaker/swift_version.swift"
-TARGET_PLIST="${SCRIPT_DIR}/pdfmaker/swift.plist"
+XCODEPROJ="${SCRIPT_DIR}/${NAME}.xcodeproj"
+TARGET_FILE="${SCRIPT_DIR}/${NAME}/swift_version.swift"
+TARGET_PLIST="${SCRIPT_DIR}/${NAME}/swift.plist"
 CONFIGURATION="${CONFIGURATION:-${1:-Release}}"
 IN_XCODE=""
 YEAR=$(date +%Y)
